@@ -1,0 +1,35 @@
+# Env
+.env
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+build/
+dist/
+
+# Run binary artifacts — text metadata (summary/history/log/snapshot) is tracked
+runs/**/artifacts/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Local tool artifacts
+.playwright-mcp/
+.claude/settings.local.json
+
+# Dataset: only the zip is tracked; extracted contents are local-only
+data/*
+*.zip
+!data/open.zip
