@@ -1,0 +1,11 @@
+exp_id: S002_cspline-notaknot-full
+plan_id: "002"
+type: baseline
+baseline_id: S001_cspline-natural-full
+method: cspline
+window: 11
+bc_type: not-a-knot
+t_target: 80
+per_axis: null
+k: 5
+seed: 42
