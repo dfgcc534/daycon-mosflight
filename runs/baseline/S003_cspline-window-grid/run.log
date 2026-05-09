@@ -1,0 +1,15 @@
+[2026-05-10T04:43:09+09:00] start exp_id=S003_cspline-window-grid, config=/workspace/daycon-muflight/configs/baseline/S003_cspline-window-grid.yaml
+[2026-05-10T04:43:09+09:00] load train + labels
+[2026-05-10T04:43:10+09:00] n_train=10000
+[2026-05-10T04:43:55+09:00] fold 0: chosen per-axis=[(5, 'natural'), (5, 'natural'), (4, 'natural')]
+[2026-05-10T04:43:55+09:00] fold 0: mean_eucl=0.01833 per_axis_mae=[0.0099, 0.0101, 0.0072]
+[2026-05-10T04:44:40+09:00] fold 1: chosen per-axis=[(5, 'natural'), (5, 'natural'), (4, 'natural')]
+[2026-05-10T04:44:40+09:00] fold 1: mean_eucl=0.01630 per_axis_mae=[0.0094, 0.0089, 0.0057]
+[2026-05-10T04:45:25+09:00] fold 2: chosen per-axis=[(5, 'natural'), (5, 'natural'), (4, 'natural')]
+[2026-05-10T04:45:25+09:00] fold 2: mean_eucl=0.01696 per_axis_mae=[0.0092, 0.0093, 0.0067]
+[2026-05-10T04:46:10+09:00] fold 3: chosen per-axis=[(5, 'natural'), (5, 'natural'), (4, 'natural')]
+[2026-05-10T04:46:10+09:00] fold 3: mean_eucl=0.01786 per_axis_mae=[0.01, 0.0098, 0.0068]
+[2026-05-10T04:46:56+09:00] fold 4: chosen per-axis=[(5, 'natural'), (5, 'natural'), (4, 'natural')]
+[2026-05-10T04:46:56+09:00] fold 4: mean_eucl=0.01753 per_axis_mae=[0.0095, 0.0099, 0.0065]
+[2026-05-10T04:46:56+09:00] CV mean_eucl=0.01740 ± 0.00071 | OOF mean_eucl=0.01740
+[2026-05-10T04:47:51+09:00] final tune: chosen per-axis (w,bc)=[(5, 'natural'), (5, 'natural'), (4, 'natural')]

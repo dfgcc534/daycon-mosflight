@@ -1,0 +1,34 @@
+exp_id: S003_cspline-window-grid
+plan_id: '002'
+type: baseline
+baseline_id: S001_cspline-natural-full
+method: cspline
+per_axis: tune
+grid:
+- - 4
+  - natural
+- - 4
+  - not-a-knot
+- - 4
+  - clamped
+- - 5
+  - natural
+- - 5
+  - not-a-knot
+- - 5
+  - clamped
+- - 7
+  - natural
+- - 7
+  - not-a-knot
+- - 7
+  - clamped
+- - 11
+  - natural
+- - 11
+  - not-a-knot
+- - 11
+  - clamped
+t_target: 80
+k: 5
+seed: 42
