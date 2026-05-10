@@ -1,0 +1,25 @@
+exp_id: R003_ema-extrapolate
+type: baseline
+plan_id: '003'
+baseline_id: R001_baseline-residual-gru
+method: gru-residual
+feature_components:
+- relative
+baseline_type: ema
+ema_alpha: 0.5
+loss_type: huber
+t_target: 80
+k: 5
+seed: 42
+model:
+  hidden: 64
+  layers: 2
+  dropout: 0.1
+  input_dim: 3
+training:
+  lr: 0.001
+  weight_decay: 0.0001
+  batch: 64
+  epochs: 100
+  early_stop_patience: 10
+  seed: 42
