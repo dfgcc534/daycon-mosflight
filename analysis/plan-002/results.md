@@ -1,8 +1,9 @@
 # plan-002 results — Cubic spline interpolation baseline
 
-**status**: partial (4 LB submissions sent, scores 회수 carry-over)
+**status**: all_complete (4 LB scores 회수 완료)
 **finished_at (CV portion)**: 2026-05-10 KST
 **4 LB submissions submitted_at**: 2026-05-10T05:09~05:12 KST
+**4 LB scores collected_at**: 2026-05-10T14:11 KST (사용자 dacon.io 직접 확인)
 
 ---
 
@@ -10,13 +11,14 @@
 
 | exp_id | method | hyperparam | cv_mean_eucl ± std | per-axis MAE [x, y, z] | hit@0.10 | runtime (s) | lb_score |
 |---|---|---|---|---|---|---|---|
-| **B001_linear-2pt** (plan-001) | polyfit | w=2, d=1 | **0.01294 ± 0.00058** | [0.0070, 0.0071, 0.0050] | 0.9923 | 0.8 | 0.60 (plan-001) |
-| S001_cspline-natural-full | cspline | w=11, BC=natural | 0.01742 ± 0.00071 | [0.0096, 0.0096, 0.0066] | 0.9842 | 5.4 | TBD |
-| S002_cspline-notaknot-full | cspline | w=11, BC=not-a-knot | 0.05370 ± 0.00282 | [0.0277, 0.0288, 0.0235] | 0.8815 | 5.3 | TBD |
-| S003_cspline-window-grid | cspline | per-axis [(5,nat),(5,nat),(4,nat)] | 0.01740 ± 0.00071 | [0.0096, 0.0096, 0.0066] | 0.9842 | 226.8 | TBD |
-| S004_smoothing-spline-tuned | smoothing | k=3, s=[1e-4, 1e-4, 1e-4] | 0.03322 ± 0.00270 | [0.0191, 0.0176, 0.0115] | 0.9506 | 17.1 | TBD |
+| **B001_linear-2pt** (plan-001) | polyfit | w=2, d=1 | **0.01294 ± 0.00058** | [0.0070, 0.0071, 0.0050] | 0.9923 | 0.8 | **0.60** (plan-001) |
+| S001_cspline-natural-full | cspline | w=11, BC=natural | 0.01742 ± 0.00071 | [0.0096, 0.0096, 0.0066] | 0.9842 | 5.4 | **0.4932** |
+| S002_cspline-notaknot-full | cspline | w=11, BC=not-a-knot | 0.05370 ± 0.00282 | [0.0277, 0.0288, 0.0235] | 0.8815 | 5.3 | 0.1204 |
+| S003_cspline-window-grid | cspline | per-axis [(5,nat),(5,nat),(4,nat)] | 0.01740 ± 0.00071 | [0.0096, 0.0096, 0.0066] | 0.9842 | 226.8 | 0.4926 |
+| S004_smoothing-spline-tuned | smoothing | k=3, s=[1e-4, 1e-4, 1e-4] | 0.03322 ± 0.00270 | [0.0191, 0.0176, 0.0115] | 0.9506 | 17.1 | 0.2178 |
 
-CV-best of S001~S004 = **S003** (0.01740). 4 변형 모두 B001 floor 0.01294 미달.
+CV-best of S001~S004 = **S003** (0.01740). LB-best of S001~S004 = **S001** (0.4932; S003 와 ΔLB=0.0006 tie).
+4 변형 모두 B001 floor (CV 0.01294 / LB 0.60) 미달.
 
 ---
 
@@ -82,22 +84,40 @@ s_grid axis MAE 곡선은 `runs/baseline/S004_smoothing-spline-tuned/summary.jso
 
 ## §6. H1 / H2 / H3 verdict
 
-- **H1**: 11pt natural / not-a-knot 보간 → polyfit-11pt 급 (0.03~0.05) — **CV 에서 confirmed**. natural 0.0174 (0.02 미만으로 약간 더 좋음), not-a-knot 0.0537 (예측 범위 안). LB verdict 는 점수 회수 후 보강.
-- **H2**: window × BC grid 가 B001 근접 — **partially refuted**. CV 0.0174 영역 (S001 동급) 에서 멈춤. clamped 가 한 번도 안 뽑힘. small-window 의 이득은 있으나 등속 polyfit 의 floor 를 넘지 못함.
-- **H3**: smoothing 이 노이즈 흡수로 B001 위협 — **CV 에서 refuted**. CV 0.0332 — fit-영역 axis MAE 의 이득이 외삽 영역 mean_eucl 로 transfer 안 됨.
+- **H1**: 11pt natural / not-a-knot 보간 → polyfit-11pt 급 (0.03~0.05) — **CV·LB 모두 confirmed**. CV: natural 0.0174 (0.02 미만으로 약간 더 좋음), not-a-knot 0.0537 (예측 범위 안). LB: natural 0.4932 / not-a-knot 0.1204 — 둘 다 B001 LB 0.60 미달, not-a-knot 은 LB 에서 4× worse (외삽 폭주가 hit_rate 에 결정적).
+- **H2**: window × BC grid 가 B001 근접 — **CV·LB 모두 partially refuted**. CV 0.0174 / LB 0.4926 영역 (S001 동급, ΔLB=0.0006) 에서 멈춤. clamped 가 한 번도 안 뽑힘. small-window 의 이득은 있으나 등속 polyfit 의 CV·LB floor 모두 넘지 못함.
+- **H3**: smoothing 이 노이즈 흡수로 B001 위협 — **CV·LB 모두 refuted**. CV 0.0332 / LB 0.2178 — fit-영역 axis MAE 의 이득이 외삽 영역 mean_eucl 에도, LB hit_rate tail 에도 transfer 안 됨. **본 plan 의 가장 강한 가설 reject** (smoothing prior 자체가 외삽 task 와 부적합).
 
 ---
 
-## §7. CV ↔ LB 상관 분석 (TBD — 점수 회수 후)
+## §7. CV ↔ LB 상관 분석 (점수 회수 완료)
 
-5 점 (B001 + S001~S004) 의 (cv_mean_eucl, lb_score) 산점 + Spearman ρ 는 4 LB 점수 회수 후 본 섹션에 추가. 현재 회수: B001 LB=0.60 (plan-001 frontmatter). 4 점수 도착 시 본 섹션 + frontmatter `lb_scores` dict 동시 갱신.
+5 점 (B001 + S001~S004) (cv_mean_eucl, lb_score):
 
-가설 (점수 도착 전 prior):
-- CV winner = S003 (0.01740). LB winner 후보:
-  - 비례 시나리오: S003 도 LB 1위 (CV ≈ LB proxy).
-  - 반전 시나리오: S004 (smoothing) 가 LB 에서 회복 — fit 영역 noise smoothing 이 LB hit_rate 의 tail behavior (큰 오차 sample 비율) 에 도움.
-  - cv-LB 상관 약함: S001~S004 LB 모두 비슷 — 4 변형이 외삽 prior 만 다르고 LB 측정 metric (hit-rate 반경 비공개) 에는 유의 신호 없음.
-- §N+3 #8 caveat: LB 차이 0.005 영역 미만은 noise.
+| exp | CV mean_eucl (↓) | LB hit_rate (↑) | CV rank | LB rank |
+|---|---|---|---|---|
+| B001 | 0.01294 | 0.6000 | 1 | 1 |
+| S003 | 0.01740 | 0.4926 | 2 | 3 |
+| S001 | 0.01742 | 0.4932 | 3 | 2 |
+| S004 | 0.03322 | 0.2178 | 4 | 4 |
+| S002 | 0.05370 | 0.1204 | 5 | 5 |
+
+**Spearman ρ(CV ↑ ↔ LB ↓) = +0.90** (n=5).
+- d_i (rank diff) = [0, +1, −1, 0, 0] → Σd² = 2
+- ρ = 1 − 6·Σd² / (n·(n²−1)) = 1 − 12/120 = **0.90**
+- p-value (Student's t with df=3): t = ρ·√(3/(1−ρ²)) = 0.90·√(3/0.19) ≈ 3.58 → p ≈ 0.037 (양측). n=5 에서는 신뢰성 한계, 단 effect size 큼.
+
+**점수 도착 전 3 prior 시나리오 verdict**:
+- 비례 시나리오 → **거의 적중** (rank 일치 외 S001/S003 만 미세 swap, ΔLB=0.0006 = noise tie).
+- 반전 시나리오 (S004 LB 회복) → **반박** (LB 0.2178 — S001/S003 의 절반).
+- 약-상관 시나리오 → **반박** (4 LB 가 0.12 ~ 0.49 범위로 강하게 분리).
+
+**해석**:
+- **CV mean_eucl 이 LB hit_rate 의 신뢰성 있는 proxy**. 향후 plan 은 CV 만으로 우선순위 결정 가능 → LB 슬롯 절약 (1일 5회 한정 자원).
+- 단, S001 vs S003 의 ΔCV=0.00002 / ΔLB=0.0006 는 *둘 다 noise 영역* — 5e-3 미만 차이는 LB 도 random.
+- not-a-knot (S002) 의 LB 0.1204 가 가장 큰 outlier — 외삽 폭주가 hit_rate 의 *전체 분포* 까지 망가뜨림 (cv mean 만 보면 3× worse 인데 LB 는 5× worse).
+
+**§N+3 #8 caveat 확인**: LB 차이 ≤ 0.005 영역은 noise — S001/S003 의 ΔLB=0.0006 이 정확히 그 영역. tie 처리 정당.
 
 ---
 
@@ -105,24 +125,24 @@ s_grid axis MAE 곡선은 `runs/baseline/S004_smoothing-spline-tuned/summary.jso
 
 4 LB 제출 모두 isSubmitted=True (api Success). lb_log @ `analysis/plan-002/lb_log.md`.
 
-| order | exp_id | submitted_at (KST) | api response |
-|---|---|---|---|
-| 1 | S004 | 2026-05-10T05:09 | Success |
-| 2 | S003 | 2026-05-10T05:11 | Success |
-| 3 | S001 | 2026-05-10T05:11 | Success |
-| 4 | S002 | 2026-05-10T05:12 | Success |
+| order | exp_id | submitted_at (KST) | api response | lb_score |
+|---|---|---|---|---|
+| 1 | S004 | 2026-05-10T05:09 | Success | 0.2178 |
+| 2 | S003 | 2026-05-10T05:11 | Success | 0.4926 |
+| 3 | S001 | 2026-05-10T05:11 | Success | 0.4932 |
+| 4 | S002 | 2026-05-10T05:12 | Success | 0.1204 |
 
-Budget: 4/5 일일. 1 슬롯 contingency. Carry-over: 점수 회수만 (dacon_submit_api 가 post-only, 점수 fetch 미지원 → user 가 dacon.io 에서 4 점수 확인 후 lb_log + frontmatter 갱신).
+Budget: 4/5 일일. 1 슬롯 contingency (미사용). Carry-over: closed (2026-05-10T14:11 KST 사용자가 dacon.io 대회 페이지 에서 4 점수 확인 후 server agent 에 전달, 일괄 갱신 완료).
 
 ---
 
-## §9. 다음 plan 후보 (enumeration only)
+## §9. 다음 plan 후보 (enumeration only — CV-LB ρ=+0.90 박제 반영)
 
-1. **Kalman / Savitzky-Golay 입력 평활 → polyfit**: smoothing spline 이 "post-hoc 평활" 인 점이 H3 refute 의 원인 추정. 입력 측 평활 + 작은-window polyfit 이 다른 inductive bias.
-2. **Velocity model**: t=0 에서의 instantaneous velocity 추정 + 등속 외삽 (B001 의 일반화). 6/8/10-pt polyfit derivative 와 비교.
-3. **Ensemble (B001, S003, S004)**: CV-mean_eucl 측 약간의 다양성 + LB hit_rate 측 다른 tail. 단순 평균 vs CV-weighted.
+CV 가 LB proxy 로 신뢰 가능 → 다음 plan 은 *CV 만 보고도* 우선순위 결정 가능. LB 슬롯 절약하고 더 많은 ablation 가능.
+
+1. **Kalman / Savitzky-Golay 입력 평활 → polyfit**: smoothing spline (S004) 이 "post-hoc 평활" 이라 H3 refute 의 원인 추정. 입력 측 평활 + 작은-window polyfit 이 다른 inductive bias. *S004 의 LB 0.2178 (CV 0.0332 시점에 예측 가능했던 수준)* 과 비교 후, 입력 측 평활이 CV 0.013 영역으로 들어오는지 확인.
+2. **Velocity model**: t=0 에서의 instantaneous velocity 추정 + 등속 외삽 (B001 의 일반화). 6/8/10-pt polyfit derivative 와 비교. B001 LB 0.60 floor 를 *명시적으로 노리는* 1순위 후보.
+3. **Ensemble (B001, S003, S004)**: CV-mean_eucl 측 약간의 다양성 + LB hit_rate 측 다른 tail. 단순 평균 vs CV-weighted. 단 CV-LB ρ=+0.90 으로 ensemble 의 LB upside 가 작을 수도 (CV 비례 → 가중평균이 단순 winner 못 이김).
 4. **Neural seq2seq (LSTM / 1D-Transformer)**: 11pt × 3-axis 입력으로 +80 ms 출력. small data — 강한 augmentation + light model 필요.
-5. **Per-axis combination of B001 + smoothing axis-wise**: B004 의 generalization. axis 별 best of {polyfit, cspline, smoothing}.
-6. **Hit-radius probing**: 1 LB 슬롯 사용해 hit_rate 반경/분모 추정. 별도 plan 권장.
-
-우선순위 결정은 local 권한 — CV-LB 상관 박제 (§7) 후 신중히.
+5. **Per-axis combination of B001 + smoothing axis-wise**: B004 의 generalization. axis 별 best of {polyfit, cspline, smoothing}. 단 S003 가 이미 axis-별 grid 를 한 결과 *clamped 도 안 뽑힘* — 여기 axis 별 method 도 polyfit dominate 가능성 큼.
+6. **Hit-radius probing**: 1 LB 슬롯 사용해 hit_rate 반경/분모 추정. *deprioritize* — CV-LB ρ 0.90 박제로 metric 추정 가치가 줄어듦.
