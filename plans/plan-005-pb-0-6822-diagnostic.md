@@ -2,7 +2,7 @@
 plan_id: 005
 version: 1
 date: 2026-05-11 (Asia/Seoul)
-status: draft
+status: complete
 based_on:
   - 004
   - notes/PB_0.6822 코드공유.ipynb
@@ -65,8 +65,8 @@ lb_score: null   # diagnostic plan — LB 제출 X
 | G4 | gate | 3 variant hit (full/A/B) + marginal contribution + 2 intervention 분해 (B↔full, A↔full) + family-change 모두 박제 | [DONE — full=0.660, A=0.657, B=0.655. marginal: gru=+0.005, regime=+0.003 (둘 다 ±0.005 noise floor 근방, ★ selector 단순화 anchor)] |
 | c8 | analysis | STAGE 5 failure analysis + B001 비교 (`failure_b001.{json,md}`) spec @ §9 | [DONE TBD] |
 | G5 | gate | top-K worst sample + B001 win/loss decomposition 박제 | [DONE — worst-100 (regime 13: 19 / regime 14: 11 집중) + PB win 965 / loss 153 / PB hit 0.660 vs B001 0.579] |
-| c9 | synthesis | `analysis/plan-005/results.md` + `next_plan_candidates.md` (≥3 후보) spec @ §10 | [TODO] |
-| G_final | gate | results.md + next_plan_candidates.md ≥ 3 후보 박제 | [TODO] |
+| c9 | synthesis | `analysis/plan-005/results.md` + `next_plan_candidates.md` (≥3 후보) spec @ §10 | [DONE TBD] |
+| G_final | gate | results.md + next_plan_candidates.md ≥ 3 후보 박제 | [DONE — 4 후보 도출 (selector simplify / corrector loss / high-speed regime / bias re-tuning), 각 후보 4 항목 박제] |
 
 ### Plan-specific severe (WORKFLOW.md §12.3 default 위 추가분)
 
