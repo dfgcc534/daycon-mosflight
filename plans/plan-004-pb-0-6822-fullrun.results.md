@@ -2,16 +2,16 @@
 plan_id: 004
 exp_id: P001_pb-0-6822-fullrun
 lb_exp_id: P001_pb-0-6822-fullrun
-lb_score: TBD
+lb_score: 0.6806
 lb_submitted_at: 2026-05-11T20:10:12+09:00
-status: partial
+status: all_complete
 date: 2026-05-11 (Asia/Seoul)
 ---
 
 # plan-004 results — PB_0.6822 Notebook Full-Fit + 18×27 Regime Distribution Audit
 
-LB carry-over: dacon-submit 응답 `{isSubmitted: True, detail: 'Success'}` — `lb_score` 비동기 대기.
-점수 회수 후 follow-up commit 으로 본 frontmatter `lb_score: TBD` → `<float>` + `status: all_complete` 동시 갱신.
+LB carry-over closed: dacon-submit 응답 `{isSubmitted: True, detail: 'Success'}` → 사용자 회수 LB = **0.6806** (commit c11.1, 2026-05-11).
+노트북 작성자 주장 0.6822 와 gap = 0.0016 (≈ 재현 가능 범위). 기존 best LB (B001 0.60) 대비 +0.0806 lift.
 
 ## §1. Exp summary
 
@@ -83,10 +83,12 @@ Regime histogram (in regime-id order):
 | submission file | `runs/baseline/P001_pb-0-6822-fullrun/submission.csv` (= soft csv 사본) |
 | submitted_at_kst | 2026-05-11T20:10:12+09:00 |
 | isSubmitted | true |
-| lb_score | **TBD** (carry-over, DACON 비동기 응답) |
+| lb_score | **0.6806** (carry-over closed; gap vs 노트북 0.6822 = 0.0016) |
 | detail | Success |
 
 (log: `analysis/plan-004/lb_log.md`)
+
+**핵심 결과**: P001 LB 0.6806 → 기존 best (B001 0.60) 대비 **+0.0806 lift**, plan-003 R006 (0.5688) 대비 **+0.1118 lift**. 노트북 framework 의 우리 데이터 적용이 *측정 가능한 점수 신호* 가 나옴을 확정 (§0 narrative 갈래 1 검증 완료).
 
 ## §5. 다음 plan 후보 (post-G_final 분석 기반)
 

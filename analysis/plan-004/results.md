@@ -2,9 +2,9 @@
 plan_id: 004
 exp_id: P001_pb-0-6822-fullrun
 lb_exp_id: P001_pb-0-6822-fullrun
-lb_score: TBD
+lb_score: 0.6806
 lb_submitted_at: 2026-05-11T20:10:12+09:00
-status: partial
+status: all_complete
 date: 2026-05-11 (Asia/Seoul)
 ---
 
@@ -20,7 +20,7 @@ PB_0.6822 노트북 framework (Attn-GRU selector + 18×27 regime bias + Tiny bou
 
 - selector 5-fold OOF soft hit = **0.6511** (10000 rows)
 - boundary corrector OOF soft hit = **0.6718** (fold 0 val, +0.0094 lift over selector baseline 0.6624)
-- LB 점수 = **TBD** (DACON 응답 isSubmitted=True, score 비동기 carry-over)
+- **LB 점수 = 0.6806** (노트북 작성자 주장 0.6822 와 gap 0.0016, 기존 best B001 0.60 대비 +0.0806 lift)
 - 18 regime 모두 sample ≥ 274 (degenerate 0개), 19개 hyper-specialized cell — 후속 plan regime 재설계 anchor 정보 확보
 
 ## §2. 핵심 비교
@@ -29,9 +29,9 @@ PB_0.6822 노트북 framework (Attn-GRU selector + 18×27 regime bias + Tiny bou
 |---|---|---|
 | B001_linear-2pt (plan-001) | n/a | 0.60 |
 | R006_combined-winners (plan-003) | n/a | 0.5688 |
-| **P001_pb-0-6822-fullrun (plan-004)** | **0.6718** (boundary OOF) | **TBD** |
+| **P001_pb-0-6822-fullrun (plan-004)** | **0.6718** (boundary OOF) | **0.6806** |
 
-본 plan 의 노트북 framework OOF (0.6718) 가 기존 best LB (0.60) 보다 높음 — LB 응답 회수 후 본 plan 의 framework 가 우리 데이터에서 *측정 가능한 점수 신호* 가 나오는지 확정. (재현 X, *측정*.)
+본 plan 의 노트북 framework 가 우리 데이터에서 LB 0.6806 — 기존 best (0.60) 대비 +0.0806, R006 (0.5688) 대비 +0.1118 lift 확정. 노트북 작성자 주장 0.6822 와의 gap 0.0016 은 seed/data-split 차이로 설명 가능한 재현 범위. (§0 narrative 갈래 1: 측정 완료.)
 
 ## §3. 다음 step
 

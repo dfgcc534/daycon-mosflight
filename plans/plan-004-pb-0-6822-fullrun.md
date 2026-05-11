@@ -11,7 +11,7 @@ based_on:
 scope: full-stack (notebook code extraction + project data full-fit + 18×27 regime distribution audit + autonomous LB submission)
 exp_ids:
   - P001_pb-0-6822-fullrun
-lb_score: TBD
+lb_score: 0.6806
 ---
 
 # plan-004 v3 — PB_0.6822 Notebook Full-Fit + 18×27 Regime Distribution Audit (server `cuda:1` 강제)
@@ -48,7 +48,7 @@ lb_score: TBD
 - G2: STAGE 2 full 5-fold selector 학습 완료 (`oof_selector_scores.npz` + `test_selector_scores.npz` finite) [DONE]
 - G3: STAGE 3 full boundary corrector + `submission_boundary_tiny_{soft,argmax}.csv` 생성 [DONE]
 - G3.5: STAGE 3.5 18×27 regime distribution 분석 박제 (`analysis/plan-004/regime_distribution.{json,md}`) [DONE]
-- G_final: `submission.csv` schema 검증 + dacon-submit 자율 호출 + lb_score 박제 + results.md [DONE-partial]
+- G_final: `submission.csv` schema 검증 + dacon-submit 자율 호출 + lb_score 박제 + results.md [DONE — lb=0.6806]
 
 ### Commit chain (next-up)
 
@@ -70,8 +70,9 @@ lb_score: TBD
 | c9 | analysis | `analysis/plan-004/regime_distribution.py` → `regime_distribution.{json,md}`. spec @ §8 | [DONE this commit] |
 | G3.5 | gate | 18 regime histogram + 18×27 hit table + degenerate flag + hyper-specialized cell 모두 박제 — degenerate=0, hyper_specialized=19 | [DONE] |
 | c10 | sub-gen | `runs/baseline/P001_pb-0-6822-fullrun/submission.csv` = soft csv 사본 + schema 100% 일치 검증. spec @ §9 | [DONE this commit] |
-| c11 | sub-lb | **`dacon-submit` skill 자율 호출** + `analysis/plan-004/lb_log.md` 박제 + **3 파일 frontmatter `lb_score` 동시 갱신** (`plans/plan-004-pb-0-6822-fullrun.md` top-level + `plans/plan-004-pb-0-6822-fullrun.results.md` + `analysis/plan-004/results.md`). spec @ §10 + §0.5 L42 AND 조건. | [DONE-partial this commit; lb_score=TBD carry-over] |
-| G_final | gate | LB 점수 회수 + 모든 G-gate [DONE] + §0.5 sync | [DONE-partial — isSubmitted=True; lb_score=TBD carry-over follow-up commit 대기] |
+| c11 | sub-lb | **`dacon-submit` skill 자율 호출** + `analysis/plan-004/lb_log.md` 박제 + **3 파일 frontmatter `lb_score` 동시 갱신** (`plans/plan-004-pb-0-6822-fullrun.md` top-level + `plans/plan-004-pb-0-6822-fullrun.results.md` + `analysis/plan-004/results.md`). spec @ §10 + §0.5 L42 AND 조건. | [DONE 416bf0e partial → c11.1 closed lb=0.6806] |
+| c11.1 | sub-lb close | LB 점수 carry-over close — 3 파일 frontmatter `lb_score: TBD` → `0.6806` + status `partial` → `all_complete` 동시 갱신, lb_log.md / registry.csv 갱신. plan-003 R006 패턴 답습. | [DONE this commit] |
+| G_final | gate | LB 점수 회수 + 모든 G-gate [DONE] + §0.5 sync — **lb=0.6806** | [DONE] |
 
 ### Plan-specific severe (WORKFLOW.md §12.3 default 위 추가분)
 
