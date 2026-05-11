@@ -51,9 +51,9 @@ lb_score: null   # diagnostic plan — LB 제출 X
 | # | type | spec section | status |
 |---|---|---|---|
 | c1 | docs | `plans/plan-005-pb-0-6822-diagnostic.md` 작성 (본 파일) | [DONE 271ac9f] |
-| c2 | code | `analysis/plan-005/diagnostic.py` 인프라 + plan-004 산출 로드 helper | [DONE TBD] |
-| c3 | code | corrector full-fit 재실행 + intermediate artifact 박제 (`corrected_oof.npz`, `corrected_test.npz`) spec @ §4 | [TODO] |
-| G0 | gate | plan-004 산출 4종 로드 OK + corrected_*.npz finite + shape OK | [TODO] |
+| c2 | code | `analysis/plan-005/diagnostic.py` 인프라 + plan-004 산출 로드 helper | [DONE f88e784] |
+| c3 | code | corrector full-fit 재실행 + intermediate artifact 박제 (`corrected_oof.npz`, `corrected_test.npz`) spec @ §4 | [DONE TBD] |
+| G0 | gate | plan-004 산출 4종 로드 OK + corrected_*.npz finite + shape OK | [DONE — corrected (10000,27,3) finite, seed_drift RMSE 0.000814 < 0.001 ok] |
 | c4 | analysis | STAGE 1 oracle 4종 (`analysis/plan-005/oracle_summary.{json,md}`) spec @ §5 | [TODO] |
 | G1 | gate | 4 oracle 모두 박제 + finite | [TODO] |
 | c5 | analysis | STAGE 2 selector decomposition (`selector_decomp.{json,md}`) spec @ §6 | [TODO] |

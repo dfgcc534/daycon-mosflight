@@ -24,6 +24,13 @@ runs/baseline/P001_*/oof_*.npz
 runs/baseline/P001_*/test_*.npz
 runs/baseline/P001_*/smoke/
 
+# plan-005 D001 diagnostic — heavy intermediates (corrector rerun artifacts, retrain npz)
+analysis/plan-005/corrected_*.npz
+analysis/plan-005/corrector_state.pt
+analysis/plan-005/c3_rerun.log
+analysis/plan-005/variant_A_no_regime/oof_*.npz
+analysis/plan-005/variant_A_no_regime/test_*.npz
+
 # Notebooks
 .ipynb_checkpoints/
 

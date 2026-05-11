@@ -1,0 +1,8 @@
+{
+  "rmse_m": 0.0008144564344547689,
+  "threshold_m": 0.001,
+  "status": "ok",
+  "n_test": 10000,
+  "soft_temperature": 0.03,
+  "note": "warn-only — diagnostic 정확도에 미세 영향. severe trigger 안 함."
+}
