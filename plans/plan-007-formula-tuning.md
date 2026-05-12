@@ -60,8 +60,8 @@ lb_score: null
 | c1 | docs | `plans/plan-007-formula-tuning.md` 작성 (본 파일) | [DONE 884b831] (+ v1.1 e189754) |
 | c2 | code | `analysis/plan-007/sliding_validity.py` — STAGE 1 sliding window distribution match check. spec @ §4 | [DONE 117eeb4] |
 | G0 | gate | KS p > 0.075 ∨ quantile RMSE < 0.0015 (aug 사용 여부 결정) | [DONE] aug_usable=True |
-| c3 | code | `analysis/plan-007/cma_es_baseline.py` — STAGE 2 기존 변수 CMA-ES fit. spec @ §5 | [TODO] |
-| c4 | exp | F001-step2: CMA-ES baseline fit + OOF + submission 생성. spec @ §5 | [TODO] |
+| c3 | code | `analysis/plan-007/cma_es_baseline.py` — STAGE 2 기존 변수 CMA-ES fit. spec @ §5 | [DONE 7be76fa] |
+| c4 | exp | F001-step2: CMA-ES baseline fit + OOF + submission 생성. spec @ §5 | [DONE b7a2a4a] oof=0.6403 |
 | c5 | sub-lb | STAGE 2 dacon-submit + lb_log row + frontmatter 갱신. spec @ §8 | [TODO] |
 | G1 | gate | Step 2 OOF finite ∈ [0.62, 0.78] + LB 1회 완료 | [TODO] |
 | c6 | code | `analysis/plan-007/basis_ablation.py` — STAGE 3 새 변수 순차 ablation. spec @ §6 | [TODO] |
