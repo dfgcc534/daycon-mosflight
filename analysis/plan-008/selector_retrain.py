@@ -111,9 +111,21 @@ def main() -> None:
     selector.CANDIDATES = EXTENDED_CANDIDATES
 
     def _patched_make_candidates(x, end_idx, horizon=2):
-        return cx.make_candidates_extended(
-            x, end_idx, horizon, kept_indices=KEPT_INDICES, kept_families=KEPT_FAMILIES
-        )
+        # v2.7 fix: `selector.make_candidates` 가 module-level `CANDIDATES` 를 iterate.
+        # 우리가 CANDIDATES = EXTENDED 로 patch 했으므로, base 27 을 다시 얻으려면
+        # 일시적으로 CANDIDATES 를 ORIGINAL 로 swap 후 호출해야 함.
+        saved = selector.CANDIDATES
+        selector.CANDIDATES = ORIGINAL_27_CANDIDATES
+        try:
+            cands_base_27 = ORIGINAL_make_candidates(x, end_idx, horizon)
+        finally:
+            selector.CANDIDATES = saved
+        cands_base_kept = cands_base_27[:, KEPT_INDICES, :]
+        new_cands_list = [cands_base_kept]
+        for fam in ("trig", "arc", "frenet_serret_3d", "higher_order", "cross_term"):
+            if fam in KEPT_FAMILIES:
+                new_cands_list.append(cx.FAMILY_TO_MAKE[fam](x, end_idx, horizon))
+        return np.concatenate(new_cands_list, axis=1).astype(np.float32)
 
     selector.make_candidates = _patched_make_candidates
 

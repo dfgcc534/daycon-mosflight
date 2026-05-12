@@ -263,13 +263,22 @@ def make_candidates_extended(
     horizon: int = 2,
     kept_indices: list[int] | None = None,
     kept_families: list[str] | set[str] | None = None,
+    base_maker=None,
 ) -> np.ndarray:
-    """기존 27 (pruned by `kept_indices`) + 새 family 후보 좌표 concat. (N, K, 3)."""
+    """기존 27 (pruned by `kept_indices`) + 새 family 후보 좌표 concat. (N, K, 3).
+
+    `base_maker`: callable to produce base 27 candidates. Defaults to
+    `selector.make_candidates` at *function call time*. **caller monkey-patches
+    `selector.make_candidates` to point at THIS function 시에는 반드시 explicit
+    base_maker (= 원본 selector.make_candidates) 를 전달 — recursion 회피.**
+    """
     if kept_indices is None:
         kept_indices = list(range(len(selector.CANDIDATES)))
     if kept_families is None:
         kept_families = []
-    cands_base_27 = selector.make_candidates(x, end_idx, horizon)
+    if base_maker is None:
+        base_maker = selector.make_candidates
+    cands_base_27 = base_maker(x, end_idx, horizon)
     cands_base_kept = cands_base_27[:, kept_indices, :]
     new_cands_list = [cands_base_kept]
     for fam in ("trig", "arc", "frenet_serret_3d", "higher_order", "cross_term"):
