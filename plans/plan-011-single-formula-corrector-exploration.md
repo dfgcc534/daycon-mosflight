@@ -66,7 +66,7 @@ lb_score: null
 
 ### G-gates
 
-- G0: Phase 0 diagnostics + preflight.json 생성 [TODO]
+- G0: Phase 0 diagnostics + preflight.json 생성 [DONE] (b6e582a — D001=0.6570 < 0.66, c008 path disabled, P1.L2 자동 skip)
 - G1: Phase 1 4-axis ablation (24 sub-exp) — 4 best lever 식별 + 최소 2 axis 에서 +0.005 [TODO]
 - G2: Phase 3 pairwise (4 pair 5-fold) — super-additive 입증 [TODO]
 - G3: Phase 4 triple stack (P4.1 + 조건부 P4.2) — OOF ≥ G2 + 0.003 [TODO]
@@ -78,9 +78,9 @@ lb_score: null
 
 | # | type | spec section | status |
 |---|---|---|---|
-| c1 | docs | `plans/plan-011-single-formula-corrector-exploration.md` v1 작성 | [TODO] |
-| c2 | code | `analysis/plan-011/preflight.py` — D001 oracle simulation + plan-006 reproduce + corrector_decomp 재측정. spec @ §4 | [TODO] |
-| G0 | gate | `preflight.json` 생성 + D001 박제 + reproduce ✓ + decomp drift ✓ | [TODO] |
+| c1 | docs | `plans/plan-011-single-formula-corrector-exploration.md` v1 작성 | [DONE] (7bfbf81 + c1 fix-up 8619091) |
+| c2 | code | `analysis/plan-011/preflight.py` — D001 oracle simulation + plan-006 reproduce + corrector_decomp 재측정. spec @ §4 | [DONE] (b6e582a) |
+| G0 | gate | `preflight.json` 생성 + D001 박제 + reproduce ✓ + decomp drift ✓ | [DONE] (b6e582a — D001=0.6570, reproduce drift 0.0, destr -79 vs -203 informational) |
 | c3 | code | `src/pb_0_6822/corrector_redesign_v2.py` — 새 components (GateHead, anisotropic loss, BellShapeWeight, GMMHead, BinHead, IterativeRefiner, LearnableFormula). plan-010 의 `corrector_redesign.py` reuse + extend. spec @ §5.1 | [TODO] |
 | c4 | code | `analysis/plan-011/phase1_loss_ablation.py` — P1.L0~L7 wrapper (8 sub-exp). spec @ §5.2 | [TODO] |
 | c5 | exp | Phase 1.L 8 sub-exp 실행 (1-fold approx, ~10min/sub-exp ≈ ~80min) | partial G1 |
