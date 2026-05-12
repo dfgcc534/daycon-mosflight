@@ -1,0 +1,46 @@
+{
+  "sub_exp": "P1.L0",
+  "config": "anchor (plan-004 default: MSE + far=0.04 + easy=0.20 + env=0.05 + apply_scale=0.75 + boundary [0.7, 1.7cm])",
+  "n_val": 2020,
+  "fold": 0,
+  "training": "X (anchor reuse from plan-005 corrected_oof.npz)",
+  "oof_soft_hit": 0.6544554455445545,
+  "oof_raw_hit": 0.6400990099009901,
+  "corrector_gain": 0.01435643564356437,
+  "per_band_hit_after": {
+    "[0,0.5cm)": {
+      "n": 692,
+      "hit_before": 1.0,
+      "hit_after": 1.0,
+      "delta": 0.0
+    },
+    "[0.5,1cm)": {
+      "n": 601,
+      "hit_before": 1.0,
+      "hit_after": 0.9750415973377704,
+      "delta": -0.024958402662229595
+    },
+    "[1,1.5cm)": {
+      "n": 349,
+      "hit_before": 0.0,
+      "hit_after": 0.12607449856733524,
+      "delta": 0.12607449856733524
+    },
+    "[1.5,2cm)": {
+      "n": 97,
+      "hit_before": 0.0,
+      "hit_after": 0.0,
+      "delta": 0.0
+    },
+    "[2cm,inf)": {
+      "n": 281,
+      "hit_before": 0.0,
+      "hit_after": 0.0,
+      "delta": 0.0
+    }
+  },
+  "delta_vs_anchor": 0.0,
+  "delta_vs_z1": null,
+  "elapsed_sec": 0,
+  "generated_at": "2026-05-13T04:54:22.514062+09:00"
+}
