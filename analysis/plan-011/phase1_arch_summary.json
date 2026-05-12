@@ -1,0 +1,328 @@
+{
+  "phase": "Phase 1.M Architecture axis ablation",
+  "n_folds": 1,
+  "fold": 0,
+  "anchor": "P1.M0",
+  "anchor_oof_soft_hit": 0.6425742574257426,
+  "sub_exps": {
+    "P1.M0": {
+      "sub_exp": "P1.M0",
+      "n_val": 2020,
+      "fold": 0,
+      "oof_soft_hit": 0.6425742574257426,
+      "oof_raw_hit": 0.6400990099009901,
+      "corrector_gain": 0.0024752475247524774,
+      "per_band_hit_after": {
+        "[0,0.5cm)": {
+          "n": 692,
+          "hit_before": 1.0,
+          "hit_after": 1.0,
+          "delta": 0.0
+        },
+        "[0.5,1cm)": {
+          "n": 601,
+          "hit_before": 1.0,
+          "hit_after": 0.9633943427620633,
+          "delta": -0.03660565723793674
+        },
+        "[1,1.5cm)": {
+          "n": 349,
+          "hit_before": 0.0,
+          "hit_after": 0.07736389684813753,
+          "delta": 0.07736389684813753
+        },
+        "[1.5,2cm)": {
+          "n": 97,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        },
+        "[2cm,inf)": {
+          "n": 281,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        }
+      },
+      "elapsed_sec": 2.3043482303619385,
+      "best_val_hit": 0.6425742506980896,
+      "device": "cuda",
+      "n_params": 37891,
+      "delta_vs_anchor": 0.0
+    },
+    "P1.M1": {
+      "sub_exp": "P1.M1",
+      "n_val": 2020,
+      "fold": 0,
+      "oof_soft_hit": 0.6425742574257426,
+      "oof_raw_hit": 0.6400990099009901,
+      "corrector_gain": 0.0024752475247524774,
+      "per_band_hit_after": {
+        "[0,0.5cm)": {
+          "n": 692,
+          "hit_before": 1.0,
+          "hit_after": 1.0,
+          "delta": 0.0
+        },
+        "[0.5,1cm)": {
+          "n": 601,
+          "hit_before": 1.0,
+          "hit_after": 0.9717138103161398,
+          "delta": -0.028286189683860208
+        },
+        "[1,1.5cm)": {
+          "n": 349,
+          "hit_before": 0.0,
+          "hit_after": 0.06303724928366762,
+          "delta": 0.06303724928366762
+        },
+        "[1.5,2cm)": {
+          "n": 97,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        },
+        "[2cm,inf)": {
+          "n": 281,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        }
+      },
+      "elapsed_sec": 1.9835219383239746,
+      "best_val_hit": 0.6425742506980896,
+      "device": "cuda",
+      "n_params": 40132,
+      "delta_vs_anchor": 0.0
+    },
+    "P1.M2": {
+      "sub_exp": "P1.M2",
+      "n_val": 2020,
+      "fold": 0,
+      "oof_soft_hit": 0.6400990099009901,
+      "oof_raw_hit": 0.6400990099009901,
+      "corrector_gain": 0.0,
+      "per_band_hit_after": {
+        "[0,0.5cm)": {
+          "n": 692,
+          "hit_before": 1.0,
+          "hit_after": 1.0,
+          "delta": 0.0
+        },
+        "[0.5,1cm)": {
+          "n": 601,
+          "hit_before": 1.0,
+          "hit_after": 0.956738768718802,
+          "delta": -0.043261231281197965
+        },
+        "[1,1.5cm)": {
+          "n": 349,
+          "hit_before": 0.0,
+          "hit_after": 0.07449856733524356,
+          "delta": 0.07449856733524356
+        },
+        "[1.5,2cm)": {
+          "n": 97,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        },
+        "[2cm,inf)": {
+          "n": 281,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        }
+      },
+      "elapsed_sec": 4.065688133239746,
+      "best_val_hit": 0.640099048614502,
+      "device": "cuda",
+      "n_params": 40132,
+      "delta_vs_anchor": -0.0024752475247524774
+    },
+    "P1.M3": {
+      "sub_exp": "P1.M3",
+      "n_val": 2020,
+      "fold": 0,
+      "oof_soft_hit": 0.6410891089108911,
+      "oof_raw_hit": 0.6400990099009901,
+      "corrector_gain": 0.000990099009900991,
+      "per_band_hit_after": {
+        "[0,0.5cm)": {
+          "n": 692,
+          "hit_before": 1.0,
+          "hit_after": 1.0,
+          "delta": 0.0
+        },
+        "[0.5,1cm)": {
+          "n": 601,
+          "hit_before": 1.0,
+          "hit_after": 0.9633943427620633,
+          "delta": -0.03660565723793674
+        },
+        "[1,1.5cm)": {
+          "n": 349,
+          "hit_before": 0.0,
+          "hit_after": 0.06876790830945559,
+          "delta": 0.06876790830945559
+        },
+        "[1.5,2cm)": {
+          "n": 97,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        },
+        "[2cm,inf)": {
+          "n": 281,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        }
+      },
+      "elapsed_sec": 1.5438225269317627,
+      "best_val_hit": 0.641089141368866,
+      "device": "cuda",
+      "n_params": 48148,
+      "delta_vs_anchor": -0.0014851485148514865
+    },
+    "P1.M4": {
+      "sub_exp": "P1.M4",
+      "n_val": 2020,
+      "fold": 0,
+      "oof_soft_hit": 0.5732673267326732,
+      "oof_raw_hit": 0.6400990099009901,
+      "corrector_gain": -0.06683168316831689,
+      "per_band_hit_after": {
+        "[0,0.5cm)": {
+          "n": 692,
+          "hit_before": 1.0,
+          "hit_after": 0.9884393063583815,
+          "delta": -0.011560693641618491
+        },
+        "[0.5,1cm)": {
+          "n": 601,
+          "hit_before": 1.0,
+          "hit_after": 0.6455906821963394,
+          "delta": -0.3544093178036606
+        },
+        "[1,1.5cm)": {
+          "n": 349,
+          "hit_before": 0.0,
+          "hit_after": 0.24641833810888253,
+          "delta": 0.24641833810888253
+        },
+        "[1.5,2cm)": {
+          "n": 97,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        },
+        "[2cm,inf)": {
+          "n": 281,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        }
+      },
+      "elapsed_sec": 3.0475690364837646,
+      "best_val_hit": 0.5732673406600952,
+      "device": "cuda",
+      "n_params": 38443,
+      "delta_vs_anchor": -0.06930693069306937
+    },
+    "P1.M5": {
+      "sub_exp": "P1.M5",
+      "n_val": 2020,
+      "fold": 0,
+      "oof_soft_hit": 0.6193069306930693,
+      "oof_raw_hit": 0.6400990099009901,
+      "corrector_gain": -0.02079207920792081,
+      "per_band_hit_after": {
+        "[0,0.5cm)": {
+          "n": 692,
+          "hit_before": 1.0,
+          "hit_after": 0.9985549132947977,
+          "delta": -0.0014450867052022698
+        },
+        "[0.5,1cm)": {
+          "n": 601,
+          "hit_before": 1.0,
+          "hit_after": 0.8302828618968386,
+          "delta": -0.16971713810316136
+        },
+        "[1,1.5cm)": {
+          "n": 349,
+          "hit_before": 0.0,
+          "hit_after": 0.17478510028653296,
+          "delta": 0.17478510028653296
+        },
+        "[1.5,2cm)": {
+          "n": 97,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        },
+        "[2cm,inf)": {
+          "n": 281,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        }
+      },
+      "elapsed_sec": 3.9223921298980713,
+      "best_val_hit": 0.6193069219589233,
+      "device": "cuda",
+      "n_params": 40198,
+      "delta_vs_anchor": -0.023267326732673288
+    },
+    "P1.M6": {
+      "sub_exp": "P1.M6",
+      "n_val": 2020,
+      "fold": 0,
+      "oof_soft_hit": 0.6346534653465347,
+      "oof_raw_hit": 0.6400990099009901,
+      "corrector_gain": -0.00544554455445545,
+      "per_band_hit_after": {
+        "[0,0.5cm)": {
+          "n": 692,
+          "hit_before": 1.0,
+          "hit_after": 1.0,
+          "delta": 0.0
+        },
+        "[0.5,1cm)": {
+          "n": 601,
+          "hit_before": 1.0,
+          "hit_after": 0.9217970049916805,
+          "delta": -0.07820299500831951
+        },
+        "[1,1.5cm)": {
+          "n": 349,
+          "hit_before": 0.0,
+          "hit_after": 0.10315186246418338,
+          "delta": 0.10315186246418338
+        },
+        "[1.5,2cm)": {
+          "n": 97,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        },
+        "[2cm,inf)": {
+          "n": 281,
+          "hit_before": 0.0,
+          "hit_after": 0.0,
+          "delta": 0.0
+        }
+      },
+      "elapsed_sec": 0.8599474430084229,
+      "best_val_hit": 0.6346535086631775,
+      "device": "cuda",
+      "n_params": 305731,
+      "delta_vs_anchor": -0.007920792079207928
+    }
+  },
+  "axis_positive_threshold_0p005": false,
+  "max_delta_vs_anchor": 0.0,
+  "best_lever": "P1.M1",
+  "generated_at": "2026-05-13T05:28:59.793220+09:00"
+}

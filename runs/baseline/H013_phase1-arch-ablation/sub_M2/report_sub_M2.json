@@ -1,0 +1,44 @@
+{
+  "sub_exp": "P1.M2",
+  "n_val": 2020,
+  "fold": 0,
+  "oof_soft_hit": 0.6400990099009901,
+  "oof_raw_hit": 0.6400990099009901,
+  "corrector_gain": 0.0,
+  "per_band_hit_after": {
+    "[0,0.5cm)": {
+      "n": 692,
+      "hit_before": 1.0,
+      "hit_after": 1.0,
+      "delta": 0.0
+    },
+    "[0.5,1cm)": {
+      "n": 601,
+      "hit_before": 1.0,
+      "hit_after": 0.956738768718802,
+      "delta": -0.043261231281197965
+    },
+    "[1,1.5cm)": {
+      "n": 349,
+      "hit_before": 0.0,
+      "hit_after": 0.07449856733524356,
+      "delta": 0.07449856733524356
+    },
+    "[1.5,2cm)": {
+      "n": 97,
+      "hit_before": 0.0,
+      "hit_after": 0.0,
+      "delta": 0.0
+    },
+    "[2cm,inf)": {
+      "n": 281,
+      "hit_before": 0.0,
+      "hit_after": 0.0,
+      "delta": 0.0
+    }
+  },
+  "elapsed_sec": 4.065688133239746,
+  "best_val_hit": 0.640099048614502,
+  "device": "cuda",
+  "n_params": 40132
+}
