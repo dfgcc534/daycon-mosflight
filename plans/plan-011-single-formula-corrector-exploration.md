@@ -86,8 +86,8 @@ lb_score: null
 | c5 | exp | Phase 1.L L1~L7 학습 (phase1_loss_train.py, L2 skip per G0). 6 sub-exp ~16s total (★ axis NEGATIVE — max ΔOOF=-0.0114, L̂=L3) | partial G1 [DONE] (5bd8353) |
 | c6 | code | `analysis/plan-011/phase1_input_ablation.py` — P1.IA~IF wrapper + 학습 일괄 (IC skip per plan-004 GRU 부재). spec @ §6 | [DONE] (234b824) |
 | c7 | exp | Phase 1.In 4 sub-exp 실행 (★ AXIS POSITIVE, In̂=ID at +0.0050). ~10s | partial G1 [DONE] (234b824 — c6/c7 통합) |
-| c8 | code | `analysis/plan-011/phase1_arch_ablation.py` — P1.M0~M6 wrapper. spec @ §7 | [TODO] |
-| c9 | exp | Phase 1.M 7 sub-exp 실행 (~100min) | partial G1 |
+| c8 | code | `analysis/plan-011/phase1_arch_ablation.py` — P1.M0~M6 wrapper. spec @ §7 | [DONE] (36e5a2c) |
+| c9 | exp | Phase 1.M 7 sub-exp ~17s (★ axis NEGATIVE max ΔOOF=0, M̂=M1 tied) | partial G1 [DONE] (36e5a2c) |
 | c10 | code | `analysis/plan-011/phase1_formula_ablation.py` — P1.F0~F4 wrapper. spec @ §8 | [TODO] |
 | c11 | exp | Phase 1.F 4 sub-exp 실행 (~50min, F0 reuse) | **G1** |
 | c12 | analysis | `analysis/plan-011/phase1_attribution.md` — 4 axis ΔOOF 표 + best lever 식별. spec @ §9 | [TODO] |
