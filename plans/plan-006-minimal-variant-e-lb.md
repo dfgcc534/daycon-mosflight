@@ -46,7 +46,7 @@ lb_score: TBD
 - G1: STAGE 1 — Variant E OOF hit (raw + corrected 둘 다) + per-regime 박제  [DONE 4cca05d]
 - G2: STAGE 2 — `submission.csv` 생성 + schema 검증  [DONE 20612f8]
 - G3: STAGE 3 — LB 자율 제출 + `lb_score` 회수  [DONE 54119b5] (partial — lb_score TBD carry-over)
-- G_final: STAGE 4 — synthesis + plan-007 후보 + 3 파일 frontmatter 동시 박제  [DONE <c6_hash>] (partial — lb_score TBD)
+- G_final: STAGE 4 — synthesis + plan-007 후보 + 3 파일 frontmatter 동시 박제  [DONE 0511e94] (partial — lb_score TBD)
 
 ### Commit chain (next-up)
 
@@ -61,8 +61,8 @@ lb_score: TBD
 | G2 | gate | csv 존재, shape == sample_submission.csv, columns 일치, 좌표 finite | [DONE 20612f8] |
 | c5 | sub-lb | STAGE 3 — `dacon-submit` skill 자율 호출 + `analysis/plan-006/lb_log.md` 박제 + 3 파일 frontmatter `lb_score` 동시 갱신. spec @ §7 | [DONE 54119b5] (partial) |
 | G3 | gate | LB 점수 회수 (float, isSubmitted=True) + lb_log.md 박제 | [DONE 54119b5] (partial) |
-| c6 | synthesis | `analysis/plan-006/results.md` + `next_plan_candidates.md` (≥ 2 후보). spec @ §8 | [DONE <c6_hash>] |
-| G_final | gate | results.md + next plan 후보 ≥ 2 + 3 파일 frontmatter 동시 박제 | [DONE <c6_hash>] (partial) |
+| c6 | synthesis | `analysis/plan-006/results.md` + `next_plan_candidates.md` (≥ 2 후보). spec @ §8 | [DONE 0511e94] |
+| G_final | gate | results.md + next plan 후보 ≥ 2 + 3 파일 frontmatter 동시 박제 | [DONE 0511e94] (partial) |
 | c5.1 | carry-over | (대기) lb_score 회수 후 3 파일 frontmatter TBD → `<float>` + status partial → all_complete + lb_log.md row append | [PENDING — user-driven] |
 
 ### Plan-specific severe (WORKFLOW.md §12.3 default 위 추가분)
