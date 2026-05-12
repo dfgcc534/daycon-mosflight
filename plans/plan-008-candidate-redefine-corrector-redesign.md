@@ -94,7 +94,7 @@ lb_score: null
 | c12 | code | (선택) `analysis/plan-008/test_internal.py` — STAGE 5 test-internal hyperparam re-tune. spec @ §9 | [TODO] |
 | c13 | exp | (선택) G002-step5: test-internal grid search. spec @ §9 | [TODO] |
 | G4 | gate | (선택) gap 50%+ 회수 — 미달 시 carry-over plan-009 | [TODO] |
-| c14 | synthesis | `analysis/plan-008/results.md` + `next_plan_candidates.md` (≥ 2 후보). spec @ §10 | [TODO] |
+| c14 | synthesis | `analysis/plan-008/results.md` + `next_plan_candidates.md` (≥ 2 시나리오 후보 + **§10.2.1 의 ranking 6 카테고리 ROI 표 필수 박제**, v2.6). spec @ §10 | [TODO] |
 | G_final | gate | results.md + next plan 후보 ≥ 2 + 3 파일 frontmatter 동시 박제 | [TODO] |
 
 ### Plan-specific severe (WORKFLOW.md §12.3 default 위 추가분)
@@ -1471,10 +1471,81 @@ lb_submitted_at: null
 
 각 후보 4 항목: 근거 metric / 예상 ROI / 작업 범위 / 선행 조건.
 
+#### §10.2.1 Cross-scenario: Ranking 개선 6 카테고리 (v2.6 신규 — 필수 박제)
+
+**근거**: plan-008 의 ranking 능력 동결 (caveat #4, #13). top-1 ranking 12.6% 의 *직접 원인* = 현 loss 가 *binary hit/miss* 만 학습 (cross-entropy soft target = "1cm 안 후보들 균등") — *진짜 best 픽* 학습 X. 모든 시나리오 (A~D) 에서 plan-009 main task 후보 가능.
+
+`next_plan_candidates.md` 의 별도 section "Ranking 개선" 에 **6 카테고리 + ROI 표** 필수 박제. 각 카테고리:
+
+**카테고리 1: Loss 변경 (★ 최고 ROI, arch 보존)**
+
+| 후보 | mechanism | 예상 LB gain | 비용 |
+|---|---|---|---|
+| **1.3 NDCG@1 differentiable** | `loss = 1 − softmax(score)[oracle_best]` — top-1 ranking 의 differentiable proxy | **+0.03** | ★ (loss 함수만 교체) |
+| 1.1 Pairwise margin | sorted pair 에 hinge — score 순서가 err 순서 일치 강제 | +0.02 | ★ |
+| 1.2 Listwise (ListMLE) | `−log P(top-1 = oracle_best)` — top-1 log-likelihood 직접 | +0.02~0.03 | ★ (gradient 불안정 risk) |
+| 1.4 Focal ranking | hard sample 가중 (1−score_best)^γ — 88% miss case 집중 | +0.01~0.02 | ★ (다른 loss 와 조합) |
+
+**카테고리 2: Selector arch 교체 (★★★ big change)**
+
+| 후보 | mechanism | 예상 LB gain | risk |
+|---|---|---|---|
+| 2.1 Set Transformer | candidate set 의 self-attention (`cand_i ↔ cand_j` 직접 비교) — 현 framework 의 "trajectory hidden 만 attend" 한계 해소 | +0.04~0.05 | mid (overfit) |
+| 2.2 Twin pairwise | (i, j) binary classifier + round-robin — ranking 직접 학습 | +0.03~0.05 | mid (inference 666×) |
+| 2.3 Transformer (full) | trajectory + 후보 통합 token sequence + bi-directional | +0.05 | **high (overfit, data 10K)** |
+| 2.4 TCN | 1D causal conv — GRU 의 sequential bottleneck 제거 | +0.01~0.02 | low (marginal, seq 짧음) |
+
+**카테고리 3: Multi-stage selector (★★ 분해)**
+
+| 후보 | mechanism | 예상 LB gain | 비용 |
+|---|---|---|---|
+| 3.1 Coarse-to-fine 2-stage | Stage 1 cheap filter 37→top-5, Stage 2 expensive rerank — search space 5 로 축소 → ranking 정확도 ↑ | +0.03~0.05 | ★★★ (2 model train) |
+| **3.2 Hard top-K filter** | test-time only: softmax 전 top-3 외 후보 −inf — centroid drift 직접 fix | **+0.02** | ★ (학습 X, 1 줄 추가) |
+| 3.3 Per-trajectory family routing | family_pred → 해당 family 후보만 ranking — 시나리오 의존 | +0.02~0.03 | ★★ (hard routing gradient) |
+
+**카테고리 4: Score combination 재설계 (★★ 작은 변경)**
+
+| 후보 | mechanism | 예상 LB gain | risk |
+|---|---|---|---|
+| 4.1 Confidence-weighted | `final = c × gru + (1−c) × bias`, c=σ(MLP(hidden)) — GRU uncertainty 반영 | +0.01~0.02 | low |
+| 4.2 Outlier penalty | `−λ × ∥cand − centroid∥` — soft 평균 안정성 | +0.01 | low |
+| 4.3 Bias × GRU multiplicative | `bias × σ(gru)` 곱셈 — train hit_rate 낮은 후보 강제 down-weight | +0.01~0.02 | mid (physics_bias 틀린 sample 회수 불가) |
+
+**카테고리 5: Non-parametric class (caveat #20 박제)**
+
+| 후보 | mechanism | 예상 LB gain | 비용 |
+|---|---|---|---|
+| 5.1 KNN nearest-neighbor | K=5 유사 trajectory 의 t+1 displacement 평균 | +0.03~0.05 | ★★ |
+| 5.2 GP residual | train residual GP fit → test posterior | +0.02~0.04 | ★★★ |
+| 5.3 Per-sample MLP regression | direct (x,y,z) 회귀 (candidate 우회) | +0.02~0.05 | ★★★★ (overfit risk) |
+| 5.4 Stacked residual | XGBoost on per-candidate errors | +0.02~0.04 | ★★ |
+
+**카테고리 6: Other (carry-over caveat 박제)**
+
+| 후보 | 출처 caveat | 비고 |
+|---|---|---|
+| 6.1 Regime-agnostic per-sample formula 회귀 | #12 | Family 4 drop 의 long-tail 회수 |
+| 6.2 Greedy brute-force (template_pool 2^15 조합 전체 search) | #14 | local optimum 회피 |
+| 6.3 Field 분리 (binormal_scale_fs / world_z_keep_trig) | #15 | semantic clean-up |
+
+#### §10.2.2 plan-009 권장 sequence (v2.6 신규)
+
+**Phase 1 (cheap, no arch)**: 1.3 NDCG@1 + 1.1 Pairwise margin + 3.2 Hard top-K filter → 누적 **+0.05~0.07** (LB 0.73~0.75 가능)
+
+**Phase 2 (mid)**: 3.1 Coarse-to-fine 2-stage → +0.03~0.05 추가
+
+**Phase 3 (big, risky)**: 2.1 Set Transformer (Phase 1 결과 미흡 시) → +0.05
+
+**Phase 4 (carry-over 시나리오 D)**: 5.x non-parametric (KNN / per-sample MLP) → +0.03~0.05
+
+→ Phase 1 만으로도 plan-009 의 minimal viable. plan-008.1 carry-over LB 측정 후 결정.
+
 ### §10.3 G_final 합격 기준
 
 - `results.md` + `next_plan_candidates.md` 작성
-- 후보 ≥ 2 + 4 항목 박제
+- 후보 ≥ 2 + 4 항목 박제 (시나리오 A~D)
+- **(v2.6 신규) §10.2.1 의 ranking 개선 6 카테고리 ROI 표 박제 필수** — `next_plan_candidates.md` 의 별도 section "Ranking 개선" 에 6 카테고리 모두 + Phase 1~4 sequence 포함
+- **(v2.6 신규) §10.2.2 의 plan-009 권장 sequence (Phase 1~4) 박제**
 - 3 파일 frontmatter `lb_score` 동시 갱신 + `status` 통일
 - 모든 G-gate [DONE]
 
@@ -1546,6 +1617,7 @@ lb_submitted_at: null
   - **§0.5 severe 추가**: `sanity_baseline_drift` (warn-only), `family_effect_marginal` (warn-only).
   - **§0.5 commit chain**: c1.6 (v2.6 spec) + c5.5 (sanity_baseline_27.py) 신설.
   - **§N+3 caveat #20 신설**: oracle 0.85 minimum 의 낙관 위험 정량 박제 (실제 예상 0.78~0.82, plan-009 carry-over path 강화).
+  - **§10.2.1 / §10.2.2 신설**: Cross-scenario ranking 개선 6 카테고리 ROI 표 (Loss / Arch / Multi-stage / Score / Non-parametric / Other) + plan-009 권장 sequence (Phase 1~4). c14 G_final 합격 기준에 필수 박제 명시.
   - **모든 spec 외 v2.5 의 oracle_miss mask / structural containment / Strategy D / Family 4-5 drop / Variant A baseline / LB carry-over 의도는 유지**.
 - v2.5 (2026-05-12): **STAGE 1 mask 교체 — `worst_regime ∈ {10,16,17}` → `oracle_miss = err.min > 0.01`** (Variant A 정합, main lever 의 직접 target).
   - **이유**: 사용자 지적 — "G0 에서 왜 regime 안에서 오차를 탐색해? 그냥 oracle 밖의 분포를 바로 볼 수는 없나?". v2.4 의 worst_regime mask 는 self-contradiction (Variant A regime 폐기 + diagnostic regime 사용). plan-008 main lever (oracle 천장 0.7188 → 0.85+ 회수) 의 *직접* target = oracle miss sample (~2800, 28%).
