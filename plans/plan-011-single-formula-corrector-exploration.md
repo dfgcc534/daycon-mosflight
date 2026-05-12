@@ -82,8 +82,8 @@ lb_score: null
 | c2 | code | `analysis/plan-011/preflight.py` — D001 oracle simulation + plan-006 reproduce + corrector_decomp 재측정. spec @ §4 | [DONE] (b6e582a) |
 | G0 | gate | `preflight.json` 생성 + D001 박제 + reproduce ✓ + decomp drift ✓ | [DONE] (b6e582a — D001=0.6570, reproduce drift 0.0, destr -79 vs -203 informational) |
 | c3 | code | `src/pb_0_6822/corrector_redesign_v2.py` — 16 components self-contained (Z1 base + 6 arch + 7 loss fn + 3 input + 2 formula). plan-010 c3 미실행 → RedesignedCorrectionNet inline. spec @ §5.1 | [DONE] (ad4d344, smoke test ✓ 16/16) |
-| c4 | code | `analysis/plan-011/phase1_loss_ablation.py` — P1.L0~L7 wrapper (8 sub-exp). spec @ §5.2 | [TODO] |
-| c5 | exp | Phase 1.L 8 sub-exp 실행 (1-fold approx, ~10min/sub-exp ≈ ~80min) | partial G1 |
+| c4 | code | `analysis/plan-011/phase1_loss_ablation.py` — P1.L0~L7 wrapper scaffold + L0 anchor 박제 (fold-0 OOF 0.6545, 재학습 X). spec @ §5.2 | [DONE] (5a7aa97 — L0 only; L1~L7 학습 wrapper = c5) |
+| c5 | exp | Phase 1.L L1~L7 학습 wrapper 추가 + 8 sub-exp 실행 (1-fold approx, ~10min/sub-exp ≈ ~80min) | partial G1 [TODO] |
 | c6 | code | `analysis/plan-011/phase1_input_ablation.py` — P1.IA~IF wrapper. spec @ §6 | [TODO] |
 | c7 | exp | Phase 1.In 5 sub-exp 실행 (~60min) | partial G1 |
 | c8 | code | `analysis/plan-011/phase1_arch_ablation.py` — P1.M0~M6 wrapper. spec @ §7 | [TODO] |
