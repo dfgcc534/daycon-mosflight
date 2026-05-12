@@ -103,6 +103,31 @@ severe trigger 점검:
 - `decision-note: spec-default — corrected_*.npz 가 local 에 있음 → fallback 재생성 path 미발동.`
 - `decision-note: partial — dacon 응답 (isSubmitted=True, detail=Success) 에 lb_score 부재 → plan §7.2 (True, None) 분기 = TBD carry-over. 점수 회수는 user-driven (DACON dashboard).`
 
+## §5.5 추가 통찰 — "1 후보 고정 픽" 만으로도 LB 의 95%
+
+Variant E 의 argmax 측정값을 다시 보면:
+
+| 방식 | hit (OOF) | 의미 |
+|---|---|---|
+| **E_corrected argmax** | **0.6491** | physics_bias 1등 후보 (`frenet_par120_perp_neg020`) 의 corrected 좌표를 **모든 sample 에 동일하게** 답으로 제시 |
+| E_corrected soft | 0.6524 | 위 + 27 후보 가중평균 보간 |
+| LB (soft 제출) | 0.6692 | OOF → LB gap +0.0168 |
+
+→ **argmax 만으로 64.91%**. score 가 sample 무관 상수이므로 argmax 도 sample 무관 → "27 후보 중 train 에서 가장 자주 적중한 단 1 개 공식" 의 좌표를 모든 모기에 적용하는 zero-ML baseline.
+
+```python
+# 이 3 줄로 OOF 0.6491 (LB 추정 ~0.66) 재현
+best_cand = train_hit_rate.argmax()             # train 1등 후보 1개
+pred      = corrected_test[:, best_cand, :]     # 모든 sample 동일 픽
+```
+
+함의:
+- 모기 비행 데이터의 **64.91% 는 단일 물리 공식 1 개 + corrector 좌표 보정** 만으로 풀린다
+- `frenet_par120_perp_neg020` 형태의 "현재 속도 ×1.2 외삽 + 약간의 lateral shift" 공식 1 개가 dominant
+- argmax → soft 의 회수 = +0.33pp, GRU + regime 의 회수 = +1.14pp (LB 단위)
+- → **27 후보 풀의 1 등 후보 자체가 본 문제의 main lever**. 나머지 26 후보 + 어텐션 + regime 표 등은 *long-tail* (worst regime 16/17 의 0.22/0.26 sample) 회수용 보조 장치
+- plan-007 의 후보 다양화 우선순위 강화: long-tail regime 의 hit-rate 를 끌어올리는 새 공식 추가가 ROI 가장 높음
+
 ## §6. 다음 plan 후보
 
 → `analysis/plan-006/next_plan_candidates.md` (LB 점수 회수 후 시나리오별 우선순위 결정)

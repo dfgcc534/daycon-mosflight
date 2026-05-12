@@ -577,3 +577,80 @@ Trajectory (11 또는 5 프레임 + sliding window 옵션)
 ```
 
 → **두 변경 모두 *기존 단계의 한 함수 교체*** 로 끝나고, 다른 단계는 그대로 사용. 점진적 도입 + 분리 ablation에 매우 친화적인 구조.
+
+---
+
+# 추가 실험 후보 (plan-007 후속, 독립 검토)
+
+본 섹션 = 위 두 idea (연속 heatmap, 학습 후보) 와 *별개* 로, plan-006 4-way LB 회수 (full=0.6806, A=0.6796, B=0.6704, E=0.6692) 이후 식별된 lift 후보를 LB 단위 ROI 순으로 박제. **C001~C007 각각이 독립적으로 시도 가능** (의존/직교 관계는 마지막 표 참조). plan-007 이미 채택된 A1 (후보 다양화) = C001.
+
+## C001~C007 실험 후보표
+
+| 실험 ID | 이름 | 한 줄 설명 | 변경 위치 | baseline | 예상 ΔLB | 작업량 |
+|---|---|---|---|---|---|---|
+| **C001** | candidate-diversify-35 | 27 후보 → 35+ 후보 확장 (radial / ballistic / ema family 추가). worst regime 16/17/10 (high-speed × high-curvature, hit < 0.42) 커버. | `src/pb_0_6822/selector.py` `CANDIDATES` 에 8개 추가 + corrector retrain | Variant A (0.6796) | **+0.02 ~ +0.04** | 0.5d |
+| **C002** | corrector-residual-redesign | TinyCorrectionNet → deeper residual block / multi-task loss. plan-005 `failure_b001` 영역 회복 + oracle-drop (0.7188 → 0.7111) 해소. | `src/pb_0_6822/boundary.py` TinyCorrectionNet 교체 + 5-fold 재학습 | full (0.6806) | **+0.01 ~ +0.025** | 1d |
+| **C003** | lightgbm-rank-stacking | GRU `final_ctx` + `event_ctx` + candidate physics feature → LightGBM LambdaRank listwise head. NN selector 의 stacking 또는 대체. n=10k 에 sample-efficient. | 신규 `src/ranking/lgbm_rank.py` + plan-005 `corrected_*.npz` 재사용 | full (0.6806) | **+0.005 ~ +0.02** | 0.5d |
+| **C004** | set-transformer-cands | 27 후보를 set 으로 보고 self-attention → 후보 간 상호작용 학습 (현재 head 는 후보별 독립 logit). "다른 26개 대비 outlier" 판별 가능. | `selector.py` head 에 set-attn block 추가 + 재학습 | full (0.6806) | **+0.005 ~ +0.015** | 1d |
+| **C005** | bi-gru-encoder | unidirectional GRU → bidirectional. full history 활용. 거의 free lift. | `selector.py` `nn.GRU(..., bidirectional=True)` + dropout 0.08 → 0.12 | full (0.6806) | **+0.003 ~ +0.008** | 0.2d |
+| **C006** | tcn-encoder-swap | GRU encoder → TCN (dilated 1D conv). 시계열 압축기만 교체, listwise head 유지. T=20 에서 GRU 와 비등하거나 약간 우위 (Bai et al. 2018). | `selector.py` encoder block 교체 + 재학습 | full (0.6806) | **±0.005** | 0.5d |
+| **C007** | transformer-encoder-swap | GRU encoder → self-attention encoder (2-layer, 4-head). n=10k + T=20 에서 GRU 우위 가능성 큼 — *negative result* 박제도 가치 있음. | `selector.py` encoder block 교체 + warmup/dropout tuning | full (0.6806) | **±0.005** | 1~2d |
+| **C008** | corrector-do-no-harm-gate | TinyCorrectionNet 에 gate head 추가: `correction_final = sigmoid(MLP(features)) × correction_raw`. **asymmetric loss** 로 `raw_hit && corrected_miss` 에 λ=5~10 penalty. plan-005 `corrector_decomp` 의 [0.005, 0.010) band 에서 발견된 *destructive 패턴* (2594 samples 중 -203 hits) 직접 차단. C002 의 *concrete sub-instance*. | `boundary.py` TinyCorrectionNet 에 gate Linear head 추가 + loss 함수 + 5-fold 재학습 | full (0.6806) | **+0.015 ~ +0.025** | 0.5~1d |
+| **C009** | corrector-band-aware-loss | gate 추가 없이 loss 만 교체: `L = L2 × (1 + α × is_already_hit) × (1 + β × is_destructive_move)`. C008 의 *lite version* (구조 변경 없음, loss 만). C008 보다 lift 작지만 위험도/작업량도 작음 — C008 의 fallback. | `boundary.py` loss 함수만 수정 + 5-fold 재학습 | full (0.6806) | **+0.005 ~ +0.010** | 0.2d |
+| **C010** | corrector-frenet-anisotropic-loss | loss 를 Frenet local frame 변환 후 `w_par=1.0, w_perp=1.0, w_bi=0.1` 비대칭 weight. plan-005 direction breakdown (parallel 0.0451, perp 0.0214, **binormal 0.0064**) 기반 — binormal capacity 낭비 회수. C008/C009 과 **직교** (stack 가능). | `boundary.py` loss 에 frenet rotation 추가 + 5-fold 재학습 | full (0.6806) | **+0.003 ~ +0.005** | 0.3d |
+| **D001** | corrector-oracle-simulation | **사전 진단 (재학습 0)**: plan-005 `corrected_oof.npz` + raw scores 로 *perfect gate* 시뮬레이션 — "destructive samples 를 모두 skip 했을 때" 의 OOF 상한 계산. C008/C009 의 **go/no-go anchor**: < 0.66 이면 ROI 작아서 C001 우선; ≥ 0.67 이면 C008 진행. | `analysis/plan-007/oracle_gate.py` 신규 (재학습 없음) | OOF 0.6524 (E_corrected) | 진단 only, lift 없음 | 0.1d |
+
+## 의존 / 직교 관계
+
+| 묶음 | 관계 | 비고 |
+|---|---|---|
+| C001 + C002 | **직교** | 후보 쪽 vs corrector 쪽. lift 누적 가능 (`+0.03 ~ +0.06`). plan-007 의 A1+A2 와 동일. |
+| C001 + C003 | **직교** | C001 의 35 후보 위에 C003 의 lgbm head 얹기 가능. |
+| C002 + C003 | **직교** | corrector 가 좌표 보정, lgbm 이 ranking. 독립. |
+| C004 vs C003 | **상충** | 둘 다 ranking head 교체 — 둘 중 하나만. |
+| C005 / C006 / C007 | **상호 배타** | encoder swap 3선택지 중 1. |
+| C001 + (C005 or C006) | **직교** | encoder swap + 후보 다양화 동시 가능. |
+| C001 + Idea 1 (연속 heatmap) | **직교** | C001 = candidate 단계, Idea 1 = regime scoring 단계. |
+| C001 vs Idea 2 (학습 후보) | **상충** | 둘 다 candidate 단계 — 손 추가 vs 데이터 학습. Idea 2 가 *재현 가능 손 추가* 의 일반화. |
+| C002 vs C008 / C009 | **상충 (C008/C009 ⊂ C002)** | C008/C009 = C002 의 concrete sub-instance. C002 generic redesign 대신 C008 부터 시도 권장 (motivation metric 명확). |
+| C008 + C010 | **직교** | gate head (when to correct) + frenet weight (how to correct) — 독립. stack 시 lift `+0.018 ~ +0.030` 추정. |
+| C009 + C010 | **직교** | loss 항만 합치면 됨 — 가장 cheap 한 stacking. |
+| D001 → C008 | **선행 진단** | D001 oracle 상한 < 0.66 이면 C008/C009/C010 모두 skip, C001 로 회귀. |
+| C008 vs C009 | **상충 (C009 ⊂ C008)** | C009 = C008 의 lite version (gate 없이 loss 만). C008 실패 시 C009 fallback 또는 C008 의 ablation. |
+
+## 권장 우선순위 (LB-단위 ROI / 작업량 기준)
+
+1. **C001** — plan-007 이미 채택. 가장 명확한 lift, 가장 cheap.
+2. **D001 → C008** — D001 (사전 oracle 진단, 0.1d, 재학습 0) 이 ≥ 0.67 이면 C008 (do-no-harm gate) 진행. corrector lift +0.0274 (전체 main engine) + plan-005 corrector_decomp 의 destructive band 명확 → ceiling 큼. C002 generic 대신 C008 부터 (motivation metric 구체적).
+3. **C003** — sample-efficient, plan-005 산출 재사용으로 0.5d 만에 시도. NN 외 다른 inductive bias.
+4. **C010** — frenet anisotropic loss. C008 과 stack 가능, 거의 free.
+5. **C005** — bi-GRU. 거의 free, 위험 없음. 1순위 묶음에 옵션 추가 가능.
+6. C009 — C008 의 fallback (gate 학습 실패 시).
+7. C004 / C006 / C007 — C001~C003 의 lift 가 saturate (< +0.005pp) 한 *이후* 검토.
+
+## 평가 메트릭 기반 fit 분석 — encoder swap (C005~C007) 이 낮은 우선순위인 이유
+
+- 메트릭: hit_rate@threshold (discrete listwise ranking). encoder 의 시계열 압축 품질은 *간접 영향*.
+- 4-way LB 분해: GRU 자체의 LB contribution = +0.0104pp (full=0.6806 − A=0.6796 의 sibling 비교 또는 A=0.6796 − E=0.6692). encoder 를 swap 해서 얻을 marginal lift 는 이 +0.0104pp 의 *일부* — 즉 ceiling 이 낮음.
+- 반면 C001~C003 은 *다른 lift component* (candidate diversity, corrector, ranking head) 를 건드리므로 ceiling 이 +0.02pp 이상.
+
+## Idea 1/2 와의 통합 — 6가지 ablation 셀
+
+기존 2축 (Idea 1 ✕ Idea 2) × 본 섹션의 candidate-diversification (C001) 으로 확장 시:
+
+| candidate 단계 | regime scoring | ablation 명칭 |
+|---|---|---|
+| 손 27 (현재) | 이산 18 (현재) | baseline (full = 0.6806) |
+| 손 27 + **C001 35+** | 이산 18 | C001 단독 |
+| 손 27 | 연속 heatmap (Idea 1) | Idea 1 단독 |
+| 학습 N (Idea 2) | 이산 18 | Idea 2 단독 |
+| 손 27 + C001 | 연속 heatmap | C001 + Idea 1 |
+| 학습 N (Idea 2) | 연속 heatmap | 둘 다 (최대 변경) |
+
+→ C001 은 *손 후보 일부 확장* 이고 Idea 2 는 *손 후보 → 데이터 학습* 의 일반화이므로, **C001 을 Idea 2 의 stepping stone** 으로 위치시킬 수 있음. 즉:
+- 단기: C001 (손으로 8개 추가, 작업량 0.5d) 로 candidate diversification 의 LB lift 가치 확인.
+- 중기: lift 가 +0.02pp 이상 확인되면 Idea 2 (학습 후보 N=35~50) 로 일반화 — paper contribution 가치 동반.
+
+## 한 줄 정리
+
+**C001 (후보 다양화) → D001 사전 진단 → C008 (do-no-harm gate) → C003 (LightGBM ranker stacking) 순으로 plan-007/008/009 후보 박제**. C008/C009/C010 은 plan-005 corrector_decomp 의 destructive [0.005, 0.010) band (2594 samples, -203 hits) 를 직접 겨냥 — C002 generic redesign 의 *concrete instance* 들. encoder swap (C005~C007) 은 ceiling 낮아 후순위. Idea 1 (연속 heatmap) / Idea 2 (학습 후보) 와 직교/일반화 관계로 묶이므로, C001 의 LB lift 검증 결과가 Idea 2 의 ROI 판단 anchor 가 됨.
