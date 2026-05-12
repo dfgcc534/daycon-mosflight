@@ -1,0 +1,30 @@
+{
+  "exp_id": "G001-sanity-27",
+  "sanity_baseline_27_oof_argmax": 0.6304,
+  "sanity_baseline_27_oof_soft": 0.6466,
+  "oracle_27": 0.7188,
+  "hyperparam_set": {
+    "models": "attn_gru",
+    "folds": 5,
+    "regime_prior_strength": 0,
+    "pre_epochs": 10,
+    "fine_epochs": 8,
+    "freeze_fine_epochs": 3,
+    "epoch_plus": 5,
+    "patience": 4,
+    "hidden": 48,
+    "batch": 4096,
+    "lr": 0.001,
+    "fine_lr_scale": 0.12,
+    "prior_strength": 0.65,
+    "pairwise_loss_weight": 0.25,
+    "fine_distill_weight": 0.55
+  },
+  "n_train": 10000,
+  "n_candidates": 27,
+  "baseline_band": [
+    0.652,
+    0.662
+  ],
+  "in_baseline_band": false
+}
