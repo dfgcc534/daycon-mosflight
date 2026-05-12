@@ -36,6 +36,10 @@ from torch import nn
 from torch.nn import functional as F  # plan-009 c3 — ranking loss 3 component spec @ §5.1
 from torch.utils.data import DataLoader, TensorDataset
 
+# plan-009 c3 — module-level mutable dict, main() 에서 args.loss_components 등으로 채움.
+# run_fold 등 외부 함수가 참조 가능. baseline (empty) 시 train_one 안 `if loss_components:` block skip.
+_PLAN_009_LOSS_KW: dict[str, object] = {}
+
 
 R_HIT = 0.01
 EPS = 1e-8
@@ -1678,7 +1682,7 @@ def run_fold(
         pairwise_loss_weight=args.pairwise_loss_weight,
         pairwise_margin=args.pairwise_margin,
         pairwise_min_label_gap=args.pairwise_min_label_gap,
-                **_plan_009_loss_kw,
+                **_PLAN_009_LOSS_KW,
     )
     pre_state = clone_state_dict(model)
     pre_metric = evaluate_selector_state(model, gauge, device, args.batch, val_bias)
@@ -1722,7 +1726,7 @@ def run_fold(
                         pairwise_loss_weight=args.pairwise_loss_weight,
                         pairwise_margin=args.pairwise_margin,
                         pairwise_min_label_gap=args.pairwise_min_label_gap,
-                **_plan_009_loss_kw,
+                **_PLAN_009_LOSS_KW,
                         fine_distill_weight=args.fine_distill_weight,
                     )
                 )
@@ -1748,7 +1752,7 @@ def run_fold(
                         pairwise_loss_weight=args.pairwise_loss_weight,
                         pairwise_margin=args.pairwise_margin,
                         pairwise_min_label_gap=args.pairwise_min_label_gap,
-                **_plan_009_loss_kw,
+                **_PLAN_009_LOSS_KW,
                         fine_distill_weight=args.fine_distill_weight,
                     )
                 )
@@ -1805,7 +1809,7 @@ def run_fold(
                 pairwise_loss_weight=args.pairwise_loss_weight,
                 pairwise_margin=args.pairwise_margin,
                 pairwise_min_label_gap=args.pairwise_min_label_gap,
-                **_plan_009_loss_kw,
+                **_PLAN_009_LOSS_KW,
                 fine_distill_weight=args.fine_distill_weight,
             )
         )
@@ -1831,7 +1835,7 @@ def run_fold(
                 pairwise_loss_weight=args.pairwise_loss_weight,
                 pairwise_margin=args.pairwise_margin,
                 pairwise_min_label_gap=args.pairwise_min_label_gap,
-                **_plan_009_loss_kw,
+                **_PLAN_009_LOSS_KW,
                 fine_distill_weight=args.fine_distill_weight,
             )
         )
@@ -1976,7 +1980,7 @@ def train_full_predict(
         pairwise_loss_weight=args.pairwise_loss_weight,
         pairwise_margin=args.pairwise_margin,
         pairwise_min_label_gap=args.pairwise_min_label_gap,
-                **_plan_009_loss_kw,
+                **_PLAN_009_LOSS_KW,
     )
     fine_teacher = np.zeros_like(fine_label, dtype=np.float32)
     if args.fine_distill_weight > 0.0:
@@ -2004,7 +2008,7 @@ def train_full_predict(
         pairwise_loss_weight=args.pairwise_loss_weight,
         pairwise_margin=args.pairwise_margin,
         pairwise_min_label_gap=args.pairwise_min_label_gap,
-                **_plan_009_loss_kw,
+                **_PLAN_009_LOSS_KW,
         fine_distill_weight=args.fine_distill_weight,
     )
     test_seq = make_seq_features(test_x, test_x.shape[1] - 1)
@@ -2078,7 +2082,9 @@ def main() -> None:
     parser.add_argument("--augment-weight", type=float, default=0.35)
     args = parser.parse_args()
     # plan-009 c3 — ranking loss 3 component kwargs (spec @ §5.1)
-    _plan_009_loss_kw = dict(
+    # module-level mutable dict — run_fold 등 외부 함수가 참조 가능 (main local scope 위반 방지)
+    _PLAN_009_LOSS_KW.clear()
+    _PLAN_009_LOSS_KW.update(
         loss_components=tuple(t.strip() for t in args.loss_components.split(",") if t.strip()),
         loss_K_pairs=args.K_pairs,
         loss_temperature=args.loss_temperature,
