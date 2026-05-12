@@ -2,7 +2,7 @@
 plan_id: 007
 version: 1
 date: 2026-05-12 (Asia/Seoul)
-status: partial
+status: complete
 based_on:
   - 004
   - 005
@@ -12,7 +12,7 @@ scope: single-formula CMA-ES tuning + basis ablation + per-sample MLP coefficien
 exp_ids:
   - F001_formula-ga
   - F002_formula-mlp
-lb_score: TBD
+lb_score: 0.6598
 ---
 
 # plan-007 v1 — Single-Formula CMA-ES + Basis Ablation + Per-Sample MLP Coefficient Regression

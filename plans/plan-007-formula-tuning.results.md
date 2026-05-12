@@ -4,10 +4,10 @@ exp_ids:
   - F001_formula-ga
   - F002_formula-mlp
 lb_exp_id: F001_formula-ga-step3
-lb_score: TBD
+lb_score: 0.6598
 lb_submitted_at: 2026-05-12T16:34:30+09:00
-lb_recovered_at: null
-status: partial
+lb_recovered_at: 2026-05-12T17:00:00+09:00
+status: complete
 date: 2026-05-12 (Asia/Seoul)
 ---
 
@@ -15,7 +15,7 @@ date: 2026-05-12 (Asia/Seoul)
 
 본 plan = plan-006 의 단일 공식 baseline (0.6491 argmax-corrected) 위에 4 단계 progression 으로 단일 공식 framework 의 데이터 ceiling 을 측정.
 
-**status: partial** — Step 2 + Step 3 dacon-submit 모두 `{isSubmitted: True, detail: 'Success'}` (2026-05-12T16:31:35+09:00 / 16:34:30+09:00) 회수 — *DACON 응답에 lb_score 미포함*. plan §8.2 의 (True, None) 분기 → carry-over c5.1/c8.1 후속 회수 예약. 본 plan 의 frontmatter `lb_score = TBD` 유지 (§8.4 — Step 3 가 최종 LB).
+**status: complete** — Step 2 + Step 3 dacon-submit 모두 `{isSubmitted: True}` (2026-05-12T16:31:35+09:00 / 16:34:30+09:00). 사용자 회수: **Step 2 LB = 0.657, Step 3 LB = 0.6598** (carry-over c5.1/c8.1 close). 본 plan 최종 LB = `0.6598` (Step 3 단일 공식 best basis 8 vars).
 
 ## §1. Exp summary
 
@@ -37,7 +37,7 @@ date: 2026-05-12 (Asia/Seoul)
 | G1 | PASS | oof_hit_5fold=0.6403 ∈ [0.62, 0.78] | `b7a2a4a` |
 | G2 | PASS | best_basis_hit=0.6387 ≥ 0.6342 (Step 2 single fit); 8 var basis | `963be03` |
 | G3 | PASS | oof_hit=0.6482 ≥ 0.6437 (+0.005), gain +0.0095 vs Step 3 | `2c7eb3d` |
-| G_final | partial | results.md + next_plan_candidates.md 박제, but lb_score=TBD (Step 3 회수 carry-over) | `c11_hash` |
+| G_final | PASS | results.md + next_plan_candidates.md 박제 + lb_score=0.6598 회수 완료 | `c11_hash` |
 
 ## §3. 단일 공식 ceiling trajectory
 
@@ -60,11 +60,23 @@ scenario B (Step 4 OOF gain +0.0095 < +0.010) → 단일 공식 framework 한계
 
 상세: `analysis/plan-007/next_plan_candidates.md`.
 
-## §5. Carry-over open
+## §5. Carry-over closed
 
-- **c5.1**: Step 2 LB 회수 (DACON 웹페이지 조회) → lb_log + frontmatter 갱신
-- **c8.1**: Step 3 LB 회수 → frontmatter `lb_score` (Step 3 값) + status `all_complete` 전환
+- **c5.1** ✓ closed: Step 2 LB = **0.657** 회수 완료 (사용자 박제)
+- **c8.1** ✓ closed: Step 3 LB = **0.6598** 회수 완료 → frontmatter `lb_score=0.6598`, status `complete` 전환
 
-본 plan 의 최종 endpoint = c8.1 close 후 plan-008 의 첫 task 로 carry-over.
+본 plan 의 모든 carry-over close. 다음 endpoint = plan-008 의 첫 task.
+
+### LB 해석 (post-recovery)
+
+| stage | OOF | LB | OOF-LB gap |
+|---|---|---|---|
+| plan-006 best (argmax+corrector) | 0.6491 | 0.6822 | +0.0331 |
+| Step 2 (CMA-ES 6 vars) | 0.6403 | 0.6570 | +0.0167 |
+| Step 3 (best basis 8 vars) | 0.6387 | **0.6598** | +0.0211 |
+
+- Step 3 LB 0.6598 > Step 2 LB 0.6570 (+0.28pp) — basis ablation 이 LB 상으로도 일관된 *small* gain (OOF 와 sign 정합).
+- 두 LB 모두 plan-006 baseline 0.6822 보다 -2.24~2.52pp 하락 — 본 plan 의 단일 공식 framework 적용 결과 LB 손해. *plan-006 의 corrector + argmax-ensemble 효과 가 단일 공식 raw 보다 LB 에서 더 강함* 재확인.
+- OOF-LB gap 0.017~0.021 = plan-006 의 +0.033 대비 작음 → 단일 공식 LB 가 OOF 와 *상대적으로* 더 align (corrector 의 leak amplification 없음).
 
 상세 분석: `analysis/plan-007/results.md` 참조.
