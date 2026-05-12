@@ -1,0 +1,188 @@
+{
+  "r_hit": 0.01,
+  "n_samples": 10000,
+  "end_idx": 10,
+  "horizon": 2,
+  "candidates": [
+    {
+      "index": 0,
+      "name": "p0_2d1",
+      "hit": 0.5787,
+      "rank": 19
+    },
+    {
+      "index": 1,
+      "name": "acc_2d1_040",
+      "hit": 0.5976,
+      "rank": 18
+    },
+    {
+      "index": 2,
+      "name": "acc_2d1_050",
+      "hit": 0.5993,
+      "rank": 17
+    },
+    {
+      "index": 3,
+      "name": "acc_2d1_056",
+      "hit": 0.6008,
+      "rank": 15
+    },
+    {
+      "index": 4,
+      "name": "acc_2d1_060",
+      "hit": 0.6008,
+      "rank": 14
+    },
+    {
+      "index": 5,
+      "name": "frenet_best",
+      "hit": 0.6296,
+      "rank": 1
+    },
+    {
+      "index": 6,
+      "name": "frenet_par090_perp000",
+      "hit": 0.6259,
+      "rank": 6
+    },
+    {
+      "index": 7,
+      "name": "frenet_par100_perp000",
+      "hit": 0.6283,
+      "rank": 3
+    },
+    {
+      "index": 8,
+      "name": "frenet_par100_perp_neg010",
+      "hit": 0.6276,
+      "rank": 5
+    },
+    {
+      "index": 9,
+      "name": "frenet_par090_perp020",
+      "hit": 0.6241,
+      "rank": 8
+    },
+    {
+      "index": 10,
+      "name": "frenet_par080_perp020",
+      "hit": 0.615,
+      "rank": 11
+    },
+    {
+      "index": 11,
+      "name": "frenet_par110_perp_neg020",
+      "hit": 0.6284,
+      "rank": 2
+    },
+    {
+      "index": 12,
+      "name": "frenet_fast_par100",
+      "hit": 0.6078,
+      "rank": 13
+    },
+    {
+      "index": 13,
+      "name": "frenet_slow_par100",
+      "hit": 0.6096,
+      "rank": 12
+    },
+    {
+      "index": 14,
+      "name": "jerk_small_pos",
+      "hit": 0.6245,
+      "rank": 7
+    },
+    {
+      "index": 15,
+      "name": "jerk_small_neg",
+      "hit": 0.6184,
+      "rank": 9
+    },
+    {
+      "index": 16,
+      "name": "frenet_par070_perp_neg020",
+      "hit": 0.6169,
+      "rank": 10
+    },
+    {
+      "index": 17,
+      "name": "frenet_par120_perp_neg020",
+      "hit": 0.632,
+      "rank": 0
+    },
+    {
+      "index": 18,
+      "name": "frenet_par120_perp020",
+      "hit": 0.628,
+      "rank": 4
+    },
+    {
+      "index": 19,
+      "name": "frenet_fast_par120_perp_neg020",
+      "hit": 0.5997,
+      "rank": 16
+    },
+    {
+      "index": 20,
+      "name": "frenet_slow_par070_perp020",
+      "hit": 0.5732,
+      "rank": 20
+    },
+    {
+      "index": 21,
+      "name": "latency_short_frenet_best_085",
+      "hit": 0.4525,
+      "rank": 25
+    },
+    {
+      "index": 22,
+      "name": "latency_short_frenet_best_092",
+      "hit": 0.5452,
+      "rank": 22
+    },
+    {
+      "index": 23,
+      "name": "latency_long_frenet_best_108",
+      "hit": 0.5567,
+      "rank": 21
+    },
+    {
+      "index": 24,
+      "name": "latency_long_frenet_best_115",
+      "hit": 0.4323,
+      "rank": 26
+    },
+    {
+      "index": 25,
+      "name": "latency_long_turn_neg_110",
+      "hit": 0.5173,
+      "rank": 23
+    },
+    {
+      "index": 26,
+      "name": "latency_short_turn_pos_090",
+      "hit": 0.5041,
+      "rank": 24
+    }
+  ],
+  "summary": {
+    "best": {
+      "name": "frenet_par120_perp_neg020",
+      "hit": 0.632
+    },
+    "worst": {
+      "name": "latency_long_frenet_best_115",
+      "hit": 0.4323
+    },
+    "mean": 0.587937037037037,
+    "median": 0.6078,
+    "std": 0.05303793993644862,
+    "plan_006_chosen": {
+      "name": "frenet_par120_perp_neg020",
+      "hit": 0.632,
+      "rank": 1
+    }
+  }
+}
