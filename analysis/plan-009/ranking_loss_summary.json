@@ -1,0 +1,39 @@
+{
+  "exp_id": "H001_ranking-loss",
+  "oof_soft_hit": 0.6482,
+  "oof_argmax_hit": 0.6456,
+  "top1_ranking_acc": 0.0922,
+  "gap_ranking": 0.10799999999999998,
+  "oracle_1cm": 0.7562,
+  "n_train": 10000,
+  "n_candidates": 25,
+  "loss_components_effective_weight": {
+    "ce": 1.0,
+    "ndcg1": 1.0,
+    "pair_plan_009": 2.0,
+    "pairwise_plan_008_label_gap": 0.25,
+    "listmle": 0.5
+  },
+  "variant_a_safe": true,
+  "variant_a_check": {
+    "keys": [
+      "covered",
+      "y",
+      "cands",
+      "attn_gru_scores",
+      "ens_scores",
+      "attn_gru_prior",
+      "ens_prior",
+      "candidate_names"
+    ],
+    "regime_bias_table": "(absent — Variant A path)",
+    "variant_a_safe": true
+  },
+  "g1_pass": {
+    "oof_soft_hit_pass": false,
+    "top1_ranking_acc_pass": false,
+    "gap_ranking_pass": false,
+    "variant_a_safe_pass": true
+  },
+  "decision_note": "plan-008 c7 selector args 그대로 + plan-009 c3 신규 loss-components ndcg1,pair2x,listmle (effective weights {ce:1, ndcg1:1, pair_plan_009:2, pairwise_plan_008_label_gap:0.25, listmle:0.5}). plan-008 의 기존 label-gap pairwise (weight=0.25) 도 유지 — plan-009 의 pair2x 와 별도 form, compound 효과 측정."
+}

@@ -1,0 +1,884 @@
+inline selector loaded: 27 candidates
+inline residual boundary MLP loaded
+[plan-009 c4 ranking_loss_train] start
+[prep] KEPT_INDICES (12): [0, 4, 11, 14, 15, 18, 19, 21, 23, 24, 25, 26]
+[prep] KEPT_FAMILIES (4): ['arc', 'cross_term', 'frenet_serret_3d', 'trig']
+[prep] EXTENDED_CANDIDATES n=25
+FOLD_START model=attn_gru fold=1/5 train_pre=207480 pre_eff=191919.0 norm=real train_fine=7980 val=2020 oracle_hit=0.7653 prior_top=[{'name': 'speed_norm_acc_par', 'count': 2020}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=1/10 loss=32.76190 arg_hit=0.6035 soft_hit=0.6366 soft_temp=0.2 arg_mean=0.012911 soft_mean=0.012599 best_soft_hit=0.6366 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 941}, {'name': 'jerk_small_pos', 'count': 493}, {'name': 'p0_2d1', 'count': 287}, {'name': 'acc_2d1_060', 'count': 235}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=2/10 loss=28.21683 arg_hit=0.6312 soft_hit=0.6475 soft_temp=0.15 arg_mean=0.012462 soft_mean=0.012338 best_soft_hit=0.6475 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 526}, {'name': 'p0_2d1', 'count': 377}, {'name': 'fs_3d_planar', 'count': 343}, {'name': 'jerk_small_pos', 'count': 156}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=3/10 loss=27.97945 arg_hit=0.6426 soft_hit=0.6505 soft_temp=0.05 arg_mean=0.012268 soft_mean=0.012201 best_soft_hit=0.6505 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 581}, {'name': 'speed_norm_acc_par', 'count': 502}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 197}, {'name': 'jerk_small_pos', 'count': 162}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=4/10 loss=27.01848 arg_hit=0.6421 soft_hit=0.6495 soft_temp=0.1 arg_mean=0.012022 soft_mean=0.011995 best_soft_hit=0.6505 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 599}, {'name': 'frenet_par110_perp_neg020', 'count': 350}, {'name': 'jerk_small_pos', 'count': 217}, {'name': 'fs_3d_planar', 'count': 210}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=5/10 loss=26.64882 arg_hit=0.6450 soft_hit=0.6500 soft_temp=0.3 arg_mean=0.011992 soft_mean=0.012043 best_soft_hit=0.6505 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 626}, {'name': 'fs_3d_planar', 'count': 340}, {'name': 'frenet_par110_perp_neg020', 'count': 182}, {'name': 'jerk_small_pos', 'count': 170}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=6/10 loss=26.01778 arg_hit=0.6530 soft_hit=0.6584 soft_temp=0.1 arg_mean=0.011901 soft_mean=0.011899 best_soft_hit=0.6584 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 386}, {'name': 'fs_3d_planar', 'count': 310}, {'name': 'frenet_par110_perp_neg020', 'count': 306}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 180}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=7/10 loss=25.97522 arg_hit=0.6530 soft_hit=0.6599 soft_temp=0.1 arg_mean=0.011871 soft_mean=0.011865 best_soft_hit=0.6599 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 413}, {'name': 'fs_3d_planar', 'count': 318}, {'name': 'frenet_par110_perp_neg020', 'count': 268}, {'name': 'jerk_small_neg', 'count': 199}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=8/10 loss=25.76179 arg_hit=0.6554 soft_hit=0.6614 soft_temp=0.05 arg_mean=0.011880 soft_mean=0.011847 best_soft_hit=0.6614 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 333}, {'name': 'speed_norm_acc_par', 'count': 307}, {'name': 'frenet_par110_perp_neg020', 'count': 287}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 252}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=9/10 loss=25.97615 arg_hit=0.6559 soft_hit=0.6619 soft_temp=0.15 arg_mean=0.011892 soft_mean=0.011903 best_soft_hit=0.6619 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 510}, {'name': 'frenet_par110_perp_neg020', 'count': 265}, {'name': 'fs_3d_planar', 'count': 251}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 239}]
+GAUGE model=attn_gru fold=1 stage=pretrain epoch=10/10 loss=26.53552 arg_hit=0.6579 soft_hit=0.6629 soft_temp=0.1 arg_mean=0.011887 soft_mean=0.011863 best_soft_hit=0.6629 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 506}, {'name': 'fs_3d_planar', 'count': 251}, {'name': 'frenet_par110_perp_neg020', 'count': 249}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 234}]
+GAUGE model=attn_gru fold=1 stage=finetune_head epoch=1/3 loss=25.26426 arg_hit=0.6579 soft_hit=0.6629 soft_temp=0.1 arg_mean=0.011878 soft_mean=0.011859 best_soft_hit=0.6629 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 513}, {'name': 'frenet_par110_perp_neg020', 'count': 273}, {'name': 'fs_3d_planar', 'count': 237}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 229}]
+GAUGE model=attn_gru fold=1 stage=finetune_head epoch=2/3 loss=25.20897 arg_hit=0.6569 soft_hit=0.6624 soft_temp=0.05 arg_mean=0.011867 soft_mean=0.011844 best_soft_hit=0.6629 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 528}, {'name': 'frenet_par110_perp_neg020', 'count': 288}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 225}, {'name': 'fs_3d_planar', 'count': 217}]
+GAUGE model=attn_gru fold=1 stage=finetune_head epoch=3/3 loss=25.17795 arg_hit=0.6569 soft_hit=0.6624 soft_temp=0.05 arg_mean=0.011852 soft_mean=0.011841 best_soft_hit=0.6629 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 543}, {'name': 'frenet_par110_perp_neg020', 'count': 306}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 219}, {'name': 'jerk_small_neg', 'count': 208}]
+GAUGE model=attn_gru fold=1 stage=finetune epoch=1/5 loss=25.22461 arg_hit=0.6574 soft_hit=0.6624 soft_temp=0.03 arg_mean=0.011879 soft_mean=0.011846 best_soft_hit=0.6624 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 529}, {'name': 'frenet_par110_perp_neg020', 'count': 296}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 223}, {'name': 'jerk_small_neg', 'count': 203}]
+GAUGE model=attn_gru fold=1 stage=finetune epoch=2/5 loss=25.17423 arg_hit=0.6564 soft_hit=0.6629 soft_temp=0.05 arg_mean=0.011857 soft_mean=0.011841 best_soft_hit=0.6629 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 529}, {'name': 'frenet_par110_perp_neg020', 'count': 327}, {'name': 'jerk_small_neg', 'count': 224}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 214}]
+GAUGE model=attn_gru fold=1 stage=finetune epoch=3/5 loss=25.13919 arg_hit=0.6559 soft_hit=0.6624 soft_temp=0.05 arg_mean=0.011862 soft_mean=0.011839 best_soft_hit=0.6629 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 516}, {'name': 'frenet_par110_perp_neg020', 'count': 369}, {'name': 'jerk_small_neg', 'count': 241}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 204}]
+GAUGE model=attn_gru fold=1 stage=finetune epoch=4/5 loss=25.10711 arg_hit=0.6564 soft_hit=0.6614 soft_temp=0.15 arg_mean=0.011858 soft_mean=0.011875 best_soft_hit=0.6629 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 510}, {'name': 'frenet_par110_perp_neg020', 'count': 395}, {'name': 'jerk_small_neg', 'count': 249}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 196}]
+GAUGE model=attn_gru fold=1 stage=finetune epoch=5/5 loss=25.11104 arg_hit=0.6569 soft_hit=0.6614 soft_temp=0.15 arg_mean=0.011856 soft_mean=0.011873 best_soft_hit=0.6629 wait=3/4 top=[{'name': 'speed_norm_acc_par', 'count': 507}, {'name': 'frenet_par110_perp_neg020', 'count': 422}, {'name': 'jerk_small_neg', 'count': 256}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 189}]
+FINETUNE_ROLLBACK model=attn_gru fold=1 pre_soft_hit=0.6629 fine_soft_hit=0.6614
+FOLD_START model=attn_gru fold=2/5 train_pre=206778 pre_eff=191269.7 norm=real train_fine=7953 val=2047 oracle_hit=0.7460 prior_top=[{'name': 'speed_norm_acc_par', 'count': 2047}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=1/10 loss=30.76073 arg_hit=0.6033 soft_hit=0.6253 soft_temp=0.15 arg_mean=0.012879 soft_mean=0.012581 best_soft_hit=0.6253 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 1161}, {'name': 'jerk_small_pos', 'count': 426}, {'name': 'acc_2d1_060', 'count': 352}, {'name': 'frenet_par120_perp020', 'count': 79}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=2/10 loss=29.57966 arg_hit=0.6253 soft_hit=0.6302 soft_temp=0.07 arg_mean=0.012357 soft_mean=0.012287 best_soft_hit=0.6302 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 443}, {'name': 'p0_2d1', 'count': 409}, {'name': 'speed_norm_acc_par', 'count': 333}, {'name': 'latency_short_turn_pos_090', 'count': 240}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=3/10 loss=27.77032 arg_hit=0.6287 soft_hit=0.6361 soft_temp=0.07 arg_mean=0.012190 soft_mean=0.012167 best_soft_hit=0.6361 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 504}, {'name': 'frenet_par110_perp_neg020', 'count': 369}, {'name': 'fs_3d_planar', 'count': 251}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 243}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=4/10 loss=27.95188 arg_hit=0.6341 soft_hit=0.6429 soft_temp=0.05 arg_mean=0.012051 soft_mean=0.012022 best_soft_hit=0.6429 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 630}, {'name': 'speed_norm_acc_par', 'count': 438}, {'name': 'fs_3d_planar', 'count': 244}, {'name': 'acc_2d1_060', 'count': 219}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=5/10 loss=26.74822 arg_hit=0.6380 soft_hit=0.6458 soft_temp=0.1 arg_mean=0.011987 soft_mean=0.011976 best_soft_hit=0.6458 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 550}, {'name': 'speed_norm_acc_par', 'count': 349}, {'name': 'fs_3d_planar', 'count': 253}, {'name': 'jerk_small_neg', 'count': 224}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=6/10 loss=26.27064 arg_hit=0.6385 soft_hit=0.6463 soft_temp=0.1 arg_mean=0.011932 soft_mean=0.011919 best_soft_hit=0.6463 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 396}, {'name': 'fs_3d_planar', 'count': 338}, {'name': 'frenet_par110_perp_neg020', 'count': 281}, {'name': 'jerk_small_neg', 'count': 246}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=7/10 loss=26.66435 arg_hit=0.6448 soft_hit=0.6473 soft_temp=0.1 arg_mean=0.011895 soft_mean=0.011897 best_soft_hit=0.6473 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 376}, {'name': 'frenet_par110_perp_neg020', 'count': 343}, {'name': 'jerk_small_neg', 'count': 313}, {'name': 'speed_norm_acc_par', 'count': 302}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=8/10 loss=26.34333 arg_hit=0.6395 soft_hit=0.6448 soft_temp=0.05 arg_mean=0.011920 soft_mean=0.011877 best_soft_hit=0.6473 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 685}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 256}, {'name': 'frenet_par110_perp_neg020', 'count': 240}, {'name': 'fs_3d_planar', 'count': 191}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=9/10 loss=25.81981 arg_hit=0.6400 soft_hit=0.6463 soft_temp=0.05 arg_mean=0.011914 soft_mean=0.011865 best_soft_hit=0.6473 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 705}, {'name': 'frenet_par110_perp_neg020', 'count': 264}, {'name': 'jerk_small_neg', 'count': 213}, {'name': 'frenet_par120_perp020', 'count': 179}]
+GAUGE model=attn_gru fold=2 stage=pretrain epoch=10/10 loss=25.83976 arg_hit=0.6434 soft_hit=0.6488 soft_temp=0.05 arg_mean=0.011868 soft_mean=0.011844 best_soft_hit=0.6488 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 553}, {'name': 'fs_3d_planar', 'count': 284}, {'name': 'frenet_par110_perp_neg020', 'count': 250}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 211}]
+GAUGE model=attn_gru fold=2 stage=finetune_head epoch=1/3 loss=25.37708 arg_hit=0.6439 soft_hit=0.6488 soft_temp=0.05 arg_mean=0.011869 soft_mean=0.011840 best_soft_hit=0.6488 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 584}, {'name': 'frenet_par110_perp_neg020', 'count': 269}, {'name': 'fs_3d_planar', 'count': 253}, {'name': 'jerk_small_neg', 'count': 201}]
+GAUGE model=attn_gru fold=2 stage=finetune_head epoch=2/3 loss=25.32979 arg_hit=0.6434 soft_hit=0.6492 soft_temp=0.05 arg_mean=0.011867 soft_mean=0.011836 best_soft_hit=0.6492 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 620}, {'name': 'frenet_par110_perp_neg020', 'count': 293}, {'name': 'jerk_small_neg', 'count': 211}, {'name': 'fs_3d_planar', 'count': 210}]
+GAUGE model=attn_gru fold=2 stage=finetune_head epoch=3/3 loss=25.28507 arg_hit=0.6424 soft_hit=0.6488 soft_temp=0.05 arg_mean=0.011868 soft_mean=0.011833 best_soft_hit=0.6492 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 646}, {'name': 'frenet_par110_perp_neg020', 'count': 314}, {'name': 'jerk_small_neg', 'count': 216}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 185}]
+GAUGE model=attn_gru fold=2 stage=finetune epoch=1/5 loss=25.27596 arg_hit=0.6424 soft_hit=0.6502 soft_temp=0.05 arg_mean=0.011867 soft_mean=0.011831 best_soft_hit=0.6502 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 631}, {'name': 'frenet_par110_perp_neg020', 'count': 337}, {'name': 'jerk_small_neg', 'count': 213}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 180}]
+GAUGE model=attn_gru fold=2 stage=finetune epoch=2/5 loss=25.22061 arg_hit=0.6429 soft_hit=0.6497 soft_temp=0.05 arg_mean=0.011865 soft_mean=0.011825 best_soft_hit=0.6502 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 628}, {'name': 'frenet_par110_perp_neg020', 'count': 381}, {'name': 'jerk_small_neg', 'count': 216}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 163}]
+GAUGE model=attn_gru fold=2 stage=finetune epoch=3/5 loss=25.17978 arg_hit=0.6429 soft_hit=0.6502 soft_temp=0.03 arg_mean=0.011866 soft_mean=0.011817 best_soft_hit=0.6502 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 614}, {'name': 'frenet_par110_perp_neg020', 'count': 430}, {'name': 'jerk_small_neg', 'count': 220}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 150}]
+GAUGE model=attn_gru fold=2 stage=finetune epoch=4/5 loss=25.15447 arg_hit=0.6448 soft_hit=0.6507 soft_temp=0.03 arg_mean=0.011849 soft_mean=0.011812 best_soft_hit=0.6507 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 591}, {'name': 'frenet_par110_perp_neg020', 'count': 480}, {'name': 'jerk_small_neg', 'count': 228}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 139}]
+GAUGE model=attn_gru fold=2 stage=finetune epoch=5/5 loss=25.13508 arg_hit=0.6448 soft_hit=0.6497 soft_temp=0.03 arg_mean=0.011820 soft_mean=0.011808 best_soft_hit=0.6507 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 576}, {'name': 'frenet_par110_perp_neg020', 'count': 528}, {'name': 'jerk_small_neg', 'count': 227}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 134}]
+FOLD_START model=attn_gru fold=3/5 train_pre=210054 pre_eff=194300.0 norm=real train_fine=8079 val=1921 oracle_hit=0.7590 prior_top=[{'name': 'speed_norm_acc_par', 'count': 1921}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=1/10 loss=33.30877 arg_hit=0.6070 soft_hit=0.6221 soft_temp=0.15 arg_mean=0.012939 soft_mean=0.012725 best_soft_hit=0.6221 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 1124}, {'name': 'jerk_small_pos', 'count': 496}, {'name': 'acc_2d1_060', 'count': 272}, {'name': 'frenet_par120_perp020', 'count': 28}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=2/10 loss=28.79265 arg_hit=0.6195 soft_hit=0.6252 soft_temp=0.3 arg_mean=0.012523 soft_mean=0.012613 best_soft_hit=0.6252 wait=0/4 top=[{'name': 'jerk_small_pos', 'count': 478}, {'name': 'p0_2d1', 'count': 390}, {'name': 'fs_3d_planar', 'count': 331}, {'name': 'speed_norm_acc_par', 'count': 296}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=3/10 loss=28.85934 arg_hit=0.6356 soft_hit=0.6325 soft_temp=0.03 arg_mean=0.012495 soft_mean=0.012467 best_soft_hit=0.6325 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 570}, {'name': 'frenet_par110_perp_neg020', 'count': 313}, {'name': 'jerk_small_pos', 'count': 249}, {'name': 'jerk_small_neg', 'count': 160}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=4/10 loss=28.06651 arg_hit=0.6361 soft_hit=0.6419 soft_temp=0.05 arg_mean=0.012301 soft_mean=0.012252 best_soft_hit=0.6419 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 736}, {'name': 'fs_3d_planar', 'count': 202}, {'name': 'frenet_par120_perp020', 'count': 197}, {'name': 'jerk_small_pos', 'count': 171}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=5/10 loss=28.38276 arg_hit=0.6335 soft_hit=0.6403 soft_temp=0.03 arg_mean=0.012152 soft_mean=0.012142 best_soft_hit=0.6419 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 694}, {'name': 'fs_3d_planar', 'count': 330}, {'name': 'frenet_par120_perp020', 'count': 156}, {'name': 'jerk_small_pos', 'count': 143}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=6/10 loss=27.08422 arg_hit=0.6346 soft_hit=0.6387 soft_temp=0.15 arg_mean=0.012136 soft_mean=0.012173 best_soft_hit=0.6419 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 667}, {'name': 'fs_3d_planar', 'count': 319}, {'name': 'jerk_small_neg', 'count': 214}, {'name': 'frenet_par120_perp020', 'count': 178}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=7/10 loss=27.13041 arg_hit=0.6325 soft_hit=0.6387 soft_temp=0.07 arg_mean=0.012111 soft_mean=0.012088 best_soft_hit=0.6419 wait=3/4 top=[{'name': 'speed_norm_acc_par', 'count': 564}, {'name': 'jerk_small_neg', 'count': 295}, {'name': 'fs_3d_planar', 'count': 259}, {'name': 'frenet_par120_perp020', 'count': 165}]
+GAUGE model=attn_gru fold=3 stage=pretrain epoch=8/10 loss=26.65674 arg_hit=0.6346 soft_hit=0.6393 soft_temp=0.1 arg_mean=0.012075 soft_mean=0.012092 best_soft_hit=0.6419 wait=4/4 top=[{'name': 'speed_norm_acc_par', 'count': 487}, {'name': 'jerk_small_pos', 'count': 276}, {'name': 'jerk_small_neg', 'count': 264}, {'name': 'fs_3d_planar', 'count': 211}]
+EARLY_STOP model=attn_gru fold=3 stage=pretrain epoch=8 best_soft_hit=0.6419
+GAUGE model=attn_gru fold=3 stage=finetune_head epoch=1/3 loss=25.97177 arg_hit=0.6361 soft_hit=0.6413 soft_temp=0.05 arg_mean=0.012309 soft_mean=0.012253 best_soft_hit=0.6413 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 708}, {'name': 'frenet_par120_perp020', 'count': 205}, {'name': 'fs_3d_planar', 'count': 200}, {'name': 'jerk_small_pos', 'count': 189}]
+GAUGE model=attn_gru fold=3 stage=finetune_head epoch=2/3 loss=25.92929 arg_hit=0.6372 soft_hit=0.6424 soft_temp=0.05 arg_mean=0.012293 soft_mean=0.012254 best_soft_hit=0.6424 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 694}, {'name': 'frenet_par120_perp020', 'count': 215}, {'name': 'fs_3d_planar', 'count': 197}, {'name': 'jerk_small_pos', 'count': 196}]
+GAUGE model=attn_gru fold=3 stage=finetune_head epoch=3/3 loss=25.89437 arg_hit=0.6398 soft_hit=0.6429 soft_temp=0.05 arg_mean=0.012278 soft_mean=0.012254 best_soft_hit=0.6429 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 667}, {'name': 'jerk_small_pos', 'count': 214}, {'name': 'frenet_par120_perp020', 'count': 210}, {'name': 'fs_3d_planar', 'count': 197}]
+GAUGE model=attn_gru fold=3 stage=finetune epoch=1/5 loss=25.86931 arg_hit=0.6387 soft_hit=0.6419 soft_temp=0.05 arg_mean=0.012274 soft_mean=0.012255 best_soft_hit=0.6419 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 631}, {'name': 'jerk_small_pos', 'count': 237}, {'name': 'frenet_par120_perp020', 'count': 208}, {'name': 'frenet_par110_perp_neg020', 'count': 201}]
+GAUGE model=attn_gru fold=3 stage=finetune epoch=2/5 loss=25.82474 arg_hit=0.6382 soft_hit=0.6419 soft_temp=0.05 arg_mean=0.012266 soft_mean=0.012256 best_soft_hit=0.6419 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 594}, {'name': 'jerk_small_pos', 'count': 244}, {'name': 'frenet_par110_perp_neg020', 'count': 239}, {'name': 'frenet_par120_perp020', 'count': 210}]
+GAUGE model=attn_gru fold=3 stage=finetune epoch=3/5 loss=25.81363 arg_hit=0.6377 soft_hit=0.6408 soft_temp=0.05 arg_mean=0.012269 soft_mean=0.012258 best_soft_hit=0.6419 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 572}, {'name': 'frenet_par110_perp_neg020', 'count': 271}, {'name': 'jerk_small_pos', 'count': 258}, {'name': 'frenet_par120_perp020', 'count': 207}]
+GAUGE model=attn_gru fold=3 stage=finetune epoch=4/5 loss=25.79422 arg_hit=0.6387 soft_hit=0.6398 soft_temp=0.05 arg_mean=0.012265 soft_mean=0.012259 best_soft_hit=0.6419 wait=3/4 top=[{'name': 'speed_norm_acc_par', 'count': 576}, {'name': 'frenet_par110_perp_neg020', 'count': 280}, {'name': 'jerk_small_pos', 'count': 258}, {'name': 'frenet_par120_perp020', 'count': 207}]
+GAUGE model=attn_gru fold=3 stage=finetune epoch=5/5 loss=25.78810 arg_hit=0.6382 soft_hit=0.6393 soft_temp=0.03 arg_mean=0.012269 soft_mean=0.012258 best_soft_hit=0.6419 wait=4/4 top=[{'name': 'speed_norm_acc_par', 'count': 580}, {'name': 'frenet_par110_perp_neg020', 'count': 281}, {'name': 'jerk_small_pos', 'count': 255}, {'name': 'frenet_par120_perp020', 'count': 211}]
+EARLY_STOP model=attn_gru fold=3 stage=finetune epoch=5 best_soft_hit=0.6419
+FINETUNE_ROLLBACK model=attn_gru fold=3 pre_soft_hit=0.6393 fine_soft_hit=0.6372
+FOLD_START model=attn_gru fold=4/5 train_pre=207480 pre_eff=191919.0 norm=real train_fine=7980 val=2020 oracle_hit=0.7624 prior_top=[{'name': 'speed_norm_acc_par', 'count': 2020}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=1/10 loss=34.13018 arg_hit=0.6139 soft_hit=0.6292 soft_temp=0.3 arg_mean=0.012839 soft_mean=0.012668 best_soft_hit=0.6292 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 915}, {'name': 'jerk_small_pos', 'count': 594}, {'name': 'acc_2d1_060', 'count': 258}, {'name': 'p0_2d1', 'count': 127}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=2/10 loss=28.91216 arg_hit=0.6312 soft_hit=0.6431 soft_temp=0.3 arg_mean=0.012542 soft_mean=0.012462 best_soft_hit=0.6431 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 474}, {'name': 'speed_norm_acc_par', 'count': 439}, {'name': 'acc_2d1_060', 'count': 175}, {'name': 'latency_short_turn_pos_090', 'count': 152}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=3/10 loss=28.16029 arg_hit=0.6371 soft_hit=0.6401 soft_temp=0.07 arg_mean=0.012244 soft_mean=0.012200 best_soft_hit=0.6431 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 516}, {'name': 'frenet_par110_perp_neg020', 'count': 472}, {'name': 'fs_3d_planar', 'count': 393}, {'name': 'rot_low_080', 'count': 141}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=4/10 loss=27.68548 arg_hit=0.6416 soft_hit=0.6436 soft_temp=0.15 arg_mean=0.012167 soft_mean=0.012167 best_soft_hit=0.6436 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 500}, {'name': 'frenet_par110_perp_neg020', 'count': 388}, {'name': 'jerk_small_neg', 'count': 254}, {'name': 'fs_3d_planar', 'count': 224}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=5/10 loss=26.98794 arg_hit=0.6411 soft_hit=0.6446 soft_temp=0.07 arg_mean=0.012081 soft_mean=0.012049 best_soft_hit=0.6446 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 467}, {'name': 'jerk_small_neg', 'count': 305}, {'name': 'frenet_par110_perp_neg020', 'count': 285}, {'name': 'latency_long_frenet_best_108', 'count': 195}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=6/10 loss=26.73892 arg_hit=0.6416 soft_hit=0.6465 soft_temp=0.1 arg_mean=0.012044 soft_mean=0.011987 best_soft_hit=0.6465 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 580}, {'name': 'frenet_par110_perp_neg020', 'count': 282}, {'name': 'jerk_small_neg', 'count': 241}, {'name': 'fs_3d_planar', 'count': 178}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=7/10 loss=27.17094 arg_hit=0.6470 soft_hit=0.6485 soft_temp=0.15 arg_mean=0.011985 soft_mean=0.011967 best_soft_hit=0.6485 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 541}, {'name': 'frenet_par110_perp_neg020', 'count': 286}, {'name': 'jerk_small_neg', 'count': 270}, {'name': 'jerk_small_pos', 'count': 222}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=8/10 loss=26.31482 arg_hit=0.6465 soft_hit=0.6490 soft_temp=0.1 arg_mean=0.011927 soft_mean=0.011919 best_soft_hit=0.6490 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 510}, {'name': 'jerk_small_neg', 'count': 330}, {'name': 'frenet_par110_perp_neg020', 'count': 283}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 174}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=9/10 loss=26.03990 arg_hit=0.6500 soft_hit=0.6510 soft_temp=0.07 arg_mean=0.011900 soft_mean=0.011887 best_soft_hit=0.6510 wait=0/4 top=[{'name': 'jerk_small_neg', 'count': 393}, {'name': 'frenet_par110_perp_neg020', 'count': 350}, {'name': 'speed_norm_acc_par', 'count': 315}, {'name': 'fs_3d_planar', 'count': 234}]
+GAUGE model=attn_gru fold=4 stage=pretrain epoch=10/10 loss=26.09837 arg_hit=0.6490 soft_hit=0.6495 soft_temp=0.07 arg_mean=0.011892 soft_mean=0.011865 best_soft_hit=0.6510 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 618}, {'name': 'frenet_par110_perp_neg020', 'count': 280}, {'name': 'jerk_small_neg', 'count': 272}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 198}]
+GAUGE model=attn_gru fold=4 stage=finetune_head epoch=1/3 loss=25.41638 arg_hit=0.6510 soft_hit=0.6510 soft_temp=0.05 arg_mean=0.011901 soft_mean=0.011877 best_soft_hit=0.6510 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 377}, {'name': 'jerk_small_neg', 'count': 376}, {'name': 'speed_norm_acc_par', 'count': 368}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 178}]
+GAUGE model=attn_gru fold=4 stage=finetune_head epoch=2/3 loss=25.38724 arg_hit=0.6520 soft_hit=0.6505 soft_temp=0.03 arg_mean=0.011903 soft_mean=0.011873 best_soft_hit=0.6510 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 411}, {'name': 'frenet_par110_perp_neg020', 'count': 394}, {'name': 'jerk_small_neg', 'count': 361}, {'name': 'jerk_small_pos', 'count': 182}]
+GAUGE model=attn_gru fold=4 stage=finetune_head epoch=3/3 loss=25.32578 arg_hit=0.6515 soft_hit=0.6510 soft_temp=0.2 arg_mean=0.011894 soft_mean=0.011928 best_soft_hit=0.6510 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 454}, {'name': 'frenet_par110_perp_neg020', 'count': 409}, {'name': 'jerk_small_neg', 'count': 350}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 177}]
+GAUGE model=attn_gru fold=4 stage=finetune epoch=1/5 loss=25.37360 arg_hit=0.6530 soft_hit=0.6505 soft_temp=0.03 arg_mean=0.011903 soft_mean=0.011872 best_soft_hit=0.6505 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 418}, {'name': 'speed_norm_acc_par', 'count': 388}, {'name': 'jerk_small_neg', 'count': 369}, {'name': 'jerk_small_pos', 'count': 175}]
+GAUGE model=attn_gru fold=4 stage=finetune epoch=2/5 loss=25.34631 arg_hit=0.6525 soft_hit=0.6505 soft_temp=0.05 arg_mean=0.011898 soft_mean=0.011866 best_soft_hit=0.6505 wait=1/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 444}, {'name': 'speed_norm_acc_par', 'count': 407}, {'name': 'jerk_small_neg', 'count': 376}, {'name': 'jerk_small_pos', 'count': 167}]
+GAUGE model=attn_gru fold=4 stage=finetune epoch=3/5 loss=25.31209 arg_hit=0.6515 soft_hit=0.6505 soft_temp=0.05 arg_mean=0.011907 soft_mean=0.011862 best_soft_hit=0.6505 wait=2/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 481}, {'name': 'speed_norm_acc_par', 'count': 429}, {'name': 'jerk_small_neg', 'count': 360}, {'name': 'jerk_small_pos', 'count': 156}]
+GAUGE model=attn_gru fold=4 stage=finetune epoch=4/5 loss=25.29298 arg_hit=0.6520 soft_hit=0.6500 soft_temp=0.2 arg_mean=0.011905 soft_mean=0.011915 best_soft_hit=0.6505 wait=3/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 503}, {'name': 'speed_norm_acc_par', 'count': 449}, {'name': 'jerk_small_neg', 'count': 352}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 143}]
+GAUGE model=attn_gru fold=4 stage=finetune epoch=5/5 loss=25.27000 arg_hit=0.6520 soft_hit=0.6500 soft_temp=0.03 arg_mean=0.011897 soft_mean=0.011861 best_soft_hit=0.6505 wait=4/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 523}, {'name': 'speed_norm_acc_par', 'count': 461}, {'name': 'jerk_small_neg', 'count': 329}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 141}]
+EARLY_STOP model=attn_gru fold=4 stage=finetune epoch=5 best_soft_hit=0.6505
+FINETUNE_ROLLBACK model=attn_gru fold=4 pre_soft_hit=0.6510 fine_soft_hit=0.6490
+FOLD_START model=attn_gru fold=5/5 train_pre=208208 pre_eff=192592.4 norm=real train_fine=8008 val=1992 oracle_hit=0.7485 prior_top=[{'name': 'speed_norm_acc_par', 'count': 1992}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=1/10 loss=33.12394 arg_hit=0.5914 soft_hit=0.6099 soft_temp=0.2 arg_mean=0.013415 soft_mean=0.013075 best_soft_hit=0.6099 wait=0/4 top=[{'name': 'fs_3d_planar', 'count': 1059}, {'name': 'acc_2d1_060', 'count': 432}, {'name': 'jerk_small_pos', 'count': 432}, {'name': 'frenet_par120_perp020', 'count': 38}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=2/10 loss=29.35686 arg_hit=0.6175 soft_hit=0.6215 soft_temp=0.1 arg_mean=0.013009 soft_mean=0.012861 best_soft_hit=0.6215 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 538}, {'name': 'p0_2d1', 'count': 355}, {'name': 'fs_3d_planar', 'count': 273}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 168}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=3/10 loss=28.45815 arg_hit=0.6325 soft_hit=0.6325 soft_temp=0.05 arg_mean=0.012881 soft_mean=0.012836 best_soft_hit=0.6325 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 653}, {'name': 'speed_norm_acc_par', 'count': 454}, {'name': 'acc_2d1_060', 'count': 289}, {'name': 'frenet_fast_par120_perp_neg020', 'count': 182}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=4/10 loss=27.63063 arg_hit=0.6265 soft_hit=0.6345 soft_temp=0.07 arg_mean=0.012727 soft_mean=0.012666 best_soft_hit=0.6345 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 593}, {'name': 'speed_norm_acc_par', 'count': 335}, {'name': 'fs_3d_planar', 'count': 250}, {'name': 'jerk_small_neg', 'count': 182}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=5/10 loss=27.07524 arg_hit=0.6370 soft_hit=0.6421 soft_temp=0.07 arg_mean=0.012581 soft_mean=0.012552 best_soft_hit=0.6421 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 470}, {'name': 'frenet_par110_perp_neg020', 'count': 384}, {'name': 'jerk_small_neg', 'count': 267}, {'name': 'jerk_small_pos', 'count': 189}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=6/10 loss=26.22238 arg_hit=0.6330 soft_hit=0.6386 soft_temp=0.03 arg_mean=0.012501 soft_mean=0.012476 best_soft_hit=0.6421 wait=1/4 top=[{'name': 'speed_norm_acc_par', 'count': 525}, {'name': 'fs_3d_planar', 'count': 295}, {'name': 'jerk_small_neg', 'count': 293}, {'name': 'frenet_par110_perp_neg020', 'count': 241}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=7/10 loss=26.49782 arg_hit=0.6381 soft_hit=0.6406 soft_temp=0.1 arg_mean=0.012475 soft_mean=0.012452 best_soft_hit=0.6421 wait=2/4 top=[{'name': 'speed_norm_acc_par', 'count': 430}, {'name': 'jerk_small_neg', 'count': 386}, {'name': 'frenet_par110_perp_neg020', 'count': 338}, {'name': 'jerk_small_pos', 'count': 168}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=8/10 loss=25.91030 arg_hit=0.6365 soft_hit=0.6401 soft_temp=0.03 arg_mean=0.012426 soft_mean=0.012403 best_soft_hit=0.6421 wait=3/4 top=[{'name': 'jerk_small_neg', 'count': 429}, {'name': 'frenet_par110_perp_neg020', 'count': 381}, {'name': 'speed_norm_acc_par', 'count': 279}, {'name': 'jerk_small_pos', 'count': 220}]
+GAUGE model=attn_gru fold=5 stage=pretrain epoch=9/10 loss=25.81668 arg_hit=0.6396 soft_hit=0.6406 soft_temp=0.03 arg_mean=0.012416 soft_mean=0.012395 best_soft_hit=0.6421 wait=4/4 top=[{'name': 'speed_norm_acc_par', 'count': 417}, {'name': 'jerk_small_neg', 'count': 311}, {'name': 'fs_3d_planar', 'count': 243}, {'name': 'frenet_par110_perp_neg020', 'count': 230}]
+EARLY_STOP model=attn_gru fold=5 stage=pretrain epoch=9 best_soft_hit=0.6421
+GAUGE model=attn_gru fold=5 stage=finetune_head epoch=1/3 loss=25.75118 arg_hit=0.6391 soft_hit=0.6421 soft_temp=0.05 arg_mean=0.012571 soft_mean=0.012542 best_soft_hit=0.6421 wait=0/4 top=[{'name': 'speed_norm_acc_par', 'count': 457}, {'name': 'frenet_par110_perp_neg020', 'count': 428}, {'name': 'jerk_small_neg', 'count': 277}, {'name': 'jerk_small_pos', 'count': 190}]
+GAUGE model=attn_gru fold=5 stage=finetune_head epoch=2/3 loss=25.71746 arg_hit=0.6401 soft_hit=0.6426 soft_temp=0.05 arg_mean=0.012562 soft_mean=0.012536 best_soft_hit=0.6426 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 461}, {'name': 'speed_norm_acc_par', 'count': 454}, {'name': 'jerk_small_neg', 'count': 283}, {'name': 'jerk_small_pos', 'count': 189}]
+GAUGE model=attn_gru fold=5 stage=finetune_head epoch=3/3 loss=25.67897 arg_hit=0.6396 soft_hit=0.6421 soft_temp=0.05 arg_mean=0.012547 soft_mean=0.012530 best_soft_hit=0.6426 wait=1/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 497}, {'name': 'speed_norm_acc_par', 'count': 434}, {'name': 'jerk_small_neg', 'count': 289}, {'name': 'jerk_small_pos', 'count': 195}]
+GAUGE model=attn_gru fold=5 stage=finetune epoch=1/5 loss=25.67260 arg_hit=0.6386 soft_hit=0.6416 soft_temp=0.07 arg_mean=0.012565 soft_mean=0.012537 best_soft_hit=0.6416 wait=0/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 550}, {'name': 'speed_norm_acc_par', 'count': 394}, {'name': 'jerk_small_neg', 'count': 294}, {'name': 'jerk_small_pos', 'count': 208}]
+GAUGE model=attn_gru fold=5 stage=finetune epoch=2/5 loss=25.62748 arg_hit=0.6370 soft_hit=0.6411 soft_temp=0.07 arg_mean=0.012570 soft_mean=0.012534 best_soft_hit=0.6416 wait=1/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 631}, {'name': 'speed_norm_acc_par', 'count': 363}, {'name': 'jerk_small_neg', 'count': 280}, {'name': 'jerk_small_pos', 'count': 225}]
+GAUGE model=attn_gru fold=5 stage=finetune epoch=3/5 loss=25.59083 arg_hit=0.6376 soft_hit=0.6391 soft_temp=0.07 arg_mean=0.012576 soft_mean=0.012531 best_soft_hit=0.6416 wait=2/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 705}, {'name': 'speed_norm_acc_par', 'count': 342}, {'name': 'jerk_small_neg', 'count': 262}, {'name': 'jerk_small_pos', 'count': 231}]
+GAUGE model=attn_gru fold=5 stage=finetune epoch=4/5 loss=25.57805 arg_hit=0.6381 soft_hit=0.6396 soft_temp=0.1 arg_mean=0.012556 soft_mean=0.012538 best_soft_hit=0.6416 wait=3/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 760}, {'name': 'speed_norm_acc_par', 'count': 334}, {'name': 'jerk_small_neg', 'count': 250}, {'name': 'jerk_small_pos', 'count': 228}]
+GAUGE model=attn_gru fold=5 stage=finetune epoch=5/5 loss=25.56072 arg_hit=0.6381 soft_hit=0.6391 soft_temp=0.07 arg_mean=0.012554 soft_mean=0.012523 best_soft_hit=0.6416 wait=4/4 top=[{'name': 'frenet_par110_perp_neg020', 'count': 788}, {'name': 'speed_norm_acc_par', 'count': 328}, {'name': 'jerk_small_neg', 'count': 240}, {'name': 'jerk_small_pos', 'count': 230}]
+EARLY_STOP model=attn_gru fold=5 stage=finetune epoch=5 best_soft_hit=0.6416
+FULL_START model=attn_gru pre=260000 pre_eff=240500.0 norm=real fine=10000 prior_top=[{'name': 'speed_norm_acc_par', 'count': 1}]
+FULL_GAUGE stage=pretrain_full epoch=1/13 loss=32.90983
+FULL_GAUGE stage=pretrain_full epoch=2/13 loss=29.29171
+FULL_GAUGE stage=pretrain_full epoch=3/13 loss=28.26661
+FULL_GAUGE stage=pretrain_full epoch=4/13 loss=27.77873
+FULL_GAUGE stage=pretrain_full epoch=5/13 loss=26.85836
+FULL_GAUGE stage=pretrain_full epoch=6/13 loss=26.83552
+FULL_GAUGE stage=pretrain_full epoch=7/13 loss=26.00126
+FULL_GAUGE stage=pretrain_full epoch=8/13 loss=26.51371
+FULL_GAUGE stage=pretrain_full epoch=9/13 loss=25.70112
+FULL_GAUGE stage=pretrain_full epoch=10/13 loss=25.43945
+FULL_GAUGE stage=pretrain_full epoch=11/13 loss=25.30320
+FULL_GAUGE stage=pretrain_full epoch=12/13 loss=26.05154
+FULL_GAUGE stage=pretrain_full epoch=13/13 loss=26.29226
+FULL_GAUGE stage=finetune_full epoch=1/7 loss=25.13709
+FULL_GAUGE stage=finetune_full epoch=2/7 loss=25.01897
+FULL_GAUGE stage=finetune_full epoch=3/7 loss=24.94437
+FULL_GAUGE stage=finetune_full epoch=4/7 loss=24.92687
+FULL_GAUGE stage=finetune_full epoch=5/7 loss=24.88347
+FULL_GAUGE stage=finetune_full epoch=6/7 loss=24.87057
+FULL_GAUGE stage=finetune_full epoch=7/7 loss=24.85880
+{
+  "root": "/workspace/daycon-muflight/data",
+  "out_dir": "/workspace/daycon-muflight/runs/baseline/H001_ranking-loss",
+  "device": "cuda:0",
+  "candidate_names": [
+    "p0_2d1",
+    "acc_2d1_060",
+    "frenet_par110_perp_neg020",
+    "jerk_small_pos",
+    "jerk_small_neg",
+    "frenet_par120_perp020",
+    "frenet_fast_par120_perp_neg020",
+    "latency_short_frenet_best_085",
+    "latency_long_frenet_best_108",
+    "latency_long_frenet_best_115",
+    "latency_long_turn_neg_110",
+    "latency_short_turn_pos_090",
+    "rot_low_080",
+    "rot_mid_100",
+    "rot_mid_120",
+    "rot_high_150",
+    "arc_continue",
+    "arc_decel",
+    "arc_accel",
+    "fs_3d_planar",
+    "fs_3d_low_torsion",
+    "fs_3d_binormal",
+    "speed_slope_d1_120",
+    "speed_norm_acc_par",
+    "omega_speed"
+  ],
+  "family_names": [
+    "base",
+    "acc",
+    "frenet",
+    "turn",
+    "jerk",
+    "latency"
+  ],
+  "candidate_family": {
+    "p0_2d1": "base",
+    "acc_2d1_060": "acc",
+    "frenet_par110_perp_neg020": "acc",
+    "jerk_small_pos": "acc",
+    "jerk_small_neg": "acc",
+    "frenet_par120_perp020": "frenet",
+    "frenet_fast_par120_perp_neg020": "turn",
+    "latency_short_frenet_best_085": "turn",
+    "latency_long_frenet_best_108": "turn",
+    "latency_long_frenet_best_115": "turn",
+    "latency_long_turn_neg_110": "turn",
+    "latency_short_turn_pos_090": "turn",
+    "rot_low_080": "turn",
+    "rot_mid_100": "turn",
+    "rot_mid_120": "jerk",
+    "rot_high_150": "jerk",
+    "arc_continue": "turn",
+    "arc_decel": "turn",
+    "arc_accel": "turn",
+    "fs_3d_planar": "turn",
+    "fs_3d_low_torsion": "turn",
+    "fs_3d_binormal": "latency",
+    "speed_slope_d1_120": "latency",
+    "speed_norm_acc_par": "latency",
+    "omega_speed": "latency"
+  },
+  "hier_family_gate": false,
+  "family_gate_scale": 1.0,
+  "latent_env_experts": 1,
+  "latent_physics_adapter": false,
+  "latent_physics_coeff_scale": 0.85,
+  "final_repeat": 1,
+  "include_late_fine": false,
+  "fine_ensemble": false,
+  "fine_branch_scales": [
+    0.65,
+    1.0,
+    1.45
+  ],
+  "fine_branch_weight_powers": [
+    0.75,
+    1.0,
+    1.35
+  ],
+  "include_pre_branch": false,
+  "candidate_metrics": {
+    "p0_2d1": {
+      "hit": 0.5787,
+      "hits": 5787,
+      "mean": 0.012940611690282822,
+      "q50": 0.008324827998876572,
+      "q75": 0.013364028185606003,
+      "q90": 0.026507442817091942,
+      "q95": 0.04479984566569328,
+      "q99": 0.09399053454399109
+    },
+    "acc_2d1_060": {
+      "hit": 0.6008,
+      "hits": 6008,
+      "mean": 0.012977389618754387,
+      "q50": 0.008157627657055855,
+      "q75": 0.013418221846222878,
+      "q90": 0.027342818677425385,
+      "q95": 0.044838931411504745,
+      "q99": 0.09297627210617065
+    },
+    "frenet_par110_perp_neg020": {
+      "hit": 0.6284,
+      "hits": 6284,
+      "mean": 0.01300755050033331,
+      "q50": 0.007649529725313187,
+      "q75": 0.012860982678830624,
+      "q90": 0.028533415868878365,
+      "q95": 0.05024345964193344,
+      "q99": 0.09626592695713043
+    },
+    "jerk_small_pos": {
+      "hit": 0.6245,
+      "hits": 6245,
+      "mean": 0.01280124019831419,
+      "q50": 0.007709826342761517,
+      "q75": 0.012829868122935295,
+      "q90": 0.02796880528330803,
+      "q95": 0.047345783561468124,
+      "q99": 0.0951463058590889
+    },
+    "jerk_small_neg": {
+      "hit": 0.6184,
+      "hits": 6184,
+      "mean": 0.012934890575706959,
+      "q50": 0.007797428406774998,
+      "q75": 0.01301543042063713,
+      "q90": 0.028154784813523293,
+      "q95": 0.047935400158166885,
+      "q99": 0.09477393329143524
+    },
+    "frenet_par120_perp020": {
+      "hit": 0.628,
+      "hits": 6280,
+      "mean": 0.01296951249241829,
+      "q50": 0.007567848078906536,
+      "q75": 0.012836704030632973,
+      "q90": 0.028885377570986748,
+      "q95": 0.04959358274936676,
+      "q99": 0.0979846715927124
+    },
+    "frenet_fast_par120_perp_neg020": {
+      "hit": 0.5997,
+      "hits": 5997,
+      "mean": 0.013848390430212021,
+      "q50": 0.008001870475709438,
+      "q75": 0.01372114010155201,
+      "q90": 0.030676215887069702,
+      "q95": 0.05326594412326813,
+      "q99": 0.10215502977371216
+    },
+    "latency_short_frenet_best_085": {
+      "hit": 0.4525,
+      "hits": 4525,
+      "mean": 0.014922726899385452,
+      "q50": 0.011043054051697254,
+      "q75": 0.017741814255714417,
+      "q90": 0.026544110849499702,
+      "q95": 0.04387081786990166,
+      "q99": 0.08669020235538483
+    },
+    "latency_long_frenet_best_108": {
+      "hit": 0.5567,
+      "hits": 5567,
+      "mean": 0.014467422850430012,
+      "q50": 0.008886678144335747,
+      "q75": 0.014599541202187538,
+      "q90": 0.0310345645993948,
+      "q95": 0.05318261310458183,
+      "q99": 0.10236536711454391
+    },
+    "latency_long_frenet_best_115": {
+      "hit": 0.4323,
+      "hits": 4323,
+      "mean": 0.016962874680757523,
+      "q50": 0.011483007110655308,
+      "q75": 0.018266482278704643,
+      "q90": 0.03497908636927605,
+      "q95": 0.0575670525431633,
+      "q99": 0.10807359218597412
+    },
+    "latency_long_turn_neg_110": {
+      "hit": 0.5173,
+      "hits": 5173,
+      "mean": 0.015358822420239449,
+      "q50": 0.00968199037015438,
+      "q75": 0.0156332328915596,
+      "q90": 0.033260639756917953,
+      "q95": 0.05621683970093727,
+      "q99": 0.10649065673351288
+    },
+    "latency_short_turn_pos_090": {
+      "hit": 0.5041,
+      "hits": 5041,
+      "mean": 0.013873583637177944,
+      "q50": 0.009935718029737473,
+      "q75": 0.015491246245801449,
+      "q90": 0.02585352025926113,
+      "q95": 0.04377012699842453,
+      "q99": 0.08786025643348694
+    },
+    "rot_low_080": {
+      "hit": 0.466,
+      "hits": 4660,
+      "mean": 0.017550963908433914,
+      "q50": 0.010744143277406693,
+      "q75": 0.019613157957792282,
+      "q90": 0.039994481950998306,
+      "q95": 0.06039652228355408,
+      "q99": 0.107121542096138
+    },
+    "rot_mid_100": {
+      "hit": 0.4316,
+      "hits": 4316,
+      "mean": 0.01877135969698429,
+      "q50": 0.01155995111912489,
+      "q75": 0.021553903818130493,
+      "q90": 0.04308037459850311,
+      "q95": 0.06392328441143036,
+      "q99": 0.10904081165790558
+    },
+    "rot_mid_120": {
+      "hit": 0.4015,
+      "hits": 4015,
+      "mean": 0.019987912848591805,
+      "q50": 0.012460744008421898,
+      "q75": 0.023856984451413155,
+      "q90": 0.04616214707493782,
+      "q95": 0.06604970246553421,
+      "q99": 0.11372420936822891
+    },
+    "rot_high_150": {
+      "hit": 0.3601,
+      "hits": 3601,
+      "mean": 0.02211543172597885,
+      "q50": 0.013793984428048134,
+      "q75": 0.027140535414218903,
+      "q90": 0.05182505026459694,
+      "q95": 0.07188703119754791,
+      "q99": 0.11874273419380188
+    },
+    "arc_continue": {
+      "hit": 0.4316,
+      "hits": 4316,
+      "mean": 0.01877135969698429,
+      "q50": 0.01155995111912489,
+      "q75": 0.021553903818130493,
+      "q90": 0.04308037459850311,
+      "q95": 0.06392328441143036,
+      "q99": 0.10904081165790558
+    },
+    "arc_decel": {
+      "hit": 0.4493,
+      "hits": 4493,
+      "mean": 0.01817840337753296,
+      "q50": 0.01114499568939209,
+      "q75": 0.020631957799196243,
+      "q90": 0.04156966134905815,
+      "q95": 0.06253275275230408,
+      "q99": 0.10838980227708817
+    },
+    "arc_accel": {
+      "hit": 0.4169,
+      "hits": 4169,
+      "mean": 0.019358675926923752,
+      "q50": 0.012016352266073227,
+      "q75": 0.022637339308857918,
+      "q90": 0.044685233384370804,
+      "q95": 0.06484569609165192,
+      "q99": 0.11206609010696411
+    },
+    "fs_3d_planar": {
+      "hit": 0.5787,
+      "hits": 5787,
+      "mean": 0.012940611690282822,
+      "q50": 0.008324827998876572,
+      "q75": 0.013364028185606003,
+      "q90": 0.026507442817091942,
+      "q95": 0.04479984566569328,
+      "q99": 0.09399053454399109
+    },
+    "fs_3d_low_torsion": {
+      "hit": 0.0057,
+      "hits": 57,
+      "mean": 0.18433122336864471,
+      "q50": 0.1078152060508728,
+      "q75": 0.194212406873703,
+      "q90": 0.4118277430534363,
+      "q95": 0.62700355052948,
+      "q99": 1.2268562316894531
+    },
+    "fs_3d_binormal": {
+      "hit": 0.0015,
+      "hits": 15,
+      "mean": 0.36684417724609375,
+      "q50": 0.2135707437992096,
+      "q75": 0.3865520656108856,
+      "q90": 0.8197935223579407,
+      "q95": 1.252294898033142,
+      "q99": 2.445045232772827
+    },
+    "speed_slope_d1_120": {
+      "hit": 0.1056,
+      "hits": 1056,
+      "mean": 0.03258928284049034,
+      "q50": 0.02723550796508789,
+      "q75": 0.04298577457666397,
+      "q90": 0.05660099536180496,
+      "q95": 0.07020930200815201,
+      "q99": 0.12357409298419952
+    },
+    "speed_norm_acc_par": {
+      "hit": 0.6342,
+      "hits": 6342,
+      "mean": 0.013012048788368702,
+      "q50": 0.0072838361375033855,
+      "q75": 0.012911696918308735,
+      "q90": 0.028926940634846687,
+      "q95": 0.05027482286095619,
+      "q99": 0.0952911302447319
+    },
+    "omega_speed": {
+      "hit": 0.0225,
+      "hits": 225,
+      "mean": 0.05584798753261566,
+      "q50": 0.04923491179943085,
+      "q75": 0.07446365058422089,
+      "q90": 0.10762330889701843,
+      "q95": 0.11020747572183609,
+      "q99": 0.15747319161891937
+    }
+  },
+  "candidate_oracle_metrics": {
+    "hit": 0.7562,
+    "hits": 7562,
+    "mean": 0.009228027425706387,
+    "q50": 0.0051347920671105385,
+    "q75": 0.009835411794483662,
+    "q90": 0.019060274586081505,
+    "q95": 0.033572178333997726,
+    "q99": 0.07637598365545273
+  },
+  "fold_rows": [
+    {
+      "fold": 1,
+      "attn_gru_argmax": {
+        "hit": 0.657920792079208,
+        "hits": 1329,
+        "mean": 0.011887161061167717,
+        "q50": 0.00697085028514266,
+        "q75": 0.012227214872837067,
+        "q90": 0.024587389081716537,
+        "q95": 0.042499855160713196,
+        "q99": 0.09137792885303497
+      },
+      "attn_gru_pre_loss_last": 26.53552008114593,
+      "attn_gru_fine_loss_last": 25.11103644598098,
+      "attn_gru_pre_best_epoch": 10,
+      "attn_gru_pre_best_hit": 0.6628712871287129,
+      "attn_gru_fine_best_epoch": 2,
+      "attn_gru_fine_best_hit": 0.6628712871287129,
+      "oracle": {
+        "hit": 0.7653465346534654,
+        "hits": 1546,
+        "mean": 0.00907998625189066,
+        "q50": 0.004977211821824312,
+        "q75": 0.009648122824728489,
+        "q90": 0.018779054284095764,
+        "q95": 0.03421337530016899,
+        "q99": 0.07720085978507996
+      },
+      "ensemble_argmax": {
+        "hit": 0.657920792079208,
+        "hits": 1329,
+        "mean": 0.011887161061167717,
+        "q50": 0.00697085028514266,
+        "q75": 0.012227214872837067,
+        "q90": 0.024587389081716537,
+        "q95": 0.042499855160713196,
+        "q99": 0.09137792885303497
+      }
+    },
+    {
+      "fold": 2,
+      "attn_gru_argmax": {
+        "hit": 0.6448461162677088,
+        "hits": 1320,
+        "mean": 0.011849019676446915,
+        "q50": 0.007116362918168306,
+        "q75": 0.012582080438733101,
+        "q90": 0.024518566206097603,
+        "q95": 0.038987841457128525,
+        "q99": 0.09068629145622253
+      },
+      "attn_gru_pre_loss_last": 25.839762687747676,
+      "attn_gru_fine_loss_last": 25.135077050207965,
+      "attn_gru_pre_best_epoch": 10,
+      "attn_gru_pre_best_hit": 0.6487542745481192,
+      "attn_gru_fine_best_epoch": 4,
+      "attn_gru_fine_best_hit": 0.6507083536883244,
+      "oracle": {
+        "hit": 0.7459697117733268,
+        "hits": 1527,
+        "mean": 0.009109734557569027,
+        "q50": 0.005057367496192455,
+        "q75": 0.010153215378522873,
+        "q90": 0.01888241246342659,
+        "q95": 0.030425947159528732,
+        "q99": 0.07780846208333969
+      },
+      "ensemble_argmax": {
+        "hit": 0.6448461162677088,
+        "hits": 1320,
+        "mean": 0.011849019676446915,
+        "q50": 0.007116362918168306,
+        "q75": 0.012582080438733101,
+        "q90": 0.024518566206097603,
+        "q95": 0.038987841457128525,
+        "q99": 0.09068629145622253
+      }
+    },
+    {
+      "fold": 3,
+      "attn_gru_argmax": {
+        "hit": 0.6361270171785528,
+        "hits": 1222,
+        "mean": 0.012300818227231503,
+        "q50": 0.007296582218259573,
+        "q75": 0.01243630237877369,
+        "q90": 0.025989463552832603,
+        "q95": 0.046457257121801376,
+        "q99": 0.08543477207422256
+      },
+      "attn_gru_pre_loss_last": 26.656737608038217,
+      "attn_gru_fine_loss_last": 25.78809586827273,
+      "attn_gru_pre_best_epoch": 4,
+      "attn_gru_pre_best_hit": 0.6418532014575742,
+      "attn_gru_fine_best_epoch": 1,
+      "attn_gru_fine_best_hit": 0.6418532014575742,
+      "oracle": {
+        "hit": 0.7589796980739199,
+        "hits": 1458,
+        "mean": 0.009381450712680817,
+        "q50": 0.005221533123403788,
+        "q75": 0.009717612527310848,
+        "q90": 0.019055932760238647,
+        "q95": 0.03364870697259903,
+        "q99": 0.07525235414505005
+      },
+      "ensemble_argmax": {
+        "hit": 0.6361270171785528,
+        "hits": 1222,
+        "mean": 0.012300818227231503,
+        "q50": 0.007296582218259573,
+        "q75": 0.01243630237877369,
+        "q90": 0.025989463552832603,
+        "q95": 0.046457257121801376,
+        "q99": 0.08543477207422256
+      }
+    },
+    {
+      "fold": 4,
+      "attn_gru_argmax": {
+        "hit": 0.65,
+        "hits": 1313,
+        "mean": 0.011899596080183983,
+        "q50": 0.006996278651058674,
+        "q75": 0.012220088392496109,
+        "q90": 0.02467028796672821,
+        "q95": 0.04353255406022072,
+        "q99": 0.09397469460964203
+      },
+      "attn_gru_pre_loss_last": 26.09837017960233,
+      "attn_gru_fine_loss_last": 25.269998845838963,
+      "attn_gru_pre_best_epoch": 9,
+      "attn_gru_pre_best_hit": 0.650990099009901,
+      "attn_gru_fine_best_epoch": 1,
+      "attn_gru_fine_best_hit": 0.6504950495049505,
+      "oracle": {
+        "hit": 0.7623762376237624,
+        "hits": 1540,
+        "mean": 0.00923201534897089,
+        "q50": 0.005162391811609268,
+        "q75": 0.009747744537889957,
+        "q90": 0.018877333030104637,
+        "q95": 0.03377732262015343,
+        "q99": 0.07029201835393906
+      },
+      "ensemble_argmax": {
+        "hit": 0.65,
+        "hits": 1313,
+        "mean": 0.011899596080183983,
+        "q50": 0.006996278651058674,
+        "q75": 0.012220088392496109,
+        "q90": 0.02467028796672821,
+        "q95": 0.04353255406022072,
+        "q99": 0.09397469460964203
+      }
+    },
+    {
+      "fold": 5,
+      "attn_gru_argmax": {
+        "hit": 0.6385542168674698,
+        "hits": 1272,
+        "mean": 0.012565306387841702,
+        "q50": 0.007604652084410191,
+        "q75": 0.012722737155854702,
+        "q90": 0.02647453360259533,
+        "q95": 0.04669538885354996,
+        "q99": 0.08949127048254013
+      },
+      "attn_gru_pre_loss_last": 25.816681871184798,
+      "attn_gru_fine_loss_last": 25.560719696791857,
+      "attn_gru_pre_best_epoch": 5,
+      "attn_gru_pre_best_hit": 0.6420682730923695,
+      "attn_gru_fine_best_epoch": 1,
+      "attn_gru_fine_best_hit": 0.641566265060241,
+      "oracle": {
+        "hit": 0.7484939759036144,
+        "hits": 1491,
+        "mean": 0.009347710758447647,
+        "q50": 0.005241460166871548,
+        "q75": 0.010022631846368313,
+        "q90": 0.019879143685102463,
+        "q95": 0.03440117835998535,
+        "q99": 0.07449833303689957
+      },
+      "ensemble_argmax": {
+        "hit": 0.6385542168674698,
+        "hits": 1272,
+        "mean": 0.012565306387841702,
+        "q50": 0.007604652084410191,
+        "q75": 0.012722737155854702,
+        "q90": 0.02647453360259533,
+        "q95": 0.04669538885354996,
+        "q99": 0.08949127048254013
+      }
+    }
+  ],
+  "model_oof": {
+    "attn_gru": {
+      "soft": {
+        "temperature": 0.07,
+        "metrics": {
+          "hit": 0.6491,
+          "hits": 6491,
+          "mean": 0.012066560797393322,
+          "q50": 0.0071981302462518215,
+          "q75": 0.012407742440700531,
+          "q90": 0.025202136486768723,
+          "q95": 0.043651092797517776,
+          "q99": 0.08997653424739838
+        }
+      },
+      "projected": {
+        "residual_weight": 1.0,
+        "temperature": 0.07,
+        "metrics": {
+          "hit": 0.6491,
+          "hits": 6491,
+          "mean": 0.012066560797393322,
+          "q50": 0.0071981302462518215,
+          "q75": 0.012407742440700531,
+          "q90": 0.025202136486768723,
+          "q95": 0.043651092797517776,
+          "q99": 0.08997653424739838
+        }
+      },
+      "argmax_soft_gate": {
+        "temperature": 0.07,
+        "margin_quantile": 0.98,
+        "margin_threshold": 0.22511091828346252,
+        "argmax_rate": 0.02,
+        "metrics": {
+          "hit": 0.6491,
+          "hits": 6491,
+          "mean": 0.012066314928233624,
+          "q50": 0.0071981302462518215,
+          "q75": 0.012407742440700531,
+          "q90": 0.025202136486768723,
+          "q95": 0.043651092797517776,
+          "q99": 0.08991824835538864
+        }
+      }
+    }
+  },
+  "oof_tcn_gru_ensemble_soft": {
+    "temperature": 0.07,
+    "metrics": {
+      "hit": 0.6491,
+      "hits": 6491,
+      "mean": 0.012066560797393322,
+      "q50": 0.0071981302462518215,
+      "q75": 0.012407742440700531,
+      "q90": 0.025202136486768723,
+      "q95": 0.043651092797517776,
+      "q99": 0.08997653424739838
+    }
+  },
+  "oof_tcn_gru_ensemble_projected": {
+    "residual_weight": 1.0,
+    "temperature": 0.07,
+    "metrics": {
+      "hit": 0.6491,
+      "hits": 6491,
+      "mean": 0.012066560797393322,
+      "q50": 0.0071981302462518215,
+      "q75": 0.012407742440700531,
+      "q90": 0.025202136486768723,
+      "q95": 0.043651092797517776,
+      "q99": 0.08997653424739838
+    }
+  },
+  "oof_tcn_gru_ensemble_argmax_soft_gate": {
+    "temperature": 0.07,
+    "margin_quantile": 0.98,
+    "margin_threshold": 0.22511091828346252,
+    "argmax_rate": 0.02,
+    "metrics": {
+      "hit": 0.6491,
+      "hits": 6491,
+      "mean": 0.012066314928233624,
+      "q50": 0.0071981302462518215,
+      "q75": 0.012407742440700531,
+      "q90": 0.025202136486768723,
+      "q95": 0.043651092797517776,
+      "q99": 0.08991824835538864
+    }
+  },
+  "oof_tcn_gru_ensemble_argmax": {
+    "hit": 0.6456,
+    "hits": 6456,
+    "mean": 0.012096415273845196,
+    "q50": 0.007192220538854599,
+    "q75": 0.012424291111528873,
+    "q90": 0.02535300701856613,
+    "q95": 0.043628934770822525,
+    "q99": 0.08992105722427368
+  },
+  "covered_rows": 10000,
+  "full_losses": {
+    "attn_gru": {
+      "pretrain": 26.292255778386043,
+      "finetune": 24.858796966552735,
+      "full_pre_epochs": 13,
+      "full_fine_epochs": 7
+    }
+  },
+  "files": [
+    "submission_attn_gru_selector_soft.csv",
+    "submission_selector_ensemble_soft.csv",
+    "submission_selector_ensemble_argmax.csv"
+  ]
+}
+[DONE] main elapsed=304.8s
+[c4] variant_a_check: {'keys': ['covered', 'y', 'cands', 'attn_gru_scores', 'ens_scores', 'attn_gru_prior', 'ens_prior', 'candidate_names'], 'regime_bias_table': '(absent — Variant A path)', 'variant_a_safe': True}
+BASELINE {"score_source": "/workspace/daycon-muflight/runs/baseline/H001_ranking-loss/oof_selector_scores.npz:ens_scores", "soft": {"temperature": 0.1, "metrics": {"hit": 0.6628712871287129, "hits": 1339, "mean": 0.01186279021203518, "q50": 0.00706447521224618, "q75": 0.012219150550663471, "q90": 0.02452555112540722, "q95": 0.04178234189748764, "q99": 0.09123273938894272}}, "gate": {"temperature": 0.1, "margin_quantile": 0.98, "margin_threshold": 0.2096443921327591, "argmax_rate": 0.020297029702970298, "metrics": {"hit": 0.6628712871287129, "hits": 1339, "mean": 0.011860485188663006, "q50": 0.00706447521224618, "q75": 0.012219150550663471, "q90": 0.02452555112540722, "q95": 0.04171597957611084, "q99": 0.09123273938894272}}}
+TRAIN_ROWS pre=598500 fine=199500 boundary_pre_weight=204774.7
+GAUGE stage=pretrain epoch=1 loss=0.199590 soft_hit=0.6653 gate_hit=0.6634 best_gate=0.6634 wait=0/4
+GAUGE stage=pretrain epoch=2 loss=0.175767 soft_hit=0.6649 gate_hit=0.6649 best_gate=0.6649 wait=0/4
+GAUGE stage=pretrain epoch=3 loss=0.163538 soft_hit=0.6658 gate_hit=0.6649 best_gate=0.6649 wait=1/4
+GAUGE stage=pretrain epoch=4 loss=0.150867 soft_hit=0.6649 gate_hit=0.6649 best_gate=0.6649 wait=2/4
+GAUGE stage=pretrain epoch=5 loss=0.148127 soft_hit=0.6649 gate_hit=0.6649 best_gate=0.6649 wait=3/4
+GAUGE stage=pretrain epoch=6 loss=0.145189 soft_hit=0.6683 gate_hit=0.6634 best_gate=0.6649 wait=4/4
+GAUGE stage=finetune epoch=1 loss=0.113526 soft_hit=0.6639 gate_hit=0.6609 best_gate=0.6649 wait=1/4
+GAUGE stage=finetune epoch=2 loss=0.110381 soft_hit=0.6629 gate_hit=0.6624 best_gate=0.6649 wait=2/4
+GAUGE stage=finetune epoch=3 loss=0.109149 soft_hit=0.6619 gate_hit=0.6629 best_gate=0.6649 wait=3/4
+GAUGE stage=finetune epoch=4 loss=0.107861 soft_hit=0.6644 gate_hit=0.6658 best_gate=0.6658 wait=0/4
+GAUGE stage=finetune epoch=5 loss=0.106847 soft_hit=0.6639 gate_hit=0.6653 best_gate=0.6658 wait=1/4
+GAUGE stage=finetune epoch=6 loss=0.106124 soft_hit=0.6639 gate_hit=0.6634 best_gate=0.6658 wait=2/4
+GAUGE stage=finetune epoch=7 loss=0.105572 soft_hit=0.6639 gate_hit=0.6644 best_gate=0.6658 wait=3/4
+GAUGE stage=finetune epoch=8 loss=0.104709 soft_hit=0.6634 gate_hit=0.6624 best_gate=0.6658 wait=4/4
+FULL_GAUGE stage=pretrain epoch=1 loss=0.190374
+FULL_GAUGE stage=pretrain epoch=2 loss=0.170131
+FULL_GAUGE stage=pretrain epoch=3 loss=0.157508
+FULL_GAUGE stage=pretrain epoch=4 loss=0.150528
+FULL_GAUGE stage=pretrain epoch=5 loss=0.146385
+FULL_GAUGE stage=pretrain epoch=6 loss=0.144440
+FULL_GAUGE stage=pretrain epoch=7 loss=0.142958
+FULL_GAUGE stage=pretrain epoch=8 loss=0.141620
+FULL_GAUGE stage=pretrain epoch=9 loss=0.141053
+FULL_GAUGE stage=pretrain epoch=10 loss=0.139291
+FULL_GAUGE stage=pretrain epoch=11 loss=0.138635
+FULL_GAUGE stage=pretrain epoch=12 loss=0.137592
+FULL_GAUGE stage=finetune epoch=1 loss=0.106263
+FULL_GAUGE stage=finetune epoch=2 loss=0.103072
+FULL_GAUGE stage=finetune epoch=3 loss=0.101516
+FULL_GAUGE stage=finetune epoch=4 loss=0.099731
+FULL_GAUGE stage=finetune epoch=5 loss=0.098828
+FULL_GAUGE stage=finetune epoch=6 loss=0.097920
+FULL_GAUGE stage=finetune epoch=7 loss=0.097567
+FULL_GAUGE stage=finetune epoch=8 loss=0.097260
+{
+  "soft": {
+    "temperature": 0.03,
+    "metrics": {
+      "hit": 0.6643564356435644,
+      "hits": 1342,
+      "mean": 0.011790359392762184,
+      "q50": 0.0069696493446826935,
+      "q75": 0.01204831525683403,
+      "q90": 0.024488624185323715,
+      "q95": 0.04183615371584892,
+      "q99": 0.09112362563610077
+    }
+  },
+  "gate": {
+    "temperature": 0.07,
+    "margin_quantile": 0.2,
+    "margin_threshold": 0.010927843861281872,
+    "argmax_rate": 0.8,
+    "metrics": {
+      "hit": 0.6658415841584159,
+      "hits": 1345,
+      "mean": 0.01180626917630434,
+      "q50": 0.00696705374866724,
+      "q75": 0.01210442092269659,
+      "q90": 0.024486994370818138,
+      "q95": 0.04238773509860039,
+      "q99": 0.09110746532678604
+    }
+  },
+  "argmax": {
+    "hit": 0.6618811881188119,
+    "hits": 1337,
+    "mean": 0.011825980618596077,
+    "q50": 0.006980026140809059,
+    "q75": 0.012139864265918732,
+    "q90": 0.024486994370818138,
+    "q95": 0.04238773509860039,
+    "q99": 0.09110746532678604
+  },
+  "candidate_oracle": {
+    "hit": 0.7653465346534654,
+    "hits": 1546,
+    "mean": 0.00907998625189066,
+    "q50": 0.004977211821824312,
+    "q75": 0.009648122824728489,
+    "q90": 0.018779054284095764,
+    "q95": 0.03421337530016899,
+    "q99": 0.07720085978507996
+  },
+  "test_files": [
+    "/workspace/daycon-muflight/runs/baseline/H001_ranking-loss/submission_boundary_tiny_soft.csv",
+    "/workspace/daycon-muflight/runs/baseline/H001_ranking-loss/submission_boundary_tiny_argmax.csv"
+  ]
+}
+[DONE] main elapsed=197.7s
+[c4] submission_step1.csv ← submission_boundary_tiny_soft.csv
+[OK] ranking_loss_summary.json: analysis/plan-009/ranking_loss_summary.json
+  oof_soft_hit=0.6482  top1=0.0922  gap=0.1080
+  G1 pass: {'oof_soft_hit_pass': False, 'top1_ranking_acc_pass': False, 'gap_ranking_pass': False, 'variant_a_safe_pass': True}
