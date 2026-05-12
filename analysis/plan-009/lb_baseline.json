@@ -23,15 +23,35 @@
       "status": "pending dacon-submit (할당량 소진, 다음 날 사용자 수동 호출)"
     },
     "plan_009_1": {
-      "submission_path": null,
-      "anchor": "best Phase submission of plan-009 (TBD at G_final)",
-      "estimated_lb": null,
-      "status": "pending plan-009 completion"
+      "submission_path": "runs/baseline/H002_corrector-strengthen/submission_step2.csv",
+      "anchor": "H002 sub-exp b (band-specific corrector, OOF fold 0 = 0.6653)",
+      "best_oof": 0.6653,
+      "real_gain_vs_plan_008_baseline": 0.0150,
+      "estimated_lb": 0.6873,
+      "estimated_lb_formula": "OOF 0.6653 + 0.022 gap (plan-005/008 trajectory)",
+      "scenario_class": "C (낮음) 0.69~0.72 LB 영역 의 상단",
+      "status": "pending dacon-submit (할당량 소진, 다음 날 사용자 수동 호출)",
+      "g_status_summary": {
+        "G0": "DONE (oracle_1cm=0.7562, oracle_1.5cm=0.8701, cap_saturation=0.2918)",
+        "G1": "SEVERE FAIL (H001 OOF=0.6482, ranking loss regression)",
+        "G2": "SEVERE spec (1/4) but +0.0150 real gain vs plan-008 baseline",
+        "G3_G4_G5": "SKIPPED (autonomous, plan-010 carry-over)",
+        "G_final": "DONE (H002 b best Phase 채택)"
+      }
     }
   },
   "lb_history_anchor": {
     "plan_005_stage6_variant_a_lb": 0.6796,
     "note": "plan-009 §N+5 박제. OOF→LB gap 추정 anchor."
   },
-  "decision_note": "spec-default — lb_baseline.json schema 가 plan-009 본문에 명시 부재로 자율 결정 채택 (CLAUDE.md Autonomous Execution Policy)."
+  "plan_010_carry_over": {
+    "candidates_file": "analysis/plan-009/next_plan_candidates.md",
+    "priority": [
+      "1. band-weight tuning ablation (G2 attribution 직접 후속)",
+      "2. ranking loss design ablation (G1 SEVERE root cause)",
+      "3. (조건부) framework 교체 (KNN/GP/plan-006 회귀) — LB<0.65 시",
+      "4. (조건부) Set Transformer arch swap — overfit risk"
+    ]
+  },
+  "decision_note": "spec-default — lb_baseline.json schema 가 plan-009 본문에 명시 부재로 자율 결정 채택 (CLAUDE.md Autonomous Execution Policy). plan_009_1 carry-over field 는 G_final c16 commit 에서 update."
 }
