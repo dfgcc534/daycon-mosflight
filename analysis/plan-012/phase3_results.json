@@ -1,0 +1,268 @@
+{
+  "exp_ids": [
+    "H026_phase3-boundary-weight",
+    "H027_phase3-scorer-arch",
+    "H028_phase3-r0-prior"
+  ],
+  "winner_id": "E0a",
+  "anchor_oof": 0.6415841584158416,
+  "n_sub_exp": 4,
+  "axis_summary": {
+    "E6_boundary_weight": {
+      "n_sub_exp": 1,
+      "deltas": {
+        "E6.bweight_on": 0.0
+      },
+      "max_delta": 0.0,
+      "best_sub_id": "E6.bweight_on",
+      "best_val_hit": 0.6415841584158416,
+      "positive_lever": false
+    },
+    "E7_scorer_arch": {
+      "n_sub_exp": 1,
+      "deltas": {
+        "E7.last_step_mlp": -0.0024752475247524774
+      },
+      "max_delta": -0.0024752475247524774,
+      "best_sub_id": "E7.last_step_mlp",
+      "best_val_hit": 0.6391089108910891,
+      "positive_lever": false
+    },
+    "E8_r0_prior": {
+      "n_sub_exp": 2,
+      "deltas": {
+        "E8.r0_plus0_5": 0.001980198019801982,
+        "E8.r0_plus1_0": 0.001980198019801982
+      },
+      "max_delta": 0.001980198019801982,
+      "best_sub_id": "E8.r0_plus0_5",
+      "best_val_hit": 0.6435643564356436,
+      "positive_lever": false
+    }
+  },
+  "results_per_sub_exp": [
+    {
+      "sub_exp_id": "E6.bweight_on",
+      "codebook_id": "absolute",
+      "K": 7,
+      "n_train": 7980,
+      "n_val": 2020,
+      "epochs_run": 7,
+      "best_epoch": 4,
+      "best_val_hit": 0.6415841584158416,
+      "best_dcm": 0.0003655126646735942,
+      "epoch_log": [
+        {
+          "epoch": 1,
+          "loss": 3.7703327387571335,
+          "val_hit": 0.6391089108910891,
+          "dcm": 0.0008597045236074995
+        },
+        {
+          "epoch": 2,
+          "loss": 3.7696558386087418,
+          "val_hit": 0.6400990099009901,
+          "dcm": 0.00045412826951768685
+        },
+        {
+          "epoch": 3,
+          "loss": 3.768847241997719,
+          "val_hit": 0.6396039603960396,
+          "dcm": 0.00038296964247555034
+        },
+        {
+          "epoch": 4,
+          "loss": 3.7696706354618073,
+          "val_hit": 0.6415841584158416,
+          "dcm": 0.0003655126646735942
+        },
+        {
+          "epoch": 5,
+          "loss": 3.7689027041196823,
+          "val_hit": 0.6391089108910891,
+          "dcm": 0.0003798920472242124
+        },
+        {
+          "epoch": 6,
+          "loss": 3.7670468389987946,
+          "val_hit": 0.6381188118811881,
+          "dcm": 0.00011714337088408805
+        },
+        {
+          "epoch": 7,
+          "loss": 3.767467722296715,
+          "val_hit": 0.6415841584158416,
+          "dcm": 0.0003697938101053708
+        }
+      ],
+      "axis": "E6_boundary_weight",
+      "r0_logit_prior": 0.0,
+      "sample_weight_used": true,
+      "scorer_arch": "attn_gru",
+      "delta_oof_vs_anchor": 0.0,
+      "elapsed_seconds": 6.1
+    },
+    {
+      "sub_exp_id": "E7.last_step_mlp",
+      "codebook_id": "absolute",
+      "K": 7,
+      "n_train": 7980,
+      "n_val": 2020,
+      "epochs_run": 7,
+      "best_epoch": 4,
+      "best_val_hit": 0.6391089108910891,
+      "best_dcm": 0.00036448472225436427,
+      "epoch_log": [
+        {
+          "epoch": 1,
+          "loss": 1.9527146220207214,
+          "val_hit": 0.6361386138613861,
+          "dcm": 0.0009745450679659641
+        },
+        {
+          "epoch": 2,
+          "loss": 1.949437953531742,
+          "val_hit": 0.6346534653465347,
+          "dcm": 0.0006672053147064449
+        },
+        {
+          "epoch": 3,
+          "loss": 1.9470109343528748,
+          "val_hit": 0.6376237623762376,
+          "dcm": 0.0005748426033790765
+        },
+        {
+          "epoch": 4,
+          "loss": 1.9444806352257729,
+          "val_hit": 0.6391089108910891,
+          "dcm": 0.00036448472225436427
+        },
+        {
+          "epoch": 5,
+          "loss": 1.9420296549797058,
+          "val_hit": 0.6386138613861386,
+          "dcm": 0.0003181784753964475
+        },
+        {
+          "epoch": 6,
+          "loss": 1.9388224855065346,
+          "val_hit": 0.6386138613861386,
+          "dcm": 0.0004666921648206491
+        },
+        {
+          "epoch": 7,
+          "loss": 1.9356517866253853,
+          "val_hit": 0.6386138613861386,
+          "dcm": 0.000557284987561555
+        }
+      ],
+      "axis": "E7_scorer_arch",
+      "r0_logit_prior": 0.0,
+      "sample_weight_used": false,
+      "scorer_arch": "last_step_mlp",
+      "delta_oof_vs_anchor": -0.0024752475247524774,
+      "elapsed_seconds": 0.7
+    },
+    {
+      "sub_exp_id": "E8.r0_plus0_5",
+      "codebook_id": "absolute",
+      "K": 7,
+      "n_train": 7980,
+      "n_val": 2020,
+      "epochs_run": 5,
+      "best_epoch": 2,
+      "best_val_hit": 0.6435643564356436,
+      "best_dcm": 0.0007698576049679568,
+      "epoch_log": [
+        {
+          "epoch": 1,
+          "loss": 1.9544873163104057,
+          "val_hit": 0.6371287128712871,
+          "dcm": 0.001389318701819738
+        },
+        {
+          "epoch": 2,
+          "loss": 1.9529102370142937,
+          "val_hit": 0.6435643564356436,
+          "dcm": 0.0007698576049679568
+        },
+        {
+          "epoch": 3,
+          "loss": 1.9525026008486748,
+          "val_hit": 0.6391089108910891,
+          "dcm": 0.0005542225250249759
+        },
+        {
+          "epoch": 4,
+          "loss": 1.952566385269165,
+          "val_hit": 0.6415841584158416,
+          "dcm": 0.0003949175232461394
+        },
+        {
+          "epoch": 5,
+          "loss": 1.9518194049596786,
+          "val_hit": 0.6396039603960396,
+          "dcm": 0.0004313669162151603
+        }
+      ],
+      "axis": "E8_r0_prior",
+      "r0_logit_prior": 0.5,
+      "sample_weight_used": false,
+      "scorer_arch": "attn_gru",
+      "delta_oof_vs_anchor": 0.001980198019801982,
+      "elapsed_seconds": 3.5
+    },
+    {
+      "sub_exp_id": "E8.r0_plus1_0",
+      "codebook_id": "absolute",
+      "K": 7,
+      "n_train": 7980,
+      "n_val": 2020,
+      "epochs_run": 5,
+      "best_epoch": 2,
+      "best_val_hit": 0.6435643564356436,
+      "best_dcm": 0.0007698576051397892,
+      "epoch_log": [
+        {
+          "epoch": 1,
+          "loss": 1.9544873163104057,
+          "val_hit": 0.6371287128712871,
+          "dcm": 0.00138931870174399
+        },
+        {
+          "epoch": 2,
+          "loss": 1.9529102370142937,
+          "val_hit": 0.6435643564356436,
+          "dcm": 0.0007698576051397892
+        },
+        {
+          "epoch": 3,
+          "loss": 1.9525026008486748,
+          "val_hit": 0.6391089108910891,
+          "dcm": 0.0005542225250500329
+        },
+        {
+          "epoch": 4,
+          "loss": 1.952566385269165,
+          "val_hit": 0.6415841584158416,
+          "dcm": 0.0003949175232461394
+        },
+        {
+          "epoch": 5,
+          "loss": 1.9518194049596786,
+          "val_hit": 0.6396039603960396,
+          "dcm": 0.00043136689441675017
+        }
+      ],
+      "axis": "E8_r0_prior",
+      "r0_logit_prior": 1.0,
+      "sample_weight_used": false,
+      "scorer_arch": "attn_gru",
+      "delta_oof_vs_anchor": 0.001980198019801982,
+      "elapsed_seconds": 4.0
+    }
+  ],
+  "G3_passed": true,
+  "positive_axes": [],
+  "elapsed_total_seconds": 14.3
+}

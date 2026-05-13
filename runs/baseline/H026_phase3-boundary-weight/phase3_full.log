@@ -1,0 +1,41 @@
+inline selector loaded: 27 candidates
+[phase3] winner anchor OOF = 0.6416
+[phase3] E6 boundary 샘플: 4665/10000 (weight=3)
+[E6.bweight_on] n_train=7980, n_val=2020, K=7
+[E6.bweight_on] epoch 01/15 loss=3.7703 val_hit=0.6391 DCM=0.00086
+[E6.bweight_on] epoch 02/15 loss=3.7697 val_hit=0.6401 DCM=0.00045
+[E6.bweight_on] epoch 03/15 loss=3.7688 val_hit=0.6396 DCM=0.00038
+[E6.bweight_on] epoch 04/15 loss=3.7697 val_hit=0.6416 DCM=0.00037
+[E6.bweight_on] epoch 05/15 loss=3.7689 val_hit=0.6391 DCM=0.00038
+[E6.bweight_on] epoch 06/15 loss=3.7670 val_hit=0.6381 DCM=0.00012
+[E6.bweight_on] epoch 07/15 loss=3.7675 val_hit=0.6416 DCM=0.00037
+[E6.bweight_on] early stop @ epoch 7
+[E6.bweight_on] best=0.6416 ΔOOF=+0.0000 DCM=0.00037 (6.1s)
+[E7.last_step_mlp] n_train=7980, n_val=2020, K=7
+[E7.last_step_mlp] epoch 01/15 loss=1.9527 val_hit=0.6361 DCM=0.00097
+[E7.last_step_mlp] epoch 02/15 loss=1.9494 val_hit=0.6347 DCM=0.00067
+[E7.last_step_mlp] epoch 03/15 loss=1.9470 val_hit=0.6376 DCM=0.00057
+[E7.last_step_mlp] epoch 04/15 loss=1.9445 val_hit=0.6391 DCM=0.00036
+[E7.last_step_mlp] epoch 05/15 loss=1.9420 val_hit=0.6386 DCM=0.00032
+[E7.last_step_mlp] epoch 06/15 loss=1.9388 val_hit=0.6386 DCM=0.00047
+[E7.last_step_mlp] epoch 07/15 loss=1.9357 val_hit=0.6386 DCM=0.00056
+[E7.last_step_mlp] early stop @ epoch 7
+[E7.last_step_mlp] best=0.6391 ΔOOF=-0.0025 DCM=0.00036 (0.7s)
+[E8.r0_plus0_5] n_train=7980, n_val=2020, K=7
+[E8.r0_plus0_5] epoch 01/15 loss=1.9545 val_hit=0.6371 DCM=0.00139
+[E8.r0_plus0_5] epoch 02/15 loss=1.9529 val_hit=0.6436 DCM=0.00077
+[E8.r0_plus0_5] epoch 03/15 loss=1.9525 val_hit=0.6391 DCM=0.00055
+[E8.r0_plus0_5] epoch 04/15 loss=1.9526 val_hit=0.6416 DCM=0.00039
+[E8.r0_plus0_5] epoch 05/15 loss=1.9518 val_hit=0.6396 DCM=0.00043
+[E8.r0_plus0_5] early stop @ epoch 5
+[E8.r0_plus0_5] best=0.6436 ΔOOF=+0.0020 DCM=0.00077 (3.5s)
+[E8.r0_plus1_0] n_train=7980, n_val=2020, K=7
+[E8.r0_plus1_0] epoch 01/15 loss=1.9545 val_hit=0.6371 DCM=0.00139
+[E8.r0_plus1_0] epoch 02/15 loss=1.9529 val_hit=0.6436 DCM=0.00077
+[E8.r0_plus1_0] epoch 03/15 loss=1.9525 val_hit=0.6391 DCM=0.00055
+[E8.r0_plus1_0] epoch 04/15 loss=1.9526 val_hit=0.6416 DCM=0.00039
+[E8.r0_plus1_0] epoch 05/15 loss=1.9518 val_hit=0.6396 DCM=0.00043
+[E8.r0_plus1_0] early stop @ epoch 5
+[E8.r0_plus1_0] best=0.6436 ΔOOF=+0.0020 DCM=0.00077 (4.0s)
+[phase3] wrote analysis/plan-012/phase3_results.json
+[phase3] G3 informational complete (positive axes: [])

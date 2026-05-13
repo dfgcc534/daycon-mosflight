@@ -298,7 +298,14 @@ class HybridScorerHead(nn.Module):
         self._load_result = {"loaded": list(filtered.keys()), "missing": list(missing), "unexpected": list(unexpected)}
 
     def _extract_seq_hidden(self, seq: torch.Tensor) -> torch.Tensor:
-        """seq (B, T, seq_dim) → (B, hidden) — base scorer 의 final_ctx 와 동일 산출."""
+        """seq (B, T, seq_dim) → (B, hidden) sample-wise representation.
+
+        attn_gru scorer (default): GRU last-layer last-step hidden via ctx_norm.
+        last_step_mlp scorer (E7.B): LastStepMLPScorer.extract_seq_hidden (seq_mlp(seq[:,-1,:])).
+        """
+        if hasattr(self.scorer, "extract_seq_hidden"):
+            # LastStepMLPScorer or any alternate scorer providing its own extractor
+            return self.scorer.extract_seq_hidden(seq)
         _, h = self.scorer.gru(seq)
         final_ctx = self.scorer.ctx_norm(h[-1])
         return final_ctx
