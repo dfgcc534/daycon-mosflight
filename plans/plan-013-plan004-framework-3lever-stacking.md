@@ -45,7 +45,9 @@ lb_score: null
 > - 재사용 = `selector.py` (27-cand selector + make_seq_features + CandidateAttentionGRUSelector + search_temperature, plan-004 그대로) + `boundary.py` (corrector base, plan-004 그대로) + `analysis/plan-007/mlp_coeff.py` (Step 4 infra) + `runs/baseline/R001_baseline-residual-gru/checkpoint_fold0.pt` (In/IC frozen GRU) + plan-008 G1 의 25 candidate set 정의.
 > - 비재사용 = plan-010 corrector_redesign / plan-011 corrector_redesign_v2 / plan-012 ring_classifier — *paradigm shift attempts*. import 도 X.
 >
-> **Target**: 5-fold OOF ≥ 0.66 (= plan-006 corrected 0.6491 위 +0.011 / plan-012 5-fold 위 +0.026), LB 추정 **0.695~0.71** (plan-004 LB 0.6806 위 +0.014~+0.029). oracle ceiling (plan-008 25 cand) = 0.7543.
+> **Target (expected best-case projection, NOT 합격선)**: 5-fold OOF ≥ 0.66 (= plan-006 corrected 0.6491 위 +0.011 / plan-012 5-fold 위 +0.026), LB 추정 **0.695~0.71** (plan-004 LB 0.6806 위 +0.014~+0.029). oracle ceiling (plan-008 25 cand) = 0.7543.
+>
+> **합격선 (G-gate pass criterion, 본 plan 의 success 정의)**: G1 ≥ 0.65 (보수적 base lock-in), G2 ≥ G1 + 0.005 (1+ lever 의 ΔOOF), G3 ≥ G1 + 0.005 (best stack). 위 "Target 0.66" 은 §3.6 의 expected OOF 분해 보수적 추정 — *합격 보장 X*, *path 가능성 박제*.
 >
 > **LB 제출 정책**: 본 plan 내 LB 제출 **0 회** (plan-011/012 carry-over pattern 답습). best stack submission 박제, LB 회수 = plan-013.1 carry-over.
 
@@ -249,6 +251,18 @@ plan-008 results:
 
 각 Phase 2 sub-exp = G1 baseline 위 *1 lever 만 추가*.
 
+**lever attribution scope 명시** (의도 분리 흐림 방지):
+- 본 plan 의 Phase 2 ablation 은 **2-lever additive** (Step 4 + 25 cand). In/IC lever 는 G1
+  baseline 에 *흡수* 되어 단독 sub-exp 가 없음 — In/IC 단독 ΔOOF 는 G0 preflight 의 plan-004
+  단독 5-fold OOF (= 0.6491 corrected, P001 박제) 와 G1 결과의 *cross-experiment 차이* 로 추정.
+  같은 fold split 보장 = G0 preflight 와 G1 모두 `selector.stable_fold_id(sample_id, folds=5)`
+  (§3.1 / §4.1 컴포넌트 5 의 단일 source 와 일치) 로 fold partition 산출 → cross-experiment 추정의 fold
+  noise 제거. (sklearn KFold 미사용 — plan-004 framework default 인 hash-based 결정적 split 단일 사용.)
+- §0 의 "3 lever" naming 은 *evidence-source lever 수* (In/IC + Step 4 + 25 cand). Phase 2 의
+  "3 sub-exp" naming 은 *ablation sub-exp 수* (Step 4 의 2 mode F0_only/27ext 가 2 sub-exp
+  + 25 cand 1 sub-exp = 3). 두 "3" 은 의도적으로 다른 carving — best stack (§8.1) 에서 Step 4
+  의 두 mode 는 *동시 X*, 더 큰 lever 만 채택하므로 최종 stack 은 max 3 lever.
+
 ### §3.5 Plan-007/008/011 anchor 비교
 
 | measure | source | value | 본 plan 대응 |
@@ -305,22 +319,30 @@ class InICEmbedder(nn.Module):
 
     def __init__(self, ckpt_path: str = "runs/baseline/R001_baseline-residual-gru/checkpoint_fold0.pt"):
         super().__init__()
-        self.gru = nn.GRU(input_size=3, hidden_size=64, num_layers=2, batch_first=True)
+        # 자율 결정 (plan-011 v1.2 매핑): "layer 1 hidden" = PyTorch 0-index 의 layer 0 (= 첫 layer) 의 t step 별 hidden.
+        # nn.GRU 는 intermediate layer output 직접 노출 X → single-layer GRU 별도 instantiate + R001 의 layer 0 weight 만 발췌 load.
+        self.gru = nn.GRU(input_size=3, hidden_size=64, num_layers=1, batch_first=True)
         state = torch.load(ckpt_path, map_location="cpu")
-        # state_dict key 변환 (R001 → 본 module shape)
-        self.gru.load_state_dict(state["gru"])
+        # state_dict key (R001 의 2-layer GRU → 본 single-layer GRU):
+        # R001 의 nested "gru" key 안 4 weight 만 발췌 (`*_l0` suffix = layer 0).
+        gru_state = state["gru"] if "gru" in state else state
+        layer0_state = {
+            "weight_ih_l0": gru_state["weight_ih_l0"],
+            "weight_hh_l0": gru_state["weight_hh_l0"],
+            "bias_ih_l0":   gru_state["bias_ih_l0"],
+            "bias_hh_l0":   gru_state["bias_hh_l0"],
+        }
+        self.gru.load_state_dict(layer0_state)
         for p in self.parameters():
             p.requires_grad = False
+        # frozen 박제: 초기 state_dict hash 를 저장 (frozen_gru_drift severe check 시 비교용)
+        self._init_state_hash = hash(tuple(p.detach().cpu().numpy().tobytes() for p in self.parameters()))
 
     def forward(self, trajectory_x: torch.Tensor) -> torch.Tensor:
-        """trajectory_x: (B, T, 3) → returns (B, T, 64) — layer 1 hidden state."""
-        # GRU 의 모든 layer 통과, layer 1 (intermediate) 출력 추출
-        # 2-layer GRU 는 (output, h_n) 반환 — output 은 마지막 layer 의 시계열, h_n 은 모든 layer 의 final state.
-        # plan-011 v1.2 가 사용한 "layer 1 hidden" = h_n[0] (첫 layer) 또는 intermediate output.
-        # 본 plan = h_n[0] 의 시계열 확장 (= layer 1 의 t step 별 hidden)
-        # 구현 디테일: nn.GRU 는 intermediate layer output 직접 노출 X → manual unrolling 또는 layer-wise wrapping 필요.
-        # 자율 결정: 첫 layer 만 별도 instantiate + 그 output 을 In/IC embedding 으로 사용.
-        ...
+        """trajectory_x: (B, T, 3) → returns (B, T, 64) — layer 0 (= plan-011 명명 'layer 1') hidden 시계열."""
+        # single-layer GRU 의 output = layer 0 의 모든 t step hidden state, shape (B, T, 64).
+        output, _h_n = self.gru(trajectory_x)
+        return output  # (B, T, 64)
 
 
 # ── 컴포넌트 2: corrector 에 In/IC embedding 시계열 input 주입 ──
@@ -341,8 +363,9 @@ class InICCorrectorWrapper(nn.Module):
             hidden=kwargs.get("hidden", 64),
         )
 
-    def forward(self, cf_base: torch.Tensor, trajectory_x: torch.Tensor) -> torch.Tensor:
-        """
+    def _impl_forward(self, cf_base: torch.Tensor, trajectory_x: torch.Tensor) -> torch.Tensor:
+        """2-arg 실 구현 (직접 호출 시 사용). plan-004 train loop 와 호환 위해 forward 는 1-arg adapter.
+
         cf_base: (B, K, 32) — plan-004 make_candidate_features 출력
         trajectory_x: (B, T, 3) — world coords
         returns: (B, K, 3) — corrector delta in world frame
@@ -352,6 +375,14 @@ class InICCorrectorWrapper(nn.Module):
         emb_broadcast = emb_last[:, None, :].expand(-1, cf_base.shape[1], -1)  # (B, K, 64)
         cf_aug = torch.cat([cf_base, emb_broadcast], dim=-1)  # (B, K, 96)
         return self.base_corrector(cf_aug)
+
+    def forward(self, cf_base: torch.Tensor) -> torch.Tensor:
+        """1-arg adapter, plan-004 train loop 호환. trajectory 는 instance attribute (_cached_trajectory) 에서 read.
+
+        train loop 매 batch 직전 `wrapper._cached_trajectory = batch_traj` 를 set 해야 함.
+        (= dataloader collate_fn 이 (cf, traj, y) 를 함께 반환하도록 §6.2 phase1_baseline.py 가 wiring).
+        """
+        return self._impl_forward(cf_base, self._cached_trajectory)
 
 
 # ── 컴포넌트 3: Step 4 per-sample MLP coeff (plan-007 reuse) ──
@@ -390,8 +421,10 @@ class Step4CoeffMLP(nn.Module):
     def forward(self, last_step_feat: torch.Tensor, candidate_idx: int | None = None) -> torch.Tensor:
         """
         last_step_feat: (B, 13) — per-sample features at end_idx
-        candidate_idx: int — Phase 2.E2 mode 에서만 (= 27 후보 중 어느 후보)
-        returns: (B, 8) — per-sample 8 vars coeff
+        candidate_idx: int — Phase 2.E2 mode 에서만 (= 27 후보 중 어느 후보). batch 내 모든
+            sample 이 같은 후보 idx 를 공유 (= train loop 의 caller 가 27 후보 각각에 대해 27 회 forward
+            호출하는 patterns; vectorized broadcast 미사용). 즉 한 batch step 당 (B, 8) 27 개 산출 → (B, 27, 8).
+        returns: (B, 8) — per-sample 8 vars coeff (해당 candidate 한정)
         """
         if self.mode == "F0_only":
             return self.mlp(last_step_feat)
@@ -403,14 +436,37 @@ class Step4CoeffMLP(nn.Module):
 
 # ── 컴포넌트 4: 25 cand redesign loader (plan-008 G1 reuse) ──
 
-def load_25_cand_set(plan_008_g1_dir: str = "runs/baseline/G001_candidate-redefine") -> np.ndarray:
-    """plan-008 G1 산출의 25 candidate set 좌표 로드.
+def load_25_cand_set(plan_008_g1_dir: str = "runs/baseline/G001_candidate-redefine") -> list[dict]:
+    """plan-008 G1 산출의 25 candidate *formula descriptor* list 로드.
 
-    Returns: (25, T, 3) candidate-formula 좌표 (per-sample 산출 함수 아닌, *formula definition* 일 경우)
-        또는 callable list (per-sample evaluation 인 경우).
+    자율 결정 (return type 단일화): per-sample evaluator 가 아닌 *formula descriptor list*.
+    각 element = plan-004 `selector.make_candidate_features` 가 인식하는 candidate spec dict
+    (= 12 base_kept + 4 templates greedy add 의 25 entry). loader 는 plan-008 G1
+    `cand_set.npy` (또는 `cand_set.json`) 을 파싱해 list 로 반환만 한다 — *per-sample 좌표 산출*
+    은 caller (= integrated_v3 의 selector hook) 가 `make_candidate_features(cand_set=...)` 로 위임.
+
+    이로써 selector head dim 27→25 swap 시 candidate feature dim (32) 는 plan-004 default
+    `make_candidate_features` 로 *그대로* 산출 (plan-008 G1 후보는 plan-004 feature factory 와
+    호환 가능한 spec 만 채택하도록 plan-008 G1 단계에서 보장됨 — descriptor schema 동일).
+
+    Returns: len=25 list of dict; each dict = candidate spec (plan-004 selector 의
+        make_candidate_features 가 인식하는 spec 형식 그대로).
     Invariant: 25 후보 좌표가 plan-008 G1 박제와 drift > 1e-6 시 cand_set_25_drift severe.
+        검증 = `make_candidate_features(loaded, dummy_traj)` 좌표가 G1 박제 좌표와
+        max abs diff over all 25 cand × all samples × all T × 3 ≤ 1e-6.
     """
-    ...
+    import json
+    from pathlib import Path
+    path = Path(plan_008_g1_dir) / "cand_set.json"
+    if not path.exists():
+        path = Path(plan_008_g1_dir) / "cand_set.npy"  # fallback (numpy structured array)
+    if path.suffix == ".json":
+        with open(path) as f:
+            cand_list = json.load(f)
+    else:
+        cand_list = list(np.load(path, allow_pickle=True))
+    assert len(cand_list) == 25, f"expected 25 candidates, got {len(cand_list)}"
+    return cand_list
 
 
 # ── 컴포넌트 5: integrated entry (Phase 1/2/3 dispatcher) ──
@@ -420,7 +476,9 @@ def run_integrated_v3(
     fold: int,
     train_x: np.ndarray,
     train_y: np.ndarray,
+    sample_ids: np.ndarray,
     test_x: np.ndarray | None = None,
+    test_sample_ids: np.ndarray | None = None,
 ) -> dict:
     """Integrated training + inference entry for Phase 1/2/3 sub-exp.
 
@@ -432,10 +490,71 @@ def run_integrated_v3(
         - "patience": int (default 5, plan-004)
         - "batch_size": int (default 256)
         - "lr": float (default 3e-4)
+        - "seed": int (default 42, fold split 결정성 보장)
 
-    Returns: dict with OOF metrics + delta predictions + corrector state for fold.
+    Returns: dict with keys:
+        - "val_preds": (N_val, 3) — fold val 의 corrected world coords
+        - "val_scores": (N_val, K) — fold val 의 selector softmax (K=27 default, =25 if use_25_cand)
+        - "test_preds": (N_test, 3) | None — test_x 가 None 이면 None
+        - "test_scores": (N_test, K) | None — test_x 가 None 이면 None
+        - "oof_metric": dict — `selector.search_temperature(val_preds, val_scores, val_y)["metrics"]` 그대로
+        - "corrector_state": dict — `wrapper.base_corrector.state_dict()` (Phase 별 디버깅용)
+        - "in_ic_init_hash": int — wrapper.embedder._init_state_hash (frozen_gru_drift check 용)
+        - "in_ic_final_hash": int — train 종료 시점 embedder.state_dict() hash (diff > 0 → severe)
+
+    Train spec (plan-004 default train loop 재사용 + 3 lever hook 주입):
+
+    1. **fold split** (§3.1 / §6.2 caller 와 정합):
+       `fold_id = np.array([base_sel.stable_fold_id(sid, folds=5) for sid in sample_ids])`
+       기준으로 `val_idx = np.where(fold_id == fold)[0]`, `train_idx = np.where(fold_id != fold)[0]`.
+       *sklearn KFold 미사용* — plan-004 framework 의 `selector.stable_fold_id` (hash-based 결정성)
+       와 단일 source. 이로써 caller (§6.2 L664 `val_mask = (fold_id == fold)`) 의 외부 mask 와
+       내부 val_idx 가 정확히 동일 sample 집합을 가리킴 — `oof_preds[val_mask] = result["val_preds"]`
+       의 alignment 보장.
+    2. **candidate set / feature factory**:
+       - `use_25_cand=False` → `cand_set = base_sel.DEFAULT_27_CANDIDATES` (plan-004 default).
+       - `use_25_cand=True` → `cand_set = load_25_cand_set()`. selector head dim 25 로
+         instantiate. make_candidate_features 는 그대로 reuse (plan-008 G1 spec 호환).
+    3. **corrector instantiate**:
+       - `use_in_ic=True` → `corrector = InICCorrectorWrapper(dim_cf=96)` (= 32 + 64).
+       - `use_in_ic=False` → `corrector = base_bnd.TinyCorrectionNet(dim_cf=32)` (plan-004 default).
+    4. **Step 4 coeff hook**:
+       - `use_step4="off"` → Step 4 비활성. F0 (또는 27 후보) 의 default 8 vars coeff 사용
+         (plan-006 / plan-004 default values).
+       - `use_step4="F0_only"` → `Step4CoeffMLP(mode="F0_only")` instantiate. forward 시
+         F0 후보에 한해 sample-wise 8 vars coeff 를 model 출력으로 교체. 나머지 26 후보는 default.
+       - `use_step4="27ext"` → `Step4CoeffMLP(mode="27ext")`. 27 후보 *전부* candidate-conditional
+         sample-wise coeff (one-hot input). Step 4 module 은 `analysis.plan_007.mlp_coeff` 의
+         best basis (d1/acc_par/acc_perp/d2/jerk/ts_term/speed_slope_d1/rotation_term) 박제 invariant.
+    5. **train loop wiring** (plan-004 default 재사용 + wrapper 1-arg forward 정합):
+       - plan-004 의 default train loop 는 `corrector(cf_base)` 1-arg 호출. `InICCorrectorWrapper`
+         의 `forward` 는 *class 정의 단계에서 1-arg adapter* 로 박제 (§4.1 컴포넌트 2 위 정의 — `forward` 는
+         `self._impl_forward(cf_base, self._cached_trajectory)` 로 호출). 실 2-arg 구현은 `_impl_forward`.
+       - train loop 매 batch 직전 `corrector._cached_trajectory = batch_trajectory_x` 를 set
+         (= dataloader collate_fn 이 (cf, traj, y) 를 함께 반환하므로 train step 한 줄 추가).
+       - 이로써 plan-004 train loop body (loss/optimizer/scheduler) 는 변경 0.
+       - optimizer = `torch.optim.AdamW(list(corrector.parameters()) + (list(step4.parameters()) if step4 else []), lr=config["lr"])`.
+         `InICEmbedder.parameters()` 는 `requires_grad=False` 이므로 grad update 자동 제외 (옵티마이저는 잡지만 step 시 변화 없음 — `param.grad` None).
+       - scheduler = constant lr (plan-004 default; cosine 미사용).
+       - loss = plan-004 default `huber + far_weight 0.04 + easy_weight 0.20 + env_head + apply_scale 0.75`
+         (= `boundary.compute_loss(...)` 그대로 reuse).
+       - epochs = `config["epochs"]` (50), patience = `config["patience"]` (5) 의 early stopping
+         (val metric = `search_temperature(...)["metrics"]["hit"]` *maximize*; patience 동안 미개선 시 stop).
+       - batch_size = `config["batch_size"]` (256).
+    6. **In/IC frozen invariant check** (every epoch end):
+       - `current_hash = hash(tuple(p.detach().cpu().numpy().tobytes() for p in corrector.embedder.parameters()))`
+       - `current_hash != corrector.embedder._init_state_hash` → `frozen_gru_drift` severe trigger.
+    7. **inference + scores 산출**:
+       - 한 forward pass = `(selector_logits, corrector_delta) = full_model(batch)` (plan-004
+         framework default). selector_logits = (B, K) logit over K candidates. `scores` =
+         `softmax(selector_logits, dim=-1)` 의 K-dim probability 시계열 (= temperature search 의
+         입력). plan-004 의 `search_temperature` signature 는 `(corrected_pos, scores, true_pos)`
+         이므로 `scores = softmax(selector_logits)` 형태로 전달.
+       - val_preds: best-epoch checkpoint 로 val_idx 의 corrected world coords 산출. shape (N_val, 3).
+       - test_preds: `test_x is not None` 시 같은 checkpoint 로 산출, 아니면 None.
+       - oof_metric: `selector.search_temperature(val_preds, val_scores, val_y)["metrics"]` 그대로.
     """
-    ...
+    ...  # 위 spec 의 step-by-step 충실 구현 (c2 commit 시 박제). 본 docstring 이 단일 spec.
 ```
 
 ### §4.2 smoke test (c2 직후 self-check)
@@ -523,7 +642,11 @@ def test_in_ic_corrector_wrapper_forward():
 ### §5.2 실행
 
 ```bash
-python -m analysis.plan-013.preflight \
+# 자율 결정: Python 모듈 식별자는 hyphen 미허용 → 디렉토리 이름 자체는 `analysis/plan-013/` 유지
+# (file-system path), 실행은 *파일 경로 직접 호출* 방식. `python -m analysis.plan-013.preflight`
+# 양식 사용 X (§4 L303 의 `from analysis.plan_007 import mlp_coeff` 와 양식 inconsistent 한
+# 양식이지만, 본 plan 은 `plan-013` 디렉토리 명명 일관성 위해 직접 호출 방식 채택).
+python analysis/plan-013/preflight.py \
   --root data \
   --p001-dir runs/baseline/P001_pb-0-6822-fullrun \
   --r001-ckpt runs/baseline/R001_baseline-residual-gru/checkpoint_fold0.pt \
@@ -563,6 +686,7 @@ train_x, train_y, sample_ids = iv3.base_sel.load_data("data")
 fold_id = np.array([iv3.base_sel.stable_fold_id(sid, 5) for sid in sample_ids])
 
 oof_preds = np.zeros((len(train_y), 3))
+oof_scores = np.zeros((len(train_y), 27))  # K=27 selector softmax (plan-004 default)
 for fold in range(5):
     config = {
         "use_in_ic": True,
@@ -573,11 +697,16 @@ for fold in range(5):
         "batch_size": 256,
         "lr": 3e-4,
     }
-    result = iv3.run_integrated_v3(config, fold, train_x, train_y)
+    result = iv3.run_integrated_v3(config, fold, train_x, train_y, sample_ids)
     val_mask = (fold_id == fold)
     oof_preds[val_mask] = result["val_preds"]
+    # 각 fold 별 scores 도 누적 (selector softmax over K candidates, run_integrated_v3 가 함께 반환)
+    oof_scores[val_mask] = result["val_scores"]
 
-oof_hit = np.mean(np.linalg.norm(oof_preds - train_y, axis=1) <= 0.01)
+# G1 gate metric = §3.3 / §4.1 컴포넌트 5 의 단일 metric (`search_temperature`).
+# raw `norm(oof_preds - train_y) <= 0.01` 미사용 — temperature search 가 K-cand selector
+# softmax 위 soft hit @ 1cm 을 최적화하므로 G-gate 와 metric 단일 source.
+oof_hit = iv3.base_sel.search_temperature(oof_preds, oof_scores, train_y)["metrics"]["hit"]
 ```
 
 ### §6.3 G1 합격
@@ -644,7 +773,22 @@ oof_hit = np.mean(np.linalg.norm(oof_preds - train_y, axis=1) <= 0.01)
 - selector + corrector 는 plan-004 default arch (25-way logit 으로 head dim 만 27→25)
 - In/IC hook 그대로
 
+**phase2_25cand.py wiring 차이 (vs §6.2 phase1_baseline.py)**:
+- `oof_scores` buffer 의 K dim 을 25 로 교체:
+  `oof_scores = np.zeros((len(train_y), 25))` (§6.2 의 K=27 대신).
+  나머지 fold loop + val_mask + search_temperature wiring 은 §6.2 와 동일.
+- §4.1 컴포넌트 5 의 `val_scores` shape `(N_val, K)` 박제와 일치 — `use_25_cand=True` 분기에서
+  K=25 가 자동 반환됨. caller 가 buffer shape 만 K=25 로 미리 할당해야 broadcast error 회피.
+- 동일 wiring 패턴이 Phase 3 best stack (§8.2) 의 `use_25_cand=True` 채택 시에도 적용 — 그 경우
+  §8.2 의 oof_scores buffer 도 K=25 분기.
+
 ΔOOF(E3) = `OOF(E3) − OOF(G1 baseline)`. 기대 +0.003~+0.010 (oracle +0.036 의 30~50% reach).
+
+★ retain risk note (informational): plan-008 evidence 에서 25 cand redesign 의 *selector OOF* 는
+-0.007 (NEGATIVE) 측정됨. 본 plan 은 candidate set 만 swap + plan-004 selector arch 유지 채택이지만,
+25-way head 의 capacity 가 27-way 보다 작음에 따른 retain 실패 (ΔOOF < 0) 가능성을 informational
+hypothesis 로 기록. G2 의 `최소 1 axis ΔOOF ≥ 0.005` 합격선은 E1/E2/E3 중 어느 하나라도 충족하면
+PASS — E3 단독 fail 시 fallback path 명시 (§7.4).
 
 ### §7.4 G2 합격
 
