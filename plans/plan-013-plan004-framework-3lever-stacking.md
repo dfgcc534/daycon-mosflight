@@ -77,7 +77,7 @@ lb_score: null
 |---|---|---|---|
 | c1 | docs | `plans/plan-013-plan004-framework-3lever-stacking.md` v1 작성 | [DONE] (8dd71b0) |
 | c1.1 | docs | plan-review-master fixes (BLOCKER 11 + AMBIGUITY 6 정리) | [DONE] (81d1a66) |
-| c2 | code | `src/pb_0_6822/integrated_v3.py` — plan-004 framework wrapper (selector + corrector entry) + In/IC hook (frozen R001 GRU embedding) + Step 4 hook (per-sample 8 vars MLP coeff, F0 only and 27-extension modes) + 25 cand hook (plan-008 G1 candidate set swap). spec @ §4 | [TODO] |
+| c2 | code | `src/pb_0_6822/integrated_v3.py` — plan-004 framework wrapper (selector + corrector entry) + In/IC hook (frozen R001 GRU embedding) + Step 4 hook (per-sample 8 vars MLP coeff, F0 only and 27-extension modes) + 25 cand hook (plan-008 G1 candidate set swap). spec @ §4 | [DONE] (9a424fb, smoke 11/12 pass) |
 | c3 | code+exp | `analysis/plan-013/preflight.py` — 4 infra 검증 + reproduce. spec @ §5 | [TODO] |
 | G0 | gate | `preflight.json` + 4 infra OK + reproduce drift ≤ 0.005 | [TODO] |
 | c4 | code+exp | `analysis/plan-013/phase1_baseline.py` — plan-004 + In/IC 5-fold (★ baseline lock). spec @ §6 | [TODO] |
