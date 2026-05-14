@@ -1,6 +1,6 @@
 ---
 plan_id: 017
-version: 1
+version: 1.1 (plan-review-master iter 1 fix 10건 — voxel window ±2cm BLOCKER fix + 9 AMBIGUITY 정합/명시화)
 date: 2026-05-15 (Asia/Seoul)
 status: spec
 based_on:
@@ -40,7 +40,7 @@ baseline_oof: 0.6452 # plan-016 G1
 ### Target
 
 - baseline LB = **0.6638** (plan-016 G1 carry).
-- G1 ensemble pass = LB Δ > 0 (positive direction, framework-disjoint 결합 의미).
+- G1 ensemble pass = LB Δ ≥ 0 (non-strict, tie 도 fail 아님; §3.1 와 단어 통일).
 - G2 voxel CE pass = OOF Δ > 0 vs G1 baseline 0.6452 (positive). LB submission 사용자 confirm.
 - G_final = 두 stage 결과 summary + 사용자 paradigm-shift 결정 anchor 박제.
 
@@ -49,6 +49,7 @@ baseline_oof: 0.6452 # plan-016 G1
 | # | type | spec section | status |
 |---|---|---|---|
 | c1 | docs | v1 draft — plan-017 spec (low-cost stage 1) | [DONE] 0566934 |
+| c1.1 | docs | **v1.1 spec patch — plan-review-master iter 1 fix 10건.** (1) §1.2 voxel window ±2.5cm → ±2cm BLOCKER fix. (2) §2.1 G2 변경/보존 명세 정합 (anchor codebook 무력화 명시 + confound caveat). (3) §0.5 G1 pass criterion Δ>0 → Δ≥0 통일. (4) §4.1 (d) 2cm coverage measure 추가. (5) §6.1 voxel_idx_to_offset numpy/torch 양 variant 명시. (6) §6.1 sample_weight dtype/device 명시 (torch.Tensor, requires_grad=False, dtype=float32). (7) §5.2 submission save schema inline. (8) §4.1 (c) smoke input dim (B=16, seq_len=6, feature_dim=9) inline. (9) §7.2 LB band threshold inline (plan-016 외부 의존 제거). (10) §4.3 재사용 module signature inline + cascade 위험 박제. v1 → v1.1 | [TODO] |
 | c2 | code+exp | STAGE 0 (G0) — preflight + Voxel CE module smoke | [TODO] |
 | c3 | exp | STAGE 1 (G1) — 3-plan ensemble + dacon-submit | [TODO] |
 | c4 | code+exp | STAGE 2 (G2) — Voxel CE head 5-seed × 5-fold + dacon-submit | [TODO] |
@@ -93,7 +94,7 @@ plan-014/015/016 의 corrector paradigm (F0=plan-006 frenet_par120_perp_neg020 +
 plan-016 G2 (Path B monitor=val_loss) 의 measured 결론: train objective (hybrid_combined_loss) ↔ eval metric (hit@1cm) misalignment → val_loss 감소해도 hit 안 늘어남.
 
 해결: **discrete classification** 위 hit metric 직접 정렬.
-- Voxel grid: F0_pred 중심 ±2.5cm, 5×5×5 = 125 voxel, voxel width = 0.01m (1cm).
+- Voxel grid: F0_pred 중심 **±2cm 범위 (= ±2 voxels × 1cm width)**, 5×5×5 = 125 voxel, voxel width = 0.01m (1cm). axis 별 5 levels = `[-0.02, -0.01, 0, 0.01, 0.02]` m (§6.2.A 와 일치).
 - Voxel index = argmin || voxel_center - y_true ||₂ 위 cross-entropy 학습.
 - Forward predict: argmax 위 voxel_center → 3D offset → F0_pred + offset.
 - 1cm voxel width = hit@1cm threshold 의 *natural alignment* (1cm 안 prediction = correct voxel argmax).
@@ -110,8 +111,8 @@ plan-016 G2 (Path B monitor=val_loss) 의 measured 결론: train objective (hybr
 |---|---|
 | Baseline | plan-016 G1 (5-seed × 5-fold = 25 models, F0 frozen, BiGRU h=128, 7 anchor K=9, boundary_weight_on, monitor=val_hit) |
 | G1 변경 | 3 submission 좌표 mean (training 없음, no head/loss change) |
-| G2 변경 | corrector head 만 교체 (cls_head[K] + reg_head[K*3*tanh*REG_SCALE] → voxel_cls_head[125] softmax) + 새 loss CE(voxel_idx) |
-| G2 보존 | F0, BiGRU encoder, anchor codebook, 5-fold scheme, multi-seed list, monitor=val_hit |
+| G2 변경 | corrector head **교체 (cls_head[K] + reg_head[K*3*tanh*REG_SCALE] → voxel_cls_head[125] softmax)** + 새 loss CE(voxel_idx). **anchor codebook (K=9) 도 forward path 에서 무력화** — voxel paradigm 은 F0 + voxel offset 만 사용, anchor 호출 없음. 단일 변경 아니나 voxel CE paradigm 의 *분리 불가능한 cohesive change* 로 spec 박제. confound caveat 는 G_final 결과 해석 시 명시. |
+| G2 보존 | F0, BiGRU encoder, 5-fold scheme, multi-seed list, monitor=val_hit |
 | 평가 | OOF (5-fold concat) + LB (사용자 confirm 후 dacon-submit) |
 
 ### §2.2 Out-of-scope
@@ -161,23 +162,32 @@ plan-016 §5.2 carry: 5 seed × 5 fold → per-fold seed-mean → 5-fold concat 
 - `analysis/plan-017/preflight.py` — 3 task:
   - (a) 3 submission file 존재 + row count = 10001 (header + 10000 sample) verify.
   - (b) plan-016 G1 baseline reproduce check — 직접 reproduce 안 함 (이미 plan-016 G0/G1 박제). artifact load 만.
-  - (c) Plan017VoxelCEHead module smoke (1-fold 1-epoch, 5×5×5=125 logit 산출, voxel_idx ∈ [0, 125) verify, loss finite).
+  - (c) Plan017VoxelCEHead module smoke — input `seq (B=16, seq_len=6, feature_dim=9)` 위 forward → logits shape `(16, 125)`, voxel_idx range ∈ [0, 125) verify, `voxel_ce_loss(logits, y, f0_pred)` 의 `loss.item()` finite, `loss.backward()` no error. (seq_len=6 = plan-014/016 carry, end_idx=10 의 [5..10] 6 step.)
+  - (d) **Voxel grid 2cm window coverage measure** — 10K train sample 위 `||y - F0||₂` 분포 산출, `frac(||y-F0||₂ ≤ 0.02)` (= voxel grid 안 정확 mapping 비율) + p50/p95/p99 quantile 박제. coverage < 95% 시 clamp 효과 caveat 박제 (§6.2.B clamp behavior).
 - `analysis/plan-017/preflight.json`
 - registry row `H057_g0_preflight`
 
 ### §4.2 G0 합격
 
-- (a) 3 file 존재 (LF 10000), row count 일치
+- (a) 3 file 존재 (10000 row + header = 10001 line), row count 일치
 - (b) plan-016 G1 artifact 로드 OK (`analysis/plan-016/g1_path_a.json` 의 OOF=0.6452, LB=0.6638 carry)
-- (c) Voxel CE smoke: forward (B=16, ...) → logits shape (16, 125), voxel_idx shape (16,) ∈ [0, 125), loss.item() finite, backward.step() no error
+- (c) Voxel CE smoke: forward (B=16, seq_len=6, feature_dim=9) → logits shape (16, 125), voxel_idx shape (16,) ∈ [0, 125), loss.item() finite, backward.step() no error
+- (d) Voxel coverage measure: `frac(||y - F0||₂ ≤ 0.02m) ≥ 0.90` (90% 이상 coverage 시 clamp 효과 marginal 판정).
 
 ### §4.3 Code reuse safety check (§3.4 박제, code 작성 의무)
 
 - `src/pb_0_6822/plan014_paradigm.py` *수정 안 함*. import only.
 - `src/pb_0_6822/plan016_ensemble.py` *수정 안 함*. import only.
 - 신규: `src/pb_0_6822/plan017_voxel_ce.py` — VoxelCEHead + loss + ensemble runner adapter.
-- 기존 `Plan014BiGRUEncoder` 의 forward(seq) → (B, 256) 시그너처 보존. encoder 재사용 시 input_dim=9 default (plan-016 baseline).
-- BoundaryWeight (`_boundary_weight`) 재사용 시 사용 방법 동일 (sample-wise weight). voxel CE loss 안 통합 위치 *명시*.
+- 재사용 module signature (inline 박제, 외부 read 없이 작성 가능):
+  - `Plan014BiGRUEncoder(input_dim=9, hidden=128, num_layers=2, dropout=0.1)`: `forward(seq: torch.Tensor of shape (B, seq_len, 9)) → torch.Tensor of shape (B, 256)` (last-step bidir concat).
+  - `_boundary_weight(F0_pred_init: np.ndarray of shape (N, 3), target: np.ndarray of shape (N, 3)) → np.ndarray of shape (N,)`: mask = (0.005 < ‖F0−y‖ < 0.015), sw = where(mask, 3.0, 1.0).
+  - `Plan014F0Function()`: callable `f0_function(X: np.ndarray of shape (N, 11, 3)) → np.ndarray of shape (N, 3)` (numpy F0 prior).
+  - `stable_hash_fold(sid: str) → int ∈ [0, 5)`: sha256 + salt='plan-014-v1'. plan-014 carry.
+- cascade 위험 점검 (사전 박제):
+  - voxel CE 도입 시 hybrid_combined_loss (plan-014/016 ring CE + huber + hinge) 와 *공존 안 함*. plan-017 voxel CE loss 만 사용 — anchor/reg/hinge term 모두 forward path 에 없음.
+  - boundary_weight 사용 시 voxel_ce_loss 안에 sample-wise 곱 — gradient flow 보존 (sample_weight 은 torch tensor on logits.device, requires_grad=False).
+  - test pred 산출 시 (X_test=None default) 기존 plan-016 ensemble runner 의 동작 보존 (X_test 미사용 시 cascade 없음).
 
 ---
 
@@ -192,18 +202,35 @@ plan-016 §5.2 carry: 5 seed × 5 fold → per-fold seed-mean → 5-fold concat 
 
 ### §5.2 spec
 
-3 submission 좌표 mean:
+3 submission 좌표 mean (모든 file 의 schema = `id,x,y,z` header + 10000 row, sample_submission.csv 순서):
 ```python
+import pandas as pd
+import numpy as np
+
 sub_a = pd.read_csv("analysis/plan-013/submission.csv")
 sub_b = pd.read_csv("runs/baseline/plan014_g5_phase4/submission_best.csv")
 sub_c = pd.read_csv("runs/baseline/plan016_g1_path_a/submission.csv")
-# id 정렬: sample_submission.csv 위 sort 동일 (각 plan 이미 그 순서)
-for s in (sub_a, sub_b, sub_c):
+
+# id 정렬 invariant: sample_submission.csv 위 sort 동일 (각 plan 이미 그 순서)
+for s in (sub_b, sub_c):
     assert (s["id"].values == sub_a["id"].values).all(), "id mismatch"
-mean_xyz = (sub_a[["x","y","z"]].values + sub_b[["x","y","z"]].values + sub_c[["x","y","z"]].values) / 3.0
+
+# 좌표 mean
+mean_xyz = (sub_a[["x","y","z"]].values
+          + sub_b[["x","y","z"]].values
+          + sub_c[["x","y","z"]].values) / 3.0
+ids = sub_a["id"].tolist()
+
+out = pd.DataFrame({
+    "id": ids,
+    "x": [f"{v:.6f}" for v in mean_xyz[:, 0]],
+    "y": [f"{v:.6f}" for v in mean_xyz[:, 1]],
+    "z": [f"{v:.6f}" for v in mean_xyz[:, 2]],
+})
+out.to_csv("runs/baseline/plan017_g1_ensemble/submission.csv", index=False)
 ```
 
-dacon-submit 1회 (사용자 confirm 후).
+dacon-submit 1회 (사용자 confirm 후, feedback memory `feedback_dacon_submit_confirmation` 박제 의무).
 
 ### §5.3 G1 합격
 
@@ -221,15 +248,16 @@ dacon-submit 1회 (사용자 confirm 후).
 
 ### §6.1 산출물
 
-- `src/pb_0_6822/plan017_voxel_ce.py` — 신규 module:
+- `src/pb_0_6822/plan017_voxel_ce.py` — 신규 module (양 variant numpy + torch 모두 박제):
   - `class Plan017VoxelCEHead(nn.Module)` — encoder + voxel cls head (125 class).
-  - `def voxel_grid_centers()` → (125, 3) 배열, F0_pred relative offset (-0.02 ~ +0.02m, 5 levels per axis).
-  - `def y_to_voxel_idx(y, F0_pred)` → (N,) int ∈ [0, 125).
-  - `def voxel_idx_to_offset(idx)` → (N, 3) offset (= voxel center).
-  - `def voxel_ce_loss(logits, y, F0_pred)` — CE on voxel_idx.
-  - `def hybrid_predict_voxel(seq, anchors, R, F0, encoder, voxel_head)` — argmax + voxel_center → F0 + offset (corrector paradigm forward 호환).
-  - `def train_one_fold_voxel(cfg, fold_id, X_train, Y_train, X_val, Y_val, f0_function, X_test=None)` — plan014_paradigm.train_one_fold 의 voxel 변형.
-  - `def run_multiseed_kfold_voxel(...)` — plan016_ensemble.run_multiseed_kfold 의 voxel 변형.
+  - `def voxel_grid_centers_np() → np.ndarray of shape (125, 3)`: F0 relative offset, axis 별 [-0.02, -0.01, 0, 0.01, 0.02] m.
+  - `def y_to_voxel_idx(y: np.ndarray of shape (N, 3), f0_pred: np.ndarray of shape (N, 3)) → np.ndarray of shape (N,) int64`: clamp 후 axis-wise base-5 인덱싱.
+  - `def voxel_idx_to_offset_np(idx: np.ndarray of shape (N,)) → np.ndarray of shape (N, 3)`: numpy variant (CSV write 용).
+  - `def voxel_idx_to_offset_torch(idx: torch.Tensor of shape (N,), device) → torch.Tensor of shape (N, 3)`: torch variant (forward predict 용, autograd 호환).
+  - `def voxel_ce_loss(logits: torch.Tensor (B, 125), y: torch.Tensor (B, 3), f0_pred: torch.Tensor (B, 3), sample_weight: torch.Tensor (B,) or None) → torch.Tensor scalar`: CE on voxel_idx. sample_weight = torch.Tensor on logits.device, requires_grad=False, dtype=float32.
+  - `def hybrid_predict_voxel(seq, encoder, voxel_head, f0_pred_detached)` — encoder(seq) → voxel_head(h) → argmax → voxel_idx_to_offset_torch → F0 + offset.
+  - `def train_one_fold_voxel(cfg, fold_id, X_train, Y_train, X_val, Y_val, f0_function, X_test=None)` — plan014_paradigm.train_one_fold 의 voxel 변형. 동일 cfg dataclass 사용. monitor=val_hit (val_hit 산출 = hybrid_predict_voxel 후 hit@1cm). early stop, sample_weight (=boundary_weight) 동일 적용.
+  - `def run_multiseed_kfold_voxel(ids_train, X_train, Y_train, ids_test, X_test, config_base, seeds, f0_function)` — plan016_ensemble.run_multiseed_kfold 의 voxel 변형. OOF aggregation = 좌표 mean over seeds → 5-fold concat → hit@1cm (§5.2 carry).
 - `analysis/plan-017/g2_voxel_ce.py` — 5-seed × 5-fold 학습 + OOF + test ensemble + submission 산출.
 - `runs/baseline/plan017_g2_voxel_ce/submission.csv`
 - `analysis/plan-017/g2_voxel_ce.json`
@@ -330,7 +358,11 @@ plan-016 G1 carry config (5 seed × 5 fold = 25 models, K=9 anchor *unused* in v
 ### §7.2 합격 기준
 
 - 2 stage 결과 박제 (G1 ensemble LB Δ, G2 voxel CE OOF+LB Δ).
-- band 분류 (plan-016 §0.5 carry — LB ≥ 0.68 / 0.66~0.68 / 0.65~0.66 / <0.65).
+- band 분류 (inline 박제, plan-016 §0.5 carry):
+  - LB ≥ 0.68 → **plan-004 LB 정조준 달성** (positive-top)
+  - 0.66 ≤ LB < 0.68 → positive
+  - 0.65 ≤ LB < 0.66 → partial
+  - LB < 0.65 → negative
 - **paradigm-shift 결정점** = 사용자 confirm:
   - 후보 A: #1 plan-004 2-stage corrector (selector + boundary corrector).
   - 후보 B: #2 Trajectory-CLIP + KNN-Augmented 27-pool + #3 486-entry regime bias (병합 plan-018).
