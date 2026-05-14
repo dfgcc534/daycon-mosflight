@@ -106,7 +106,7 @@ G0 preflight  →  G1 module + smoke  →  G2 Phase 1 bake-off  →  G3 Phase 2 
 - **G2** Phase 1 bake-off: winner_OOF ≥ 0.60 + DCM ≥ 0.002 (plan-012 G1 spec carry) [DONE 4783ae8: winner=E0c K-Means (OOF=0.6359, DCM=0.0026) — F0 raw 위 +0.0039 회수]
 - **G3** Phase 2 axis 5: 5 axis 중 1+ ΔOOF ≥ 0.005 (plan-012 G2 spec) [DONE 76a4e52: `g3_marginal_only` warn, positive_axes=[]. max ΔOOF E2 +0.003 (K=9 best, marginal)]
 - **G4** Phase 3 aux 3: informational [DONE 92417dd: E6 +0.0015, E7 -0.0050, E8 -0.0040. positive_axes=['E6']]
-- **G5** Phase 4 final: best_stack ≥ anchor_5fold + 0.005 (plan-012 G4 spec) + band 분류 [TODO]
+- **G5** Phase 4 final: best_stack ≥ anchor_5fold + 0.005 (plan-012 G4 spec) + band 분류 [DONE d85a999: anchor=0.6359 / best=0.6425 / Δ=+0.0066 PASS / **band=negative** (< 0.65)]
 - **G_final** synthesis: results.md 신규 + registry append + frontmatter sync + plan-015 후보 [TODO]
 
 ### Commit chain
@@ -127,7 +127,7 @@ G0 preflight  →  G1 module + smoke  →  G2 Phase 1 bake-off  →  G3 Phase 2 
 | c6 | code+exp | STAGE 2 (G2) — Phase 1 codebook bake-off (E0a/E0b/E0c 3 sub-exp → winner). spec @ §6. **PASS** (v4 F0 frozen): winner=E0c K-Means (OOF=**0.6359** / DCM=0.0026 / gap=0.0066). E0a=0.6293 (DCM=0.0014) / E0b=0.6239. F0 raw 0.6320 위 +0.0039 회수 — v3.x cascade failure 회피 confirmed | [DONE] 4783ae8 |
 | c7 | exp | STAGE 3 (G3) — Phase 2 axis ablation 5 (E1~E5). spec @ §7. **`g3_marginal_only` warn**: positive_axes=[]. anchor fold-0=0.6573. max ΔOOF: E1=-0.0055 / E2=+0.0030 (E2c K=9 best) / E3=-0.0005 / E4=-0.0050 / E5=-0.0015. paradigm 위 의미 있는 lever 0개 — F0 frozen ceiling 신호 | [DONE] 76a4e52 |
 | c8 | exp | STAGE 4 (G4) — Phase 3 aux ablation 3 (E6~E8). spec @ §8. informational mode (G3 carry). E6 boundary_weight=+0.0015 (marginal positive) / E7 LastStep MLP=-0.0050 (BiGRU 시계열 가치 입증) / E8 prior=-0.0040. positive_axes=['E6'] | [DONE] 92417dd |
-| c9 | exp | STAGE 5 (G5) — Phase 4 final 5-fold + best stack + submission. spec @ §9 | [TODO] |
+| c9 | exp | STAGE 5 (G5) — Phase 4 final 5-fold + best stack + submission. spec @ §9. **G5_passed=True** (Δ=+0.0066). anchor_5fold=0.6359 / best_5fold=**0.6425** (E0c K=9 + boundary). **band=negative** (< 0.65). plan-013 join row 4 (둘 다 실패) 활성. submission_best.csv 박제 | [DONE] d85a999 |
 | c10 | docs+sync | STAGE 6 (G_final) — results.md + registry + frontmatter sync + plan-015 후보. spec @ §10 | [TODO] |
 
 ---
