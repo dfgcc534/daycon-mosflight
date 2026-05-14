@@ -1,6 +1,6 @@
 ---
 plan_id: 014
-version: 3.2 (spec patch — Input feature 상세 박제. `make_seq_features` 정의 = shape `(N, 6, 9)`, 6 step indices `range(max(3, end_idx-5), end_idx+1)` (pad if <6), per-step 9 dim = turn-model features 8 dim (speed / prev_speed-ratio / acc_norm-ratio / acc_par-ratio / perp_norm-ratio / jerk_norm-ratio / turn_cos / curvature) + direction 1 dim. source-of-truth = `src/pb_0_6822/selector.py:280-294 + 406-449` (형식만 reuse, 본 module 내 직접 재구현, `selector.py` import X). §2.1.A Input pipeline row sync.)
+version: 3.3 (spec patch — Dataset / IO 상세 박제. §2.1.C 새 sub-section: train/test/labels CSV path (`data/train|test/{sample_id}.csv` shape `(11, 3)` + `data/train_labels.csv` columns id/x/y/z) / timestep grid `[-400..0]` ms step 40 / T_TARGET_MS=80 / end_idx=10 / IO utility = `src/io.py` (plan-001, import OK).)
 date: 2026-05-14 (Asia/Seoul)
 status: spec
 based_on:
@@ -114,6 +114,7 @@ G0 preflight  →  G1 module + smoke  →  G2 Phase 1 bake-off  →  G3 Phase 2 
 | **c3** | docs | **v3 spec replacement — plan-012 5-Phase frame import.** v2.x single-path 폐기, 4 컴포넌트 baseline (fixed) + plan-012 5-Phase ablation frame 으로 재작성. frontmatter version 2.3→3 / title v1→v3 / §0.5 multi-path / §1.1 evolution 표 / §1.5 정직성 reframe / §2.1 baseline+ablation / §3.3 The Configs multi / §3.4 7-stage G-gate / §4~§10 stub | [DONE] 5f6750b |
 | c3.1 | docs | **v3.1 spec patch — F0 산식 정정.** v3 박제 3 변수 `(α_par, α_perp_t, α_perp_n)` = plan-006 source-of-truth (`ring_classifier.py:512-565`) 와 mismatch (perp 잘못 t̂/n̂ 분리 + `d1·v_last` baseline 누락) → option A 채택 (사용자 confirm): 3 scalar `(d1, par, perp)` learnable, init (1.98, 1.20, −0.20), 산식 `F0 = p0 + d1·v_scale·v_last + par·acc_scale·acc_par_vec + perp·acc_scale·acc_perp_vec` (d2=0 / jerk=0 fixed, v_scale=acc_scale=1 with horizon=2 / time_scale=1). §0.5 C2 F0 bullet / §2.1.A C2 row / §3.2 F0_pred 산식 / §3.4 G0 (a) / frontmatter version 3→3.1 sync | [DONE] ba9e994 |
 | c3.2 | docs | **v3.2 spec patch — Input feature 상세.** `make_seq_features` 정의 박제: shape `(N, 6, 9)`, 6 step indices `range(max(3, end_idx-5), end_idx+1)` (pad if <6), per-step 9 dim = `turn_model_features_from_context` 8 dim (speed / prev_speed-ratio / acc_norm-ratio / acc_par-ratio / perp_norm-ratio / jerk_norm-ratio / turn_cos / curvature) + direction 1 dim. source = `src/pb_0_6822/selector.py:280-294 + 406-449` (형식만 reuse, `selector.py` import X). §2.1.A Input pipeline row sync. frontmatter version 3.1→3.2 | [DONE] eed3c6e |
+| c3.3 | docs | **v3.3 spec patch — Dataset / IO 상세.** §2.1 에 새 sub-section C Dataset/IO 추가: train/test CSV path (`data/train|test/{sample_id}.csv` shape `(11, 3)`), labels (`data/train_labels.csv` columns id/x/y/z), timestep grid (`[-400..0]` ms step 40), T_TARGET_MS=80, end_idx=10, IO utility = `src/io.py` (plan-001, import OK). frontmatter version 3.2→3.3 | [TODO] |
 | c4 | code+exp | STAGE 0 (G0) — preflight artifact. spec @ §4 | [TODO] |
 | c5 | code | STAGE 1 (G1) — `src/pb_0_6822/plan014_paradigm.py` 새 module + smoke + 재사용 끊김. spec @ §5 | [TODO] |
 | c6 | code+exp | STAGE 2 (G2) — Phase 1 codebook bake-off (E0a/E0b/E0c 3 sub-exp → winner). spec @ §6 | [TODO] |
@@ -231,6 +232,18 @@ plan-012 results.md = "paradigm reframe 은 F0 raw hit 위 +0.002~0.003 만 추�
 | **G4.Phase 3** | **E8 r=0 logit prior** | 0 / +0.5 / +1.0 | center mode logit bias |
 
 → 총 11 ablation sub-experiment (E0 3-way + E1~E5 5 axis + E6~E8 3 axis). G5 에서 winner + best lever stack 으로 final 5-fold.
+
+#### C. Dataset / IO
+
+| 항목 | 값 |
+|---|---|
+| Train data | `data/train/{sample_id}.csv` (shape `(11, 3)`) — 11 timesteps × 3 axes |
+| Train labels | `data/train_labels.csv` (columns: `id` / `x` / `y` / `z`) — y_true = position at +80ms from observation end |
+| Test data | `data/test/{sample_id}.csv` (same shape `(11, 3)`) |
+| Timestep grid | `[-400, -360, ..., -40, 0]` ms (step=40ms, `N_TIMESTEPS = 11`) |
+| Target horizon | `T_TARGET_MS = 80` (관측 종료 후 +80ms 의 position) |
+| `end_idx` (for `make_seq_features` / F0) | `N_TIMESTEPS − 1 = 10` (last observation index) |
+| IO utility | `src/io.py` — `load_all_samples(split)` → `(ids, X (N, 11, 3))`, `load_labels()` → `(ids, Y (N, 3))`. plan-001 utility, import OK (= `selector.py` 와 별개 file, plan-004 module 재사용 정책과 무관) |
 
 ### §2.2 Out-of-scope
 
