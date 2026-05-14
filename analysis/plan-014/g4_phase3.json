@@ -1,0 +1,91 @@
+{
+  "exp_id": "H040_g4_phase3_aux3",
+  "winner_id": "E0c",
+  "anchor_oof_fold0": 0.6572580337524414,
+  "n_sub_exp": 4,
+  "axis_summary": {
+    "E6": {
+      "n_sub_exp": 1,
+      "deltas": {
+        "E6b": 0.0015121102333068848
+      },
+      "max_delta": 0.0015121102333068848,
+      "best_sub_id": "E6b",
+      "best_val_hit": 0.6587701439857483,
+      "positive_lever": true
+    },
+    "E7": {
+      "n_sub_exp": 1,
+      "deltas": {
+        "E7b": -0.005040287971496582
+      },
+      "max_delta": -0.005040287971496582,
+      "best_sub_id": "E7b",
+      "best_val_hit": 0.6522177457809448,
+      "positive_lever": false
+    },
+    "E8": {
+      "n_sub_exp": 2,
+      "deltas": {
+        "E8b": -0.004032254219055176,
+        "E8c": -0.004032254219055176
+      },
+      "max_delta": -0.004032254219055176,
+      "best_sub_id": "E8b",
+      "best_val_hit": 0.6532257795333862,
+      "positive_lever": false
+    }
+  },
+  "positive_axes": [
+    "E6"
+  ],
+  "G4_passed": true,
+  "G4_mode": "informational (G3 g3_marginal_only carry)",
+  "results_per_sub_exp": [
+    {
+      "sub_exp_id": "E6b",
+      "name": "boundary_weight_on",
+      "axis": "E6",
+      "val_hit": 0.6587701439857483,
+      "dcm": 0.002113909926265478,
+      "delta_oof_vs_anchor": 0.0015121102333068848,
+      "best_epoch": 3,
+      "elapsed_seconds": 3.976553440093994
+    },
+    {
+      "sub_exp_id": "E7b",
+      "name": "laststep_mlp",
+      "axis": "E7",
+      "val_hit": 0.6522177457809448,
+      "dcm": 0.0024462805595248938,
+      "delta_oof_vs_anchor": -0.005040287971496582,
+      "best_epoch": 4,
+      "elapsed_seconds": 1.0753271579742432
+    },
+    {
+      "sub_exp_id": "E8b",
+      "name": "r0_prior_0.5",
+      "axis": "E8",
+      "r0_prior": 0.5,
+      "val_hit": 0.6532257795333862,
+      "dcm": 0.0016879141330718994,
+      "delta_oof_vs_anchor": -0.004032254219055176,
+      "best_epoch": 13,
+      "elapsed_seconds": 3.0892138481140137
+    },
+    {
+      "sub_exp_id": "E8c",
+      "name": "r0_prior_1.0",
+      "axis": "E8",
+      "r0_prior": 1.0,
+      "val_hit": 0.6532257795333862,
+      "dcm": 0.0018325494602322578,
+      "delta_oof_vs_anchor": -0.004032254219055176,
+      "best_epoch": 12,
+      "elapsed_seconds": 2.9935989379882812
+    }
+  ],
+  "elapsed_total_seconds": 11.840317964553833,
+  "plan_version": "v4.5",
+  "f0_frozen_baseline": "plan-006_frenet_par120_perp_neg020"
+}

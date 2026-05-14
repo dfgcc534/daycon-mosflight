@@ -1,0 +1,24 @@
+[plan-014 G4 v4] loading data ...
+[plan-014 G4] G2 winner = E0c (kmeans). G3 anchor (E2b/E3c/E4a/E5b)
+
+[plan-014 G4] anchor (G3 carry): val_hit=0.6573
+
+[plan-014 G4] === E6b (boundary_weight_on) ===
+  E6b: val_hit=0.6588 (Δ=+0.0015) dcm=0.0021 epoch=3 elapsed=4.0s
+
+[plan-014 G4] === E7b (laststep_mlp) ===
+  E7b: val_hit=0.6522 (Δ=-0.0050) dcm=0.0024 epoch=4 elapsed=1.1s
+
+[plan-014 G4] === E8 r=0 logit prior (inference-only) ===
+  E8b prior=0.5: val_hit=0.6532 (Δ=-0.0040) dcm=0.0017 epoch=13 elapsed=3.1s
+  E8c prior=1.0: val_hit=0.6532 (Δ=-0.0040) dcm=0.0018 epoch=12 elapsed=3.0s
+
+[plan-014 G4] === axis summary ===
+  E6: n=1, max_delta=+0.0015, best=E6b, positive=True
+  E7: n=1, max_delta=-0.0050, best=E7b, positive=False
+  E8: n=2, max_delta=-0.0040, best=E8b, positive=False
+
+[plan-014 G4] === final ===
+  positive_axes=['E6'], mode=informational
+  elapsed_total=11.8s (0.20 min)
+[plan-014 G4] artifact -> analysis/plan-014/g4_phase3.json
