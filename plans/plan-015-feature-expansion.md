@@ -108,7 +108,7 @@ lb_score: null
 | c6 | exp | STAGE 3 (G3, E3) — A+B+C (+ multi-scale stride), 5-fold OOF | [SKIPPED — G1 negative drop rule] |
 | c7 | exp | STAGE 4 (G4, E4) — A+B+C+D (+ pairwise), 5-fold OOF | [SKIPPED — G1 negative drop rule] |
 | c8 | code+exp | STAGE 5 (G5) — best cumulative + 5-fold concat + submission (Δ + band 판정). best=baseline (drop rule), Δ=+0.0000, G5_no_improvement warn, band=negative. submission = plan-014 carry | [DONE] 43d1f89 |
-| c9 | docs+sync | STAGE 6 (G_final) — results.md 신규 + plan-015.md frontmatter sync + plan-016 후보 (공통 2 + negative 3) + LB carry-over (사용자 confirm pending) | [TODO] |
+| c9 | docs+sync | STAGE 6 (G_final) — results.md 신규 + plan-015.md frontmatter sync + plan-016 후보 (공통 2 + negative 3) + LB carry-over (사용자 confirm pending) | [DONE] ec0f4af |
 
 ---
 
