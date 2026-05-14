@@ -2,10 +2,20 @@
 plan_id: 015
 version: 2.4 (spec patch — plan-review-master iter 4 fix 6건. (1)+(2) §5.1 plan015_features.py 의 적용 순서 + 분기 로직 박제 (A→B→C→D 순차, feature_flags 단독/cumulative 동시 지원). (3) §5/§6/§8 spec 본문에 weight 재초기화 carry 명기 (§7.2 와 정합). (4) §9.1 argmax + tie-break + drop rule 코드 spec 박제. (5) §9.2 test 5-fold ensemble = per-fold checkpoint coord mean (hit majority vote 아님). (6) §3.1 test sample reduction = §9.2 5-fold ensemble coord mean (train OOF concat 과 다름) cross-ref. v2.3 → v2.4.)
 date: 2026-05-14 (Asia/Seoul)
-status: spec
+status: G_final_complete
 based_on:
   - 014 (band=negative, best_stack 0.6425, oracle ceiling 0.8248, 회수율 5.4%)
-followed_by: []
+followed_by:
+  - 016 (negative branch — deep path-pivot, plan-015 feature 확장 paradigm 한계 confirmed)
+exp_ids:
+  - H042_g0_preflight
+  - H043_g1_e1_feature_A
+  - H047_g5_best_stack_5fold
+  - H048_g_final_synthesis
+lb_score: null
+band: negative
+best_5fold_oof: 0.6425
+delta_oof_vs_baseline: 0.0000
 scope: corrector input feature 확장 — 현 9D kinematic 의 표현력 부족이 plan-014 G3 5축 negative 의 root cause 신호. 4 feature (A F0 residual / B binormal split / C multi-scale stride / D pairwise) 순차 ablation 으로 attribution + best stack 결정. plan-014 best_stack (E0c K-Means K=9 + boundary_weight_on, F0 frozen plan-006) 위 input feature 만 swap (corrector arch / loss / lever 모두 plan-014 carry).
 exp_ids:
   - H042_g0_preflight
@@ -59,8 +69,8 @@ lb_score: null
 - **G2** E2 (A+B): + B feature, ΔOOF vs G1 [SKIPPED — drop rule]
 - **G3** E3 (A+B+C): + C feature, ΔOOF vs G2 [SKIPPED — drop rule]
 - **G4** E4 (A+B+C+D): + D feature, ΔOOF vs G3 [SKIPPED — drop rule]
-- **G5** best stack 5-fold + submission: best = G0 baseline (= plan-014 best_stack OOF=0.6425) [TODO — submission carry]
-- **G_final** synthesis: results.md + frontmatter sync + plan-016 후보 (LB carry-over 포함) [TODO]
+- **G5** best stack 5-fold + submission: best = G0 baseline (= plan-014 best_stack OOF=0.6425) [DONE 43d1f89: argmax=baseline, Δ=+0.0000, g5_no_improvement warn, band=negative, submission carry from plan-014]
+- **G_final** synthesis: results.md + frontmatter sync + plan-016 후보 (LB carry-over 포함) [TODO — results.md 작성 완료, dacon-submit pending 사용자 confirm]
 
 ### 합격 기준 (Q2 결정 — Δ + band)
 
@@ -97,8 +107,8 @@ lb_score: null
 | c5 | exp | STAGE 2 (G2, E2) — A+B (F0 residual + binormal split), 5-fold OOF | [SKIPPED — G1 negative drop rule §3.2 v2.2] |
 | c6 | exp | STAGE 3 (G3, E3) — A+B+C (+ multi-scale stride), 5-fold OOF | [SKIPPED — G1 negative drop rule] |
 | c7 | exp | STAGE 4 (G4, E4) — A+B+C+D (+ pairwise), 5-fold OOF | [SKIPPED — G1 negative drop rule] |
-| c8 | code+exp | STAGE 5 (G5) — best cumulative + 5-fold concat + submission (Δ + band 판정) | [TODO — best = G0 baseline carry, plan-014 best_stack submission 재사용] |
-| c9 | docs+sync | STAGE 6 (G_final) — results.md + frontmatter sync + plan-016 후보 + LB carry-over (plan-014 + plan-015 best 둘 다 dacon-submit 1회) | [TODO] |
+| c8 | code+exp | STAGE 5 (G5) — best cumulative + 5-fold concat + submission (Δ + band 판정). best=baseline (drop rule), Δ=+0.0000, G5_no_improvement warn, band=negative. submission = plan-014 carry | [DONE] 43d1f89 |
+| c9 | docs+sync | STAGE 6 (G_final) — results.md 신규 + plan-015.md frontmatter sync + plan-016 후보 (공통 2 + negative 3) + LB carry-over (사용자 confirm pending) | [TODO] |
 
 ---
 
