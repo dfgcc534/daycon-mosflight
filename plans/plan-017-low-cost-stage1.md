@@ -49,7 +49,7 @@ baseline_oof: 0.6452 # plan-016 G1
 | # | type | spec section | status |
 |---|---|---|---|
 | c1 | docs | v1 draft — plan-017 spec (low-cost stage 1) | [DONE] 0566934 |
-| c1.1 | docs | **v1.1 spec patch — plan-review-master iter 1 fix 10건.** (1) §1.2 voxel window ±2.5cm → ±2cm BLOCKER fix. (2) §2.1 G2 변경/보존 명세 정합 (anchor codebook 무력화 명시 + confound caveat). (3) §0.5 G1 pass criterion Δ>0 → Δ≥0 통일. (4) §4.1 (d) 2cm coverage measure 추가. (5) §6.1 voxel_idx_to_offset numpy/torch 양 variant 명시. (6) §6.1 sample_weight dtype/device 명시 (torch.Tensor, requires_grad=False, dtype=float32). (7) §5.2 submission save schema inline. (8) §4.1 (c) smoke input dim (B=16, seq_len=6, feature_dim=9) inline. (9) §7.2 LB band threshold inline (plan-016 외부 의존 제거). (10) §4.3 재사용 module signature inline + cascade 위험 박제. v1 → v1.1 | [TODO] |
+| c1.1 | docs | **v1.1 spec patch — plan-review-master iter 1 fix 10건.** (1) §1.2 voxel window ±2.5cm → ±2cm BLOCKER fix. (2) §2.1 G2 변경/보존 명세 정합 (anchor codebook 무력화 명시 + confound caveat). (3) §0.5 G1 pass criterion Δ>0 → Δ≥0 통일. (4) §4.1 (d) 2cm coverage measure 추가. (5) §6.1 voxel_idx_to_offset numpy/torch 양 variant 명시. (6) §6.1 sample_weight dtype/device 명시 (torch.Tensor, requires_grad=False, dtype=float32). (7) §5.2 submission save schema inline. (8) §4.1 (c) smoke input dim (B=16, seq_len=6, feature_dim=9) inline. (9) §7.2 LB band threshold inline (plan-016 외부 의존 제거). (10) §4.3 재사용 module signature inline + cascade 위험 박제. v1 → v1.1 | [DONE] cf874e0 |
 | c2 | code+exp | STAGE 0 (G0) — preflight + Voxel CE module smoke | [TODO] |
 | c3 | exp | STAGE 1 (G1) — 3-plan ensemble + dacon-submit | [TODO] |
 | c4 | code+exp | STAGE 2 (G2) — Voxel CE head 5-seed × 5-fold + dacon-submit | [TODO] |
