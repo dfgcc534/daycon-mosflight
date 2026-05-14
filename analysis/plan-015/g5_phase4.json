@@ -1,0 +1,25 @@
+{
+  "exp_id": "H047_g5_best_stack_5fold",
+  "candidates": {
+    "baseline": 0.6425,
+    "E1 (A)": 0.6415
+  },
+  "best_name": "baseline",
+  "best_oof": 0.6425,
+  "baseline_oof": 0.6425,
+  "delta_oof": 0.0,
+  "G5_threshold": 0.005,
+  "G5_passed": false,
+  "G5_warn": "g5_no_improvement",
+  "band": "negative",
+  "submission_best_path": "runs/baseline/plan015_g5/submission_best.csv",
+  "submission_source": "plan-014 best_stack carry (G1 negative drop rule)",
+  "drop_rule_activated": true,
+  "skipped_stages": [
+    "G2",
+    "G3",
+    "G4"
+  ],
+  "elapsed_seconds": 0.0013031959533691406,
+  "plan_version": "v2.4"
+}
