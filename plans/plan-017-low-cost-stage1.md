@@ -48,7 +48,7 @@ baseline_oof: 0.6452 # plan-016 G1
 
 | # | type | spec section | status |
 |---|---|---|---|
-| c1 | docs | v1 draft — plan-017 spec (low-cost stage 1) | [TODO] |
+| c1 | docs | v1 draft — plan-017 spec (low-cost stage 1) | [DONE] 0566934 |
 | c2 | code+exp | STAGE 0 (G0) — preflight + Voxel CE module smoke | [TODO] |
 | c3 | exp | STAGE 1 (G1) — 3-plan ensemble + dacon-submit | [TODO] |
 | c4 | code+exp | STAGE 2 (G2) — Voxel CE head 5-seed × 5-fold + dacon-submit | [TODO] |
