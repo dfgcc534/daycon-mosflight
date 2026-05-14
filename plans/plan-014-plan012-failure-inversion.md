@@ -104,7 +104,7 @@ G0 preflight  →  G1 module + smoke  →  G2 Phase 1 bake-off  →  G3 Phase 2 
 - **G0** preflight: F0 frozen reproduce ±0.005 (= 0.6320) / anchor 0.01m / soft entropy ≥0.5 nat / plan-012 disclaimer verify [DONE 6c56dd1: F0=0.6320 / oracle (E0a/E0b/E0c)=(0.8203/0.8248/0.7625) / soft=1.707 nat / ranking abs=[y,x,z] fro=[n,b,t]]
 - **G1** module build: `plan014_paradigm.py` + smoke + 재사용 끊김 4가지 (i) `selector` / `ring_classifier` / `boundary` / plan-006 numpy F0 함수 import 0 (ii) F0 forward = (1.98, 1.20, −0.20) reproduce ±0.005 + grad path 끊김 (= F0 는 nn.Buffer 또는 plain function, requires_grad 없음) (iii) anchor ‖·‖ = 0.01m ± 1e-6 (iv) soft label `w_k` (target Gaussian 분포) 의 sample-별 entropy 평균 ≥0.5 nat — **G0 (c) 와 같은 분석적 산출 (학습 전, model output prob_k 와 별개)** [DONE 8ef0c3c: 5/5 pytest PASS, F0 = Plan014F0Function plain class]
 - **G2** Phase 1 bake-off: winner_OOF ≥ 0.60 + DCM ≥ 0.002 (plan-012 G1 spec carry) [DONE 4783ae8: winner=E0c K-Means (OOF=0.6359, DCM=0.0026) — F0 raw 위 +0.0039 회수]
-- **G3** Phase 2 axis 5: 5 axis 중 1+ ΔOOF ≥ 0.005 (plan-012 G2 spec) [TODO]
+- **G3** Phase 2 axis 5: 5 axis 중 1+ ΔOOF ≥ 0.005 (plan-012 G2 spec) [DONE 76a4e52: `g3_marginal_only` warn, positive_axes=[]. max ΔOOF E2 +0.003 (K=9 best, marginal)]
 - **G4** Phase 3 aux 3: informational [TODO]
 - **G5** Phase 4 final: best_stack ≥ anchor_5fold + 0.005 (plan-012 G4 spec) + band 분류 [TODO]
 - **G_final** synthesis: results.md 신규 + registry append + frontmatter sync + plan-015 후보 [TODO]
@@ -125,7 +125,7 @@ G0 preflight  →  G1 module + smoke  →  G2 Phase 1 bake-off  →  G3 Phase 2 
 | c4 | code+exp | STAGE 0 (G0) — preflight artifact (F0 frozen reproduce 0.6320 ±0.005). spec @ §4. PASS 4/4: F0 frozen hit@1cm=0.6320 (정확 reproduce). oracle (E0a/E0b/E0c)=(0.8203/0.8248/0.7625). marginal ranking abs=[y,x,z] fro=[n,b,t]. min_cluster=338 | [DONE] 6c56dd1 |
 | c5 | code | STAGE 1 (G1) — `src/pb_0_6822/plan014_paradigm.py` v4 module + smoke + 재사용 끊김. spec @ §5. 5/5 PASS: AST import 0 (selector/ring_classifier/boundary/f0_predict_*) / F0 frozen plain class (no nn.Parameter, reproduce 0.6320) / anchor 0.01m / soft entropy ≥0.5 / smoke val_hit_after >= initial − 0.05 | [DONE] 8ef0c3c |
 | c6 | code+exp | STAGE 2 (G2) — Phase 1 codebook bake-off (E0a/E0b/E0c 3 sub-exp → winner). spec @ §6. **PASS** (v4 F0 frozen): winner=E0c K-Means (OOF=**0.6359** / DCM=0.0026 / gap=0.0066). E0a=0.6293 (DCM=0.0014) / E0b=0.6239. F0 raw 0.6320 위 +0.0039 회수 — v3.x cascade failure 회피 confirmed | [DONE] 4783ae8 |
-| c7 | exp | STAGE 3 (G3) — Phase 2 axis ablation 5 (E1~E5). spec @ §7 | [TODO] |
+| c7 | exp | STAGE 3 (G3) — Phase 2 axis ablation 5 (E1~E5). spec @ §7. **`g3_marginal_only` warn**: positive_axes=[]. anchor fold-0=0.6573. max ΔOOF: E1=-0.0055 / E2=+0.0030 (E2c K=9 best) / E3=-0.0005 / E4=-0.0050 / E5=-0.0015. paradigm 위 의미 있는 lever 0개 — F0 frozen ceiling 신호 | [DONE] 76a4e52 |
 | c8 | exp | STAGE 4 (G4) — Phase 3 aux ablation 3 (E6~E8). spec @ §8 | [TODO] |
 | c9 | exp | STAGE 5 (G5) — Phase 4 final 5-fold + best stack + submission. spec @ §9 | [TODO] |
 | c10 | docs+sync | STAGE 6 (G_final) — results.md + registry + frontmatter sync + plan-015 후보. spec @ §10 | [TODO] |
