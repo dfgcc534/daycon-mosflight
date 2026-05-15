@@ -94,7 +94,7 @@ LB 제출 = **총 1회** (best variant 만, plan-018 spirit carry — DACON dail
 | c7 | code | `src/plan019/ebip_icnn.py` — Input Convex NN g_θ + 1-step Newton (Amos 2017). spec @ §6 | [DONE] (a671780) |
 | c8 | exp | F015: S2 EBIP + ICNN 5-fold OOF | [TODO] |
 | G2 | gate | S2 OOF ≥ 0.68 | [TODO] |
-| c9 | code | `src/plan019/meta_ebip_icnn.py` — FOMAML inner loop + ICNN energy. spec @ §7 | [TODO] |
+| c9 | code | `src/plan019/meta_ebip_icnn.py` — FOMAML inner loop + ICNN energy. spec @ §7 | [DONE] (335a513) |
 | c10 | exp | F016: S3 meta-EBIP + ICNN 5-fold OOF | [TODO] |
 | G3 | gate | S3 OOF ≥ 0.70 ⭐ | [TODO] |
 | c11 | sub-lb | best variant dacon-submit + lb_log + frontmatter. spec @ §8 | [TODO] |
