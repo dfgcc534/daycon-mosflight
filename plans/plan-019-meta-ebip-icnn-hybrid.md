@@ -95,8 +95,8 @@ LB 제출 = **총 1회** (best variant 만, plan-018 spirit carry — DACON dail
 | c8 | exp | F015: S2 EBIP + ICNN 5-fold OOF | [DONE] (aa0d1ed) |
 | G2 | gate | S2 OOF ≥ 0.68 | [WARN] (aa0d1ed) — OOF=0.6520 `icnn_no_gain` warn, S3 진행 |
 | c9 | code | `src/plan019/meta_ebip_icnn.py` — FOMAML inner loop + ICNN energy. spec @ §7 | [DONE] (335a513) |
-| c10 | exp | F016: S3 meta-EBIP + ICNN 5-fold OOF | [TODO] |
-| G3 | gate | S3 OOF ≥ 0.70 ⭐ | [TODO] |
+| c10 | exp | F016: S3 meta-EBIP + ICNN 5-fold OOF | [DONE] (2bdf9e6) |
+| G3 | gate | S3 OOF ≥ 0.70 ⭐ | [WARN] (2bdf9e6) — OOF=0.6538 `meta_adaptation_no_gain` warn |
 | c11 | sub-lb | best variant dacon-submit + lb_log + frontmatter. spec @ §8 | [TODO] |
 | G4 | gate | LB > 0.70 (또는 회수 후 band 박제) | [TODO] |
 | c12 | synthesis | `analysis/plan-019/results.md` + `next_plan_candidates.md` (≥ 2 후보). spec @ §9 | [TODO] |
