@@ -82,7 +82,8 @@ LB 제출 = **총 1회** (best variant 만, plan-018 spirit carry — DACON dail
 
 | # | type | spec section | status |
 |---|---|---|---|
-| c1 | docs | `plans/plan-019-*.md` 본문 (본 파일) | [TODO] |
+| c1 | docs | `plans/plan-019-*.md` 본문 (본 파일) | [DONE] (3772665) |
+| c1.1 | docs | v1.1 spec amendments (user feedback Critical/High/Medium 3건) | [DONE] (015ca9e) |
 | c2 | code | `analysis/plan-019/eda_check.py` — 데이터 sanity (plan-018 §4.1 spec carry). 신규 작성 | [TODO] |
 | c3 | code | `src/plan019/baseline_a0.py` — plan-007 step 4 MLP 재구현 (plan-018 §4.2 spec carry). 신규 작성 | [TODO] |
 | c4 | exp | A0 5-fold OOF reproduce | [TODO] |
