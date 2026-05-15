@@ -1,0 +1,33 @@
+{
+  "exp_id": "F013_eda_check",
+  "plan_version": "v1.1",
+  "shape_ok": true,
+  "axis_std": [
+    1.2213975652103877,
+    0.798087981849211,
+    0.6383384372966965
+  ],
+  "std_ok": true,
+  "const_vel_mae_per_axis_max_m": 0.015023937359999951,
+  "mae_ok": true,
+  "const_vel_hit_1cm": 0.2463,
+  "a0_oof_hit_1cm_imported": 0.6482,
+  "a0_oof_target_min": 0.6479,
+  "a0_oof_target_max": 0.6485,
+  "a0_in_range_imported": true,
+  "best_basis_vars": [
+    "d1",
+    "acc_par",
+    "acc_perp",
+    "d2",
+    "jerk",
+    "ts_term",
+    "speed_slope_d1",
+    "rotation_term"
+  ],
+  "n_coeffs": 8,
+  "all_assertions_pass": true,
+  "g0_imported_passed": true,
+  "note": "본 file 은 plan-007 step 4 OOF import-only sanity. 실제 A0 5-fold OOF reproduce 는 c4 baseline_a0.py 에서 별도 수행.",
+  "elapsed_seconds": 0.7201027870178223
+}
