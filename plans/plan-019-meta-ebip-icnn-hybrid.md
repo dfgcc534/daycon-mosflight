@@ -89,8 +89,8 @@ LB 제출 = **총 1회** (best variant 만, plan-018 spirit carry — DACON dail
 | c4 | exp | A0 5-fold OOF reproduce | [DONE] (cec06e7) |
 | G0 | gate | A0 OOF ∈ [0.6479, 0.6485] | [DONE] (cec06e7) — OOF=0.6482 PASS |
 | c5 | code | `src/plan019/ebip_base.py` — EBIP base (energy = bilinear + g_θ small MLP, unrolled 5-step Adam). spec @ §5 | [DONE] (77c8d58) |
-| c6 | exp | F014: S1 EBIP base 5-fold OOF | [TODO] |
-| G1 | gate | S1 OOF ≥ 0.66 | [TODO] |
+| c6 | exp | F014: S1 EBIP base 5-fold OOF | [DONE] (4dd7c2a) |
+| G1 | gate | S1 OOF ≥ 0.66 | [WARN] (4dd7c2a) — OOF=0.6552 `ebip_no_gain` warn, S2 진행 |
 | c7 | code | `src/plan019/ebip_icnn.py` — Input Convex NN g_θ + 1-step Newton (Amos 2017). spec @ §6 | [DONE] (a671780) |
 | c8 | exp | F015: S2 EBIP + ICNN 5-fold OOF | [TODO] |
 | G2 | gate | S2 OOF ≥ 0.68 | [TODO] |
