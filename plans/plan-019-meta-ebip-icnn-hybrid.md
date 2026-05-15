@@ -10,7 +10,7 @@ based_on:
   - brainstorm-iter-1~5 (5-iteration /loop, 6 candidates: meta-EBIP+ICNN / EBIP / meta-EBIP / Learnable Basis+MoLE / DEQ / ICNN)
   - 018 (single-stack architecture lever falsified — plan-019 의 paradigm-shift 동기)
 followed_by:
-  - 020 후보 박제 (corrector 결합 / multi-stack / learnable basis / DEQ — energy-based 단독 ceiling 박제 후 paradigm-shift 필수)
+  - plan-004 upgrade direction (plan-020 candidates 폐기 — 사용자 재평가 결과, plan-019 S1 의 CNN encoder lever 를 plan-004 paradigm 직접 upgrade 에서 활용)
 scope: 본 5-iteration brainstorm 의 *ambitious path* — **meta-EBIP + ICNN hybrid** (brainstorm ranking #1)
        의 progressive ablation. plan-018 결과 *무관* (사용자 명시) — plan-007 step 4 가 baseline.
        3 stage breakdown: (S1) EBIP base / (S2) + ICNN convex / (S3) + meta adaptation.

@@ -10,7 +10,7 @@ based_on:
   - brainstorm-iter-1~5 (6 candidates: meta-EBIP+ICNN ★ / EBIP / meta-EBIP / Learnable Basis+MoLE / DEQ / ICNN)
   - 018 (단일 stack architecture lever falsified — 본 plan 의 paradigm-shift 동기)
 followed_by:
-  - 020 후보 박제 (energy-based paradigm 의 *실측 ceiling* ≈ A0 + 0.007 → corrector 결합 또는 multi-stack 필수)
+  - plan-004 upgrade direction (plan-020 candidates 폐기 — 사용자 재평가 결과, plan-004 27-candidate selector path 직접 upgrade 로 재정의)
 scope: brainstorm ranking #1 paradigm (meta-EBIP + ICNN hybrid) 의 progressive 3-stage ablation.
        3 stage (S1 EBIP base / S2 + ICNN convex / S3 + meta adaptation) × 5-fold OOF.
        G_final = LB > 0.70.
@@ -107,41 +107,25 @@ Verdict: **falsified**. measured 결과:
 - plan-019: "implicit reformulation 으로 single-stack ceiling +0.007 push 가능, 그러나 target 0.66 미달" (3 stage 평균 A0+0.005).
 - 종합: **single-stack paradigm 자체의 실측 ceiling ≈ A0 + 0.005~0.010**. plan-007 §9.2 의 *0.6491 한계* 추측 위 약간 push, 그러나 plan-004 LB 0.6822 와 oracle 0.7188 도달 불가능 — *multi-stack / corrector 결합 필수*.
 
-## §4. plan-020 후보 (paradigm-shift 필수)
+## §4. 후속 방향 — plan-004 upgrade direction (plan-020 candidates 폐기)
 
-본 plan G1/G2/G3 모두 WARN, single-stack 의 *실측 ceiling* 박제 → **brainstorm 의 나머지 5 candidates 도 single-stack 한 부수, 모두 fail 예상**. plan-020 = **paradigm-shift 필요**.
+본 §4 의 직전 버전 (plan-020 후보 A/B/C/D — corrector 결합 / multi-stack / learnable basis / DEQ, `analysis/plan-019/next_plan_candidates.md`) 은 **plan-019 측정 후 사용자 재평가 결과 폐기**.
 
-후보 ≥ 2 박제 (analysis/plan-019/next_plan_candidates.md 참조):
+### 폐기 사유
 
-### §4.1 후보 A: corrector 결합 (plan-005/016 paradigm + S1 best)
+- 본 candidates 모두 *plan-019 S1 module 의 활용* path. 그러나 S1 의 +0.007 gain source 가 **CNN encoder 64d** 으로 measured — S1 자체보다 *encoder lever 직접 활용* 이 효과적.
+- 후보 A (S1 + corrector ensemble): S1 OOF=0.6552 < plan-005 D001 (~0.69), ensemble member 약함.
+- 후보 B (multi-stack with S1 corrector): S1 ≈ plan-007 step 4 LB 0.6598 동급, corrector 가치 약함.
+- 후보 C (learnable basis + MoLE): plan-018/019 결합 결론으로 basis/head 가 main lever 아님 measured.
+- 후보 D (DEQ): plan-019 S1 의 energy_mlp 학습 미발현 measured, paradigm-similar ceiling.
 
-- **idea**: plan-019 의 S1 EBIP base (OOF=0.6552) 의 prediction 을 plan-005/016 의 corrector freeze 와 *output ensemble* (좌표 mean) 으로 결합. plan-017 G1 ensemble (LB 0.6640) 패턴 carry.
-- **mechanism**: framework-disjoint 결합 — S1 (energy-based) + plan-016 G1 (BiGRU corrector). 둘이 *서로 다른 error mode* 보강 가능.
-- **cost**: low (좌표 mean ensemble + freeze inference).
-- **risk**: 둘 다 plan-007 fixed basis 위 동작 → framework-similar 일 수 있음.
+### 재정의된 후속 방향
 
-### §4.2 후보 B: multi-stack (plan-004 paradigm 변형 — selector + boundary corrector)
+**plan-004 upgrade direction** — plan-004 LB 0.6822 (27-candidate full ensemble selector + GRU) 의 *직접 upgrade* path:
+- plan-019 의 *encoder dim* (CNN 64d) measured lever 와 plan-018 의 *head/basis ablation* 결합 — 그러나 paradigm 은 **plan-004 carry** (27 candidates pool + selector).
+- single-stack ceiling 박제 결론 → paradigm-shift 가 *plan-005/004 의 multi-formula 27-candidate path 직접 upgrade* 방향으로 결정.
 
-- **idea**: plan-018 §4.2 carry. plan-004 LB 0.6822 의 *full ensemble* 아닌 *single-model* 변형 — selector (anchor classify) + boundary corrector (high-error region focus). plan-019 S1 의 EBIP energy module 을 corrector 로 재사용.
-- **mechanism**: high-error region (~20% sample, plan-005 oracle 보다 멀리 있는 ~30% 의 0.04 m 이상) 에 model capacity 집중. plan-005 의 *27 후보 풀* 의 oracle 0.7188 를 *학습된 selector* 로 회수.
-- **cost**: high (selector + corrector 분리 + joint training).
-- **risk**: plan-004 LB 0.6822 가 full ensemble 결과, single-model 회수율 미확정.
-
-### §4.3 후보 C: Learnable Basis + Sparse MoLE (brainstorm #4)
-
-- **idea**: brainstorm #4 carry — 8 fixed basis 를 *learnable embedding* (Koopman lift / Fourier feature) 으로 확장. plan-018 의 A3 MoLE (head capacity) + 본 후보 (basis capacity) 결합.
-- **mechanism**: plan-019 가 *single-stack ceiling* falsify 했으므로, single-stack 의 *basis 자체 확장* 으로 ceiling 추가 push 시도. plan-018 §4.4 carry.
-- **cost**: medium (basis learning + overfit risk on 10K).
-- **risk**: plan-018 / plan-019 의 combined 결과로 *single-stack ceiling 자체가 0.65~0.66* — basis 확장으로도 0.67 돌파 의문.
-
-### §4.4 후보 D: DEQ (brainstorm #2, infinite-depth implicit layer)
-
-- **idea**: brainstorm #2 carry — 본 plan 의 unrolled GD T=5 의 *infinite-depth limit* (Deep Equilibrium Model, Bai et al. 2019). fixed-point iteration p* = f(p*, traj) 까지 수렴.
-- **mechanism**: 본 plan 의 S1/S2 가 T=3~5 step 으로 underfit (energy minimum 미도달) 가능성 — DEQ 로 수렴까지 가서 *진짜 implicit prediction* 달성.
-- **cost**: high (DEQ 안정성, Jacobian implicit diff).
-- **risk**: 본 plan 의 S2 ICNN unrolled GD 의 *실측 효과 미미* 관찰 → DEQ 도 동일 ceiling 예상. paradigm-shift 의도와 모순.
-
-**권장**: **후보 A (corrector 결합)** — cheapest, plan-005 corrector 의 *measured complementarity* 와 plan-019 S1 의 implicit anchor 결합. 단일 plan-020 으로 최저 cost 진행.
+상세 plan-NNN 작성은 본 plan-019 scope 외 별도 commit.
 
 ## §5. measured 값 박제 (외부 reference)
 
@@ -167,7 +151,7 @@ Verdict: **falsified**. measured 결과:
 
 - plan-019 G4 LB skip (사용자 결정).
 - DACON quota: **0/5 본 plan 사용**.
-- best variant S1 의 submission.csv 미산출 (G4 SKIP). plan-020 후보 A (corrector 결합) 시 ensemble member 로 carry 가능 — `runs/baseline/F014_ebip-base/checkpoint_fold{0..4}.pt` 박제 유지.
+- best variant S1 의 submission.csv 미산출 (G4 SKIP). plan-004 upgrade direction 시 *encoder lever* 차용 가능 — `runs/baseline/F014_ebip-base/checkpoint_fold{0..4}.pt` 박제 유지 (CNN encoder weight reuse).
 
 ## §7. 종료
 
@@ -175,7 +159,7 @@ Verdict: **falsified**. measured 결과:
   - results.md 신규 (본 파일) ✓
   - plan-019 frontmatter sync (status=G_final_complete, g{0..3}_passed, best_stage=S1, best_stage_oof=0.6552, delta_vs_a0=0.0070) — 본 commit
   - analysis/plan-019/results.md 신규 — 별도 작성
-- plan-020 후보 ≥ 2 박제: ✓ (총 4 — corrector 결합 / multi-stack / learnable basis / DEQ)
+- 후속 방향 박제: ✓ (plan-004 upgrade direction, plan-020 candidates 폐기)
 - G4 LB measured: SKIP (사용자 결정)
 
 decision-note: brainstorm 6 candidates 의 *single-stack 한정* 결론 — paradigm-shift (corrector 결합 또는 multi-stack) 가 ceiling break 의 유일 path. plan-019 의 *실측 ceiling* ≈ A0 + 0.007 박제 후 plan-020 진행.
