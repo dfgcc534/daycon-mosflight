@@ -2,7 +2,7 @@
 plan_id: 018
 version: 1.2 (executor patch — A5 Neural CDE 제외 (torchcde 미설치, RK4 ODE solver 수동 구현 cost 과대). 4 ablation arch (A1/A2/A3/A6) 로 reduction. basis_vars 실제 값 carry (d1/acc_par/acc_perp/d2/jerk/ts_term/speed_slope_d1/rotation_term) — spec 박제 8 vars 와 다름 but plan-007 actual best 박제. A0 reproduce 는 mlp_coeff.json (OOF=0.6482) import only.)
 date: 2026-05-15 (Asia/Seoul)
-status: draft
+status: G_final_complete
 based_on:
   - 007 (Step 4 MLP OOF 0.6482, LB 0.6598. best basis 8 vars 박제)
   - 005 (oracle 0.7188, plan-018 미적용 — multi-formula 는 본 plan out-of-scope)
@@ -13,9 +13,14 @@ scope: plan-007 step 4 의 *spirit* (per-sample coefficient regression on fixed 
        multi-stage / corrector / multi-formula / learnable basis 는 본 plan 외 (다음 plan).
        단일 모델 LB ≥ 0.67 (= plan-004 LB 0.6822 의 95% 이상) 도달 시 G_final PASS.
 exp_ids:
-  - F008_arch-ablation         # A0 + 5 ablation arch × 5-fold OOF (총 6 arch)
-  - F009_best-arch-lb          # best arch LB 제출
-lb_score: null
+  - F008_eda_check
+  - F008_arch-ablation         # A0 (imported) + 4 ablation arch (A1/A2/A3/A6) × 5-fold OOF
+  - F010_g_final_synthesis
+lb_score: null  # G2 SKIP per user decision (quota 보존)
+g1_passed: false
+best_arch: A3
+best_arch_oof: 0.6485
+delta_vs_a0: 0.0003
 exception_policy: plan-007 §2.2 의 "End-to-end 학습 통합 out-of-scope" 의 **예외 plan**.
                   본 plan 의 A1~A6 (A4 제외) 는 trajectory encoder + coefficient head 의 *single-stack end-to-end*.
                   단, *multi-stack* (encoder + head + corrector + selector 등 ≥ 3 stage) 은 여전히 out-of-scope.
