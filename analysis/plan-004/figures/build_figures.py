@@ -97,7 +97,7 @@ def fig02_sample_trajectories():
     # 10 random training sample ids (TRAIN_00001 ~ TRAIN_10000)
     pick_ids = [f"TRAIN_{i:05d}" for i in rng.choice(np.arange(1, 10001),
                                                      size=8, replace=False)]
-    fig = plt.figure(figsize=(11, 5.5))
+    fig = plt.figure(figsize=(9, 7.5))
     ax = fig.add_subplot(111, projection="3d")
     colors = plt.cm.tab10(np.linspace(0, 1, len(pick_ids)))
     for sid, c in zip(pick_ids, colors):
@@ -310,21 +310,28 @@ def fig05_regime_heatmap():
     rd = json.load(open(REPO / "analysis/plan-004/regime_distribution.json"))
     hit = np.array(rd["hit_table"])  # (18, 27)
     cand_names = rd["candidate_names"]
-    fig, ax = plt.subplots(figsize=(13, 5.5))
+    fig, ax = plt.subplots(figsize=(10, 9))
     im = ax.imshow(hit, aspect="auto", cmap="RdYlGn", vmin=0, vmax=1)
     ax.set_xticks(range(27))
-    ax.set_xticklabels([f"c{i:02d}\n{n}" for i, n in enumerate(cand_names)],
-                       rotation=75, fontsize=6, ha="right")
+    ax.set_xticklabels([f"c{i:02d} {n}" for i, n in enumerate(cand_names)],
+                       rotation=80, fontsize=7, ha="right")
     ax.set_yticks(range(18))
     ax.set_yticklabels([f"r{r:02d} (n={c})"
                        for r, c in enumerate(rd["regime_histogram"])],
-                       fontsize=8)
-    ax.set_xlabel("Candidate (27)")
-    ax.set_ylabel("Regime (18 = speed × curvature × speed_slope)")
+                       fontsize=9)
+    # Annotate each cell with its value
+    for r in range(18):
+        for c in range(27):
+            v = hit[r, c]
+            color = "white" if v < 0.35 or v > 0.75 else "black"
+            ax.text(c, r, f"{v:.2f}", ha="center", va="center",
+                    fontsize=5.5, color=color)
+    ax.set_xlabel("Candidate (27)", fontsize=10)
+    ax.set_ylabel("Regime (18 = speed × curvature × speed_slope)", fontsize=10)
     ax.set_title("Figure 5. 18 regime × 27 candidate hit-rate (@ 1 cm) — 실측 train OOF\n"
                  "녹색=잘 맞춤, 빨강=거의 못 맞춤.  selector logit 에 이 표 기반 regime_bias(0.45) 가산.",
                  fontsize=10)
-    cbar = fig.colorbar(im, ax=ax, fraction=0.025, pad=0.02)
+    cbar = fig.colorbar(im, ax=ax, fraction=0.030, pad=0.02)
     cbar.set_label("hit rate @ 1 cm", fontsize=9)
     fig.savefig(OUT / "fig05_regime_heatmap.png")
     plt.close(fig)

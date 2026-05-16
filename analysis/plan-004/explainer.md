@@ -19,7 +19,11 @@ lb_score: 0.6806
 | 18 regimes | 3 × 3 × 2 | (speed × curvature × speed_slope) quantile binning |
 | Oracle bound | 0.7277 | 27 후보 중 항상 best 선택 시 ceiling |
 
-**왜 이 구조인가 (한 문장)**: 평가가 *평균 거리* 가 아니라 *1 cm hit rate* 이므로, 회귀 모델로 평균 거리를 줄이는 대신 *물리적으로 그럴듯한 discrete 후보군* 을 만들고 신경망에는 *선택* (=분류, 신경망이 잘하는 일) 만 시킨 뒤, 미세한 boundary 회수만 *제한된 corrector* 로 처리한다. 노트북 작성자의 표현으로 "**Physics Ladder**" — 물리 후보의 다섯 단계 사다리.
+**왜 이 구조인가**:
+
+- 평가가 *평균 거리* 가 아니라 *1 cm hit rate* 임 → 회귀로 평균 거리를 줄이는 게 *직접 점수* 와 맞지 않음.
+- 따라서 *물리적으로 그럴듯한 discrete 후보군* 을 만들고, 신경망은 *선택* (=분류, 신경망이 잘하는 일) 만 담당. 미세 보정은 *제한된 corrector* 가 처리.
+- 노트북 작성자의 표현으로 "**Physics Ladder**" — 물리 후보의 다섯 단계 사다리.
 
 ---
 
@@ -186,6 +190,8 @@ Final (x, y, z) at +80 ms
 - **Jerk family** (2개): `jerk_small_pos`, `jerk_small_neg`
 - **Latency family** (10개): `latency_short_frenet_best_085, _092`, `latency_long_frenet_best_108, _115`, `latency_long_turn_neg_110`, `latency_short_turn_pos_090`, ... (시간 스케일 0.85 ~ 1.15 변형)
 
+> *입문자 노트*: 개별 candidate 이름을 외울 필요 X. 패턴 = `[base family]_[parameter variant]` (예: `frenet` + `par100_perp000` = 진행 방향 100% + 수직 0%). family 가 무엇인지 + 27 개로 *수가 한정* 이라는 점만 기억하면 충분.
+
 **Latency 후보의 의도**: LiDAR 스캔/추적/좌표 변환의 미세 지연을 *Gaussian noise 로 평균 보정* 하는 대신 *time_scale 후보로 enumerate* 한다. 즉 "지연은 체계적 변형이지 무작위 잡음이 아니다" 라는 도메인 가정.
 
 > *Cross-ref*: 설계자 narrative 의 *Physics Ladder* 5 단계 = (단계 1·2·3 = 위 후보 family, 본 §) + (**단계 4** = Attn-GRU Selector, 다음 §3.3) + (**단계 5** = Tiny MLP Corrector, §3.5). 이 문서는 §3.2 ~ §3.5 로 분리 서술.
@@ -244,6 +250,8 @@ $$
 | speed_slope (가속/감속) | [0.0108] | 2 |
 
 → `regime = speed_bin × 6 + curve_bin × 2 + slope_bin` ∈ {0, ..., 17}.
+
+> *입문자 노트*: 위 인덱싱 공식 자체는 신경 안 써도 됨. "18 = **3 × 3 × 2** (속도 3 단계 × 곡률 3 단계 × 가/감속 2 단계) 의 격자" 정도만 기억. 각 sample 이 18 칸 중 한 칸에 들어간다는 것이 핵심.
 
 각 (regime, candidate) cell 에 **train OOF hit rate** 를 empirical Bayes shrinkage 로 안정화 (prior strength = 18 sample, `candidate_regime_bias`, `src/pb_0_6822/selector.py` L380-403):
 
@@ -428,7 +436,7 @@ $$
 
 ## §4.7 Oracle bound 와 남은 헤드룸 — 어디까지 갈 수 있는가
 
-![Figure 8. 단계별 lift 분해](figures/fig08_corrector_lift.png)
+단계별 hit rate 진화:
 
 | 단계 | hit@1cm | 누적 lift |
 |---|---|---|
@@ -437,6 +445,8 @@ $$
 | Corrector OOF (plan-004 stage 2) | 0.6718 | +0.0718 |
 | **Final LB (plan-004 제출)** | **0.6806** | **+0.0806** |
 | Oracle bound (best-of-27) | 0.7277 | (ceiling) |
+
+![Figure 8. 단계별 lift 분해](figures/fig08_corrector_lift.png)
 
 **Oracle 의 의미**: 만약 selector 가 *항상 정답 후보를 선택* 한다면 hit rate = 0.7277. 즉 **27 candidate 자체로 70%+ 의 문제는 *원리적으로* 풀린다**. 남은 30% 는 후보 자체로 cover 안 됨 (후보 family 확장 필요).
 

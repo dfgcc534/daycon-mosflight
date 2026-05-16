@@ -61,7 +61,12 @@ window.MathJax = {
 </tr>
 </tbody>
 </table>
-<p><strong>왜 이 구조인가 (한 문장)</strong>: 평가가 <em>평균 거리</em> 가 아니라 <em>1 cm hit rate</em> 이므로, 회귀 모델로 평균 거리를 줄이는 대신 <em>물리적으로 그럴듯한 discrete 후보군</em> 을 만들고 신경망에는 <em>선택</em> (=분류, 신경망이 잘하는 일) 만 시킨 뒤, 미세한 boundary 회수만 <em>제한된 corrector</em> 로 처리한다. 노트북 작성자의 표현으로 "<strong>Physics Ladder</strong>" — 물리 후보의 다섯 단계 사다리.</p>
+<p><strong>왜 이 구조인가</strong>:</p>
+<ul>
+<li>평가가 <em>평균 거리</em> 가 아니라 <em>1 cm hit rate</em> 임 → 회귀로 평균 거리를 줄이는 게 <em>직접 점수</em> 와 맞지 않음.</li>
+<li>따라서 <em>물리적으로 그럴듯한 discrete 후보군</em> 을 만들고, 신경망은 <em>선택</em> (=분류, 신경망이 잘하는 일) 만 담당. 미세 보정은 <em>제한된 corrector</em> 가 처리.</li>
+<li>노트북 작성자의 표현으로 "<strong>Physics Ladder</strong>" — 물리 후보의 다섯 단계 사다리.</li>
+</ul>
 <hr />
 <h1>§1. Task — 무엇을 푸는가</h1>
 <h2>§1.1 한 줄 정의</h2>
@@ -232,6 +237,9 @@ Final (x, y, z) at +80 ms</code></pre>
 <li><strong>Jerk family</strong> (2개): <code>jerk_small_pos</code>, <code>jerk_small_neg</code></li>
 <li><strong>Latency family</strong> (10개): <code>latency_short_frenet_best_085, _092</code>, <code>latency_long_frenet_best_108, _115</code>, <code>latency_long_turn_neg_110</code>, <code>latency_short_turn_pos_090</code>, ... (시간 스케일 0.85 ~ 1.15 변형)</li>
 </ul>
+<blockquote>
+<p><em>입문자 노트</em>: 개별 candidate 이름을 외울 필요 X. 패턴 = <code>[base family]_[parameter variant]</code> (예: <code>frenet</code> + <code>par100_perp000</code> = 진행 방향 100% + 수직 0%). family 가 무엇인지 + 27 개로 <em>수가 한정</em> 이라는 점만 기억하면 충분.</p>
+</blockquote>
 <p><strong>Latency 후보의 의도</strong>: LiDAR 스캔/추적/좌표 변환의 미세 지연을 <em>Gaussian noise 로 평균 보정</em> 하는 대신 <em>time_scale 후보로 enumerate</em> 한다. 즉 "지연은 체계적 변형이지 무작위 잡음이 아니다" 라는 도메인 가정.</p>
 <blockquote>
 <p><em>Cross-ref</em>: 설계자 narrative 의 <em>Physics Ladder</em> 5 단계 = (단계 1·2·3 = 위 후보 family, 본 §) + (<strong>단계 4</strong> = Attn-GRU Selector, 다음 §3.3) + (<strong>단계 5</strong> = Tiny MLP Corrector, §3.5). 이 문서는 §3.2 ~ §3.5 로 분리 서술.</p>
@@ -302,6 +310,9 @@ linear → 27 logits</code></pre>
 </tbody>
 </table>
 <p>→ <code>regime = speed_bin × 6 + curve_bin × 2 + slope_bin</code> ∈ {0, ..., 17}.</p>
+<blockquote>
+<p><em>입문자 노트</em>: 위 인덱싱 공식 자체는 신경 안 써도 됨. "18 = <strong>3 × 3 × 2</strong> (속도 3 단계 × 곡률 3 단계 × 가/감속 2 단계) 의 격자" 정도만 기억. 각 sample 이 18 칸 중 한 칸에 들어간다는 것이 핵심.</p>
+</blockquote>
 <p>각 (regime, candidate) cell 에 <strong>train OOF hit rate</strong> 를 empirical Bayes shrinkage 로 안정화 (prior strength = 18 sample, <code>candidate_regime_bias</code>, <code>src/pb_0_6822/selector.py</code> L380-403):</p>
 <div class="arithmatex">\[
 \hat{p}^{\text{EB}}_{r,c} \;=\; \frac{n_{r,c} \cdot \hat{p}_{r,c} \;+\; \pi \cdot \hat{p}_{\text{global}}}{n_{r,c} + \pi}, \qquad \pi = 18
@@ -509,7 +520,7 @@ local → world 변환 → selector soft blend 좌표에 더함</code></pre>
 <p><strong>Why OOF score bank?</strong> — fold k 의 val partition 에 대한 selector 점수는 <em>다른 fold 들의 train 으로 학습된</em> 모델의 출력 → train data 미노출. Corrector 가 이 OOF score 를 입력으로 학습하면, train 성능과 OOF 성능이 일관됨.</p>
 <p><strong>부수 이득</strong>: Selector 와 Corrector 의 모듈러 ablation 이 자유로워짐. Selector 만 교체, Corrector 만 교체 가능.</p>
 <h2>§4.7 Oracle bound 와 남은 헤드룸 — 어디까지 갈 수 있는가</h2>
-<p><img alt="Figure 8. 단계별 lift 분해" src="figures/fig08_corrector_lift.png" /></p>
+<p>단계별 hit rate 진화:</p>
 <table>
 <thead>
 <tr>
@@ -546,6 +557,7 @@ local → world 변환 → selector soft blend 좌표에 더함</code></pre>
 </tr>
 </tbody>
 </table>
+<p><img alt="Figure 8. 단계별 lift 분해" src="figures/fig08_corrector_lift.png" /></p>
 <p><strong>Oracle 의 의미</strong>: 만약 selector 가 <em>항상 정답 후보를 선택</em> 한다면 hit rate = 0.7277. 즉 <strong>27 candidate 자체로 70%+ 의 문제는 <em>원리적으로</em> 풀린다</strong>. 남은 30% 는 후보 자체로 cover 안 됨 (후보 family 확장 필요).</p>
 <p><strong>현재 헤드룸</strong>: 0.7277 - 0.6806 = <strong>0.0471</strong> (4.7pp). 이 중 절반은 selector ranker 개선, 절반은 candidate 자체 확장으로 회수 가능 (plan-004 §5 다음 plan 후보 참조).</p>
 <hr />
