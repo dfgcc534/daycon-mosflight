@@ -72,7 +72,7 @@ band: null
 | # | type | spec section | status |
 |---|---|---|---|
 | c1 | docs | `plans/plan-020-f0-structural-search.md` 본문 v1 작성 (v1.1 narrative 정합 / v1.2 plan-review-master 5-iter fix / v1.3 코드 재사용 검토 정정) | [DONE] |
-| c2 | code | `analysis/plan-020/baseline_f0.py` (plan-006 산식 1:1 재구현, reproduce-only) | [TODO] |
+| c2 | code | `analysis/plan-020/baseline_f0.py` (plan-006 산식 1:1 재구현, reproduce-only + torch mirror, bit-identical sanity) | [DONE] |
 | c3 | code | `analysis/plan-020/formula_deterministic.py` (14 후보 산식, no learning) | [TODO] |
 | c4 | code | `analysis/plan-020/formula_nn.py` (3 NN 후보 module + 학습 loop) | [TODO] |
 | c5 | code | `analysis/plan-020/run_oof.py` 5-fold OOF runner (CPU + GPU 분기) | [TODO] |
