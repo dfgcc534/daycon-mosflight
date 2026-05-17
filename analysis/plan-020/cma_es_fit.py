@@ -176,6 +176,8 @@ def fit_candidate(
         return fit_per_regime_f0(X_train, Y_train, end_idx, popsize=popsize, maxiter=maxiter, seed=seed_list[0])
     if name == "C14_trajectory_knn":
         return fit_knn(X_train, Y_train, end_idx)
+    if name == "C04_imm":
+        return fit_c04_imm(X_train, Y_train, end_idx, popsize=popsize, maxiter=maxiter, seed_list=seed_list, verbose=verbose)
     if name in {"C02_ctra", "C03_ctrv", "C06_quintic_hermite", "C07_jerk_quartic", "C11_se3_twist", "C13_levy_prior"}:
         return None  # 0-param / degenerate
 
@@ -199,6 +201,101 @@ def fit_candidate(
     fp["_seed_scores"] = seed_scores  # diagnostic
     fp["_best_train_hit"] = -best_score
     return fp
+
+
+# ── C04 IMM (w_diag → softmax with π_raw, special closure path) ──────
+
+
+def fit_c04_imm(
+    X: np.ndarray,
+    Y: np.ndarray,
+    end_idx: int,
+    popsize: int = 20,
+    maxiter: int = 200,
+    seed_list: list[int] | None = None,
+    verbose: bool = False,
+) -> dict:
+    """§6.1 C4: π_raw = train mode hit-rate (per CV/CA/CT) → w_diag CMA-ES → final pi via softmax.
+
+    Returns: {"pi": np.ndarray shape (3,), "w_diag": ..., "pi_raw": ..., "_best_train_hit": float}
+    Mismatch: C04_imm() in formula_deterministic expects fit_params["pi"] — this fit fn provides it.
+    """
+    seed_list = seed_list or DEFAULT_SEEDS
+    DT_local = fd.DT
+    H_local = fd.H
+
+    # mode predictions on train (constant — no per-iter dependency)
+    v_t = (X[:, end_idx] - X[:, end_idx - 1]) / DT_local
+    v_p = (X[:, end_idx - 1] - X[:, end_idx - 2]) / DT_local
+    a_t = (v_t - v_p) / DT_local
+    p_CV = X[:, end_idx] + H_local * v_t
+    p_CA = X[:, end_idx] + H_local * v_t + 0.5 * H_local**2 * a_t
+    p_CT = fd.C03_ctrv(X, end_idx)
+
+    d_CV = np.linalg.norm(p_CV - Y, axis=1)
+    d_CA = np.linalg.norm(p_CA - Y, axis=1)
+    d_CT = np.linalg.norm(p_CT - Y, axis=1)
+    pi_raw = np.array([
+        float((d_CV <= R_HIT_MAIN).mean()),
+        float((d_CA <= R_HIT_MAIN).mean()),
+        float((d_CT <= R_HIT_MAIN).mean()),
+    ])
+
+    spec = CANDIDATE_CMA_SPEC["C04_imm"]
+
+    def _pi_from_w(w):
+        w = np.asarray(w, dtype=float)
+        logits = w * pi_raw
+        logits = logits - logits.max()  # stability
+        ex = np.exp(logits)
+        return ex / ex.sum()
+
+    def _eval_mixture_with_pi(pi, tau):
+        pred = pi[0] * p_CV + pi[1] * p_CA + pi[2] * p_CT
+        d = np.linalg.norm(pred - Y, axis=1)
+        sh_main = 1.0 / (1.0 + np.exp(-(R_HIT_MAIN - d) / tau))
+        sh_loose = 1.0 / (1.0 + np.exp(-(R_HIT_LOOSE - d) / tau))
+        return -float((sh_main + 0.5 * sh_loose).mean())
+
+    best_score = float("inf")
+    best_w = np.asarray(spec["init"], dtype=float)
+    seed_scores: dict[int, float] = {}
+    for seed in seed_list:
+        opts = {
+            "popsize": popsize,
+            "maxiter": maxiter,
+            "tolfun": 1e-5,
+            "seed": seed,
+            "verbose": -9,
+            "bounds": spec["bounds"],
+        }
+        es = cma.CMAEvolutionStrategy(spec["init"], spec["sigma"], opts)
+        for it in range(maxiter):
+            if es.stop():
+                break
+            sols = es.ask()
+            tau = _tau_for_iter(it, maxiter)
+            fits = [_eval_mixture_with_pi(_pi_from_w(s), tau) for s in sols]
+            es.tell(sols, fits)
+        w_cand = np.asarray(es.result.xbest if es.result.xbest is not None else spec["init"])
+        pi_cand = _pi_from_w(w_cand)
+        pred = pi_cand[0] * p_CV + pi_cand[1] * p_CA + pi_cand[2] * p_CT
+        d = np.linalg.norm(pred - Y, axis=1)
+        hard_score = -float((d <= R_HIT_MAIN).mean())
+        seed_scores[seed] = -hard_score
+        if hard_score < best_score:
+            best_score = hard_score
+            best_w = w_cand
+        if verbose:
+            print(f"  [C04_imm] seed={seed} train_hit={-hard_score:.4f}", flush=True)
+    pi_final = _pi_from_w(best_w)
+    return {
+        "pi": pi_final,
+        "w_diag": best_w,
+        "pi_raw": pi_raw,
+        "_seed_scores": seed_scores,
+        "_best_train_hit": -best_score,
+    }
 
 
 # ── C05 per-regime F0 ──────────────────────────────────────────────────

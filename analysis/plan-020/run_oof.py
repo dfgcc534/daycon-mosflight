@@ -142,9 +142,9 @@ def run_deterministic_oof(
                     print(f"  [{name}] fold {k}: CMA-ES fit failed ({type(exc).__name__}), fallback to default.", flush=True)
                 fit_params = None
 
-        # C05 per-regime requires regimes assignment (fold-internal)
+        # C05 per-regime requires regimes assignment (fold-internal). bins comes from fit_params.
         if name == "C05_per_regime_f0" and fit_params is not None and "regimes" not in fit_params:
-            bins = fit_regime_bins(X[train_idx], end_idx=END_IDX)
+            bins = fit_params.get("bins") or fit_regime_bins(X[train_idx], end_idx=END_IDX)
             fit_params["regimes"] = assign_regimes(X[val_idx], end_idx=END_IDX, bins=bins)
 
         pred_val = fn(X[val_idx], end_idx=END_IDX, fit_params=fit_params)

@@ -298,12 +298,14 @@ def _kalman_per_axis(
     F = np.array([[1.0, DT, 0.5 * DT**2], [0.0, 1.0, DT], [0.0, 0.0, 1.0]])
     G = np.array([DT**3 / 6.0, DT**2 / 2.0, DT])
     Q_mat = q * np.outer(G, G)
-    # init from first 3 obs
+    # init: pos = first obs, vel = first-diff, accel = 0 (finite-diff a is unstable on 3 points).
+    # Initial P large enough for KF to self-correct within first few obs.
     x_state = np.zeros((N, 3))
     x_state[:, 0] = obs[:, 0]
     x_state[:, 1] = (obs[:, 1] - obs[:, 0]) / DT
-    x_state[:, 2] = (obs[:, 2] - 2 * obs[:, 1] + obs[:, 0]) / DT**2
-    P = np.broadcast_to(np.eye(3) * 1e-2, (N, 3, 3)).copy()
+    # x_state[:, 2] = 0  (already zero — let KF infer acceleration from successive obs)
+    P_init_diag = np.array([1e-3, 1.0, 1e2])  # p tight, v loose, a very loose
+    P = np.broadcast_to(np.diag(P_init_diag), (N, 3, 3)).copy()
     for t in range(1, T):
         x_pred = x_state @ F.T
         P_pred = F @ P @ F.T + Q_mat                # broadcast (3,3) @ (N,3,3) @ (3,3)
