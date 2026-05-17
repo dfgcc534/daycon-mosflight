@@ -311,6 +311,10 @@ def main():
     ap.add_argument("--epochs", type=int, default=50)
     ap.add_argument("--batch-size", type=int, default=256)
     ap.add_argument("--lr", type=float, default=1e-3)
+    ap.add_argument("--cma-popsize", type=int, default=20, help="CMA-ES popsize (deterministic 학습 후보).")
+    ap.add_argument("--cma-maxiter", type=int, default=200, help="CMA-ES maxiter.")
+    ap.add_argument("--cma-seeds", type=int, nargs="+", default=None,
+                    help="CMA-ES seed list (default: --seeds 와 동일).")
     args = ap.parse_args()
 
     t0 = time.time()
@@ -349,7 +353,12 @@ def main():
         t_sub = time.time()
         print(f"\n[plan-020 run_oof] === {name} ===", flush=True)
         if name in fd.C01_TO_C14:
-            res = run_deterministic_oof(name, fd.C01_TO_C14[name], X, Y, folds, pred_f0)
+            cma_kwargs = {
+                "popsize": args.cma_popsize,
+                "maxiter": args.cma_maxiter,
+                "seed_list": args.cma_seeds or args.seeds,
+            }
+            res = run_deterministic_oof(name, fd.C01_TO_C14[name], X, Y, folds, pred_f0, cma_kwargs=cma_kwargs)
         elif name in nn_names:
             # N5 expert_preds = pre-computed F0 / helix / hermite / ctra over full dataset
             expert_preds_global = None
