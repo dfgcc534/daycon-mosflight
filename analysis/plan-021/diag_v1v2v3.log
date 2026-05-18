@@ -1,0 +1,33 @@
+inline selector loaded: 27 candidates
+[diag] loading data ...
+[diag] N=10000 folds=[2020, 2047, 1921, 2020, 1992]
+[diag] F0: hit@1cm=0.6320 hit@1.5cm=0.8033
+
+[diag] === V1_feat ===
+  [V1_feat] flat_dim=71 hidden=64 layers=1 epochs=30
+  [V1_feat] fold 0: seed=20260520 ep=28 train_hit=0.6494
+  [V1_feat] fold 1: seed=20260520 ep=23 train_hit=0.6516
+  [V1_feat] fold 2: seed=20260520 ep=27 train_hit=0.6509
+  [V1_feat] fold 3: seed=20260520 ep=29 train_hit=0.6518
+  [V1_feat] fold 4: seed=20260520 ep=26 train_hit=0.6532
+  [V1_feat] elapsed 61.9s hit@1cm=0.6458 hit@1.5cm=0.8106 Δ_1cm=+0.0138 Δ_1.5cm=+0.0073
+
+[diag] === V2_cap ===
+  [V2_cap] flat_dim=35 hidden=128 layers=2 epochs=50
+  [V2_cap] fold 0: seed=20260520 ep=44 train_hit=0.6548
+  [V2_cap] fold 1: seed=20260518 ep=45 train_hit=0.6561
+  [V2_cap] fold 2: seed=20260518 ep=49 train_hit=0.6579
+  [V2_cap] fold 3: seed=20260519 ep=48 train_hit=0.6579
+  [V2_cap] fold 4: seed=20260519 ep=48 train_hit=0.6613
+  [V2_cap] elapsed 109.7s hit@1cm=0.6429 hit@1.5cm=0.8122 Δ_1cm=+0.0109 Δ_1.5cm=+0.0089
+
+[diag] === V3_both ===
+  [V3_both] flat_dim=71 hidden=128 layers=2 epochs=50
+  [V3_both] fold 0: seed=20260519 ep=47 train_hit=0.6627
+  [V3_both] fold 1: seed=20260519 ep=48 train_hit=0.6644
+  [V3_both] fold 2: seed=20260520 ep=48 train_hit=0.6644
+  [V3_both] fold 3: seed=20260518 ep=47 train_hit=0.6670
+  [V3_both] fold 4: seed=20260518 ep=49 train_hit=0.6692
+  [V3_both] elapsed 108.7s hit@1cm=0.6457 hit@1.5cm=0.8106 Δ_1cm=+0.0137 Δ_1.5cm=+0.0073
+
+[diag] wrote /home/ahn/.claude/jobs/727e5ca9/diag_v1v2v3.json

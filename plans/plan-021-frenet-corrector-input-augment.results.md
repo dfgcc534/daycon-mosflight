@@ -53,6 +53,20 @@ best_delta_1.5cm: +0.0037
 
 → LGBM 의 macro stat + EWMA 추가 (170D vs 134D) 가 1cm tight zone 의 nonlinear F0-residual signal 흡수에 강함. GRU 의 sequence learning 이 1.5cm graded distance 학습에 강함. 둘은 본질적으로 다른 lever. **best 선정 = headline metric (hit@1cm) 우위 → A_lgbm**. G3 pass_both gate keeper = B GRU (별도 역할).
 
+## 4.1 GRU diagnostic ablation (자체실험, 2026-05-19)
+
+§4 의 "1cm 1.9× LGBM 우위" 가 paradigm 차이인지 spec 불공정인지 분리 측정 — 4-variant 5-fold OOF (3 seed, best-on-train, cuda:1).
+
+| variant | 변경 | hit@1cm | Δ_1cm | hit@1.5cm | Δ_1.5cm | var_1cm | wall |
+|---|---|---|---|---|---|---|---|
+| V0 (재현) | spec 그대로 | 0.6408 | +0.0088 | 0.8100 | +0.0067 | 0.0057 | 57s |
+| **V1 +feat** | flat 35→71D (macro 9 + EWMA 27 inject) | **0.6458** | **+0.0138** | 0.8106 | +0.0073 | **0.0046** | 62s |
+| V2 +cap | hidden 64→128, layers 1→2, ep 30→50 | 0.6429 | +0.0109 | **0.8122** | **+0.0089** | 0.0062 | 110s |
+| V3 +both | V1+V2 합 | 0.6457 | +0.0137 | 0.8106 | +0.0073 | 0.0056 | 109s |
+| (ref) A LGBM | — | 0.6488 | +0.0168 | 0.8070 | +0.0037 | 0.0066 | 334s |
+
+**핵심 finding (feature inequity)**: macro stat 9D + EWMA 27D = 36D 만 GRU flat dim 에 추가 (V1) 시 Δ_1cm +0.0088 → +0.0138 = +50bp. 즉 LGBM vs GRU 1cm gap (80bp) 의 **~63% 가 spec 불공정** (LGBM 170D, GRU 134D — §1.4 "GRU 가 sequence 안에서 자체 학습" 가정의 한계). paradigm 차이는 잔여 30bp 만. V1 ≈ V3 (1cm) → feature parity 후 capacity 추가효과 = 0 → 1cm bottleneck = feature, not capacity. artifact: `analysis/plan-021/diag_gru_variants.py` + `diag_v0.json` / `diag_v1v2v3.json` / `diag_v0.log` / `diag_v1v2v3.log`.
+
 ## 5. 4 lever 의 paradigm-level 효과 (§8.3)
 
 본 plan 의 4 lever 동시 적용 측정 (lever 별 ablation X — out-of-scope). G3 PASS 결과로 **4 lever 의 조합 paradigm-level 효과 입증**:
