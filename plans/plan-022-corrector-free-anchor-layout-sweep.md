@@ -100,8 +100,8 @@ band: null
 | c2 | code | `analysis/plan-022/anchors.py` (7 layout numpy 상수 + smoke test: 각 layout ‖a‖ ≤ 0.005m + dtype float32 + shape 정합) | [DONE — 908da5a] |
 | c3 | code | `analysis/plan-022/selector_only_model.py` (LgbmSelectorOnly class — plan-021 LgbmDualHead.clf_head carry, reg head 제거. predict → probs only. + build_soft_label_with_tau helper) | [DONE — 40935ab] |
 | c4 | code | `analysis/plan-022/run_oof.py` (5-fold OOF runner, 7 layout × 3 τ_cls = 21 cell sweep, paired Δ 21 셀 산출 + best cell selection) | [DONE — f3ea888] |
-| c5 | test | `tests/test_plan022_smoke.py` (8 pytest: import + 7 layout shape/norm 검증 + LgbmSelectorOnly fit/predict + soft label sum=1 + G1 reproduce sanity) | [TODO] |
-| G0 | gate | smoke + tests green — 8/8 pytest pass | [TODO] |
+| c5 | test | `tests/test_plan022_smoke.py` (8 pytest: import + 7 layout shape/norm 검증 + LgbmSelectorOnly fit/predict + soft label sum=1 + G1 reproduce sanity) | [DONE — c1199c4] |
+| G0 | gate | smoke + tests green — 8/8 pytest pass (8.52s) | [DONE — c1199c4] |
 | c6 | exp G1 | F0 baseline 5-fold OOF reproduce → 0.6320 / 0.8033 (plan-020/021 carry exact). `analysis/plan-022/baseline_carry.json` 박제 | [TODO] |
 | G1 | gate | F0 hit@1cm ∈ [0.6315, 0.6325] AND hit@1.5cm ∈ [0.8028, 0.8038] | [TODO] |
 | c7 | exp G2.A1 | A1 octa7 (baseline reproduce) — 3 τ_cls cell 측정 → `results_A1.{json,md}` | [TODO] |
