@@ -70,8 +70,8 @@ band: null
 | G0 | gate | smoke + tests green — 11/11 pytest pass ✓ | [DONE] |
 | c6 | exp G1 | F0 baseline 5-fold OOF reproduce → exact 0.6320 / 0.8033 (plan-020 carry 정확 일치, 0.8s CPU). `analysis/plan-021/baseline_carry.json` 박제. | [DONE] |
 | G1 | gate | F0 hit@1cm = **0.6320** ∈ [0.6315, 0.6325] AND hit@1.5cm = **0.8033** ∈ [0.8028, 0.8038] ✓ | [DONE] |
-| c7 | exp G2.A | sub-exp A LGBM 5-fold OOF → `analysis/plan-021/results_lgbm.{json,md}` | [TODO] |
-| G2.A | gate | A metric finite | [TODO] |
+| c7 | exp G2.A | A LGBM 5-fold OOF (v1.3 conceptual fix 후): hit@1cm 0.6488 (Δ +0.0168 ✓), hit@1.5cm 0.8070 (Δ +0.0037 ✗ < +0.005). pass_both=False (partial). CPU 334s. | [DONE] |
+| G2.A | gate | A metric finite ✓ (lgbm_numerical 미발동) | [DONE] |
 | c8 | exp G2.B | sub-exp B GRU 5-fold OOF → `analysis/plan-021/results_gru.{json,md}` | [TODO] |
 | G2.B | gate | B metric finite + val_hit > 0.10 + overfit guard | [TODO] |
 | c9 | analysis | paradigm-level finding (A vs B 비교 + 4 lever marginal 가치) → `analysis/plan-021/paradigm_analysis.{json,md}` | [TODO] |
