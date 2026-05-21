@@ -60,6 +60,60 @@ from src.io import load_all_samples, load_labels  # noqa: E402
 from src.pb_0_6822.selector import stable_fold_id  # noqa: E402
 
 
+# ── LgbmSelectorRowExpanded — spec §4.4 선택 B subclass ───────────
+# plan-022 LgbmSelectorOnly.fit 는 sample-level X (N, D) 전제 + 내부 row-expand.
+# 본 plan 의 build_feat_1080 는 per-anchor feature 포함 → 이미 (N*K, D) row-expanded.
+# 따라서 fit override 필요. plan-022 의 sample-weight expansion + missing class
+# dummy inject 로직만 carry, 외부 np.repeat 단계 skip.
+class LgbmSelectorRowExpanded(_som.LgbmSelectorOnly):
+    """fit(X_expanded (N*K, D), q (N, K)) — X 자체가 이미 row-expanded."""
+
+    def fit(self, X_expanded, q, eval_set=None, early_stopping_rounds=None):
+        N = q.shape[0]
+        K = self.K
+        assert q.shape == (N, K), f"q shape {q.shape} != ({N}, {K})"
+        assert X_expanded.shape[0] == N * K, f"X_expanded shape {X_expanded.shape} != ({N*K}, *)"
+
+        y_expanded = np.tile(np.arange(K), N)
+        sample_weight = q.flatten()
+        mask = sample_weight > 1e-6
+
+        present_classes = set(y_expanded[mask].tolist())
+        missing = [k for k in range(K) if k not in present_classes]
+        if missing:
+            X_dummy = np.zeros((len(missing), X_expanded.shape[1]), dtype=X_expanded.dtype)
+            y_dummy = np.array(missing, dtype=np.int64)
+            w_dummy = np.full(len(missing), 1e-6, dtype=sample_weight.dtype)
+            X_fit = np.concatenate([X_expanded[mask], X_dummy], axis=0)
+            y_fit = np.concatenate([y_expanded[mask], y_dummy], axis=0)
+            w_fit = np.concatenate([sample_weight[mask], w_dummy], axis=0)
+        else:
+            X_fit = X_expanded[mask]
+            y_fit = y_expanded[mask]
+            w_fit = sample_weight[mask]
+
+        fit_kwargs = {"sample_weight": w_fit}
+        if eval_set is not None and early_stopping_rounds is not None:
+            # LightGBM API: eval_set 의 y 도 1D class index 형태 필요 → soft label argmax 사용
+            es_kwargs = []
+            for X_es, q_es in eval_set:
+                N_es = q_es.shape[0]
+                # eval set 도 동일 row-expand + sample-weight 방식 적용
+                y_es = np.tile(np.arange(K), N_es)
+                w_es = q_es.flatten()
+                m_es = w_es > 1e-6
+                es_kwargs.append((X_es[m_es], y_es[m_es]))
+            try:
+                from lightgbm import early_stopping
+                fit_kwargs["eval_set"] = es_kwargs
+                fit_kwargs["callbacks"] = [early_stopping(stopping_rounds=early_stopping_rounds, verbose=False)]
+            except ImportError:
+                pass
+
+        self.clf.fit(X_fit, y_fit, **fit_kwargs)
+        return self
+
+
 # ── cell configs (spec §3.5) ──────────────────────────────────────
 CELL_CONFIGS: dict[str, dict] = {
     "C1": {
@@ -221,9 +275,8 @@ def run_oof_plan025(
             gt_train, R_wfn_train, F0_train, anchors, TAU_CLS,
         )                                              # (N_tr, K)
 
-        # Model
-        model = _som.LgbmSelectorOnly(K=K_ANCHORS)
-        # random_state override (본 plan layer)
+        # Model (LgbmSelectorRowExpanded — 본 plan 의 (N*K, D) row-expanded X 처리)
+        model = LgbmSelectorRowExpanded(K=K_ANCHORS)
         try:
             model.clf.set_params(random_state=seed)
         except Exception:
@@ -243,16 +296,13 @@ def run_oof_plan025(
             q_tr2 = q_train[idx_tr2]
             q_val = q_train[idx_val]
             try:
-                model.fit(X_tr2, q_tr2)
-                # LightGBM early_stopping w/ soft label may TypeError or ValueError;
-                # plan-022 LgbmSelectorOnly.fit signature 가 eval_set 미지원 가능 — fallback
-                # 시도 후 best_iteration_ 으로 검증
-                if model.clf.best_iteration_ is None:
-                    raise AttributeError("no best_iteration_")
-                oof_best_iter[fold] = int(model.clf.best_iteration_)
+                model.fit(X_tr2, q_tr2, eval_set=[(X_val, q_val)],
+                          early_stopping_rounds=cfg["early_stopping_rounds"])
+                best_it = getattr(model.clf, "best_iteration_", None)
+                oof_best_iter[fold] = int(best_it) if best_it else None
             except (TypeError, ValueError, AttributeError) as e:
                 warnings.warn(
-                    f"C2 early_stopping fallback to default fit ({type(e).__name__}) "
+                    f"C2 early_stopping fallback to default fit ({type(e).__name__}: {e}) "
                     f"— decision-note: early_stop_fallback"
                 )
                 model.fit(feat_train, q_train)
