@@ -1,0 +1,39 @@
+inline selector loaded: 27 candidates
+[diag] PyTorch=2.8.0+cu128, threads=48, cuda=False
+[diag] load data ...
+[diag] build_input_common ...
+[diag] fold 0: n_tr=7980 n_va=2020
+[diag] quantile_carry: {'omega_p90': 0.41358473896980286, 'jerk_p90': 0.3903566598892212, 'levy_tail_threshold': 0.053715213385033225}
+[diag] seq/cand build elapsed 0.5s
+[diag] seq_tr.shape=(7980, 7, 95) cand_tr.shape=(7980, 14, 150)
+[diag] model params: 2,000,502
+[diag] epoch  0: train_loss=2.6943 val_loss=2.6322 hit_1cm(va)=0.6401 | best@0 no_improve=0 | n_batch=25 1.6s (66ms/batch)
+[diag] epoch  1: train_loss=2.6727 val_loss=2.6294 hit_1cm(va)=0.6406 | best@1 no_improve=0 | n_batch=25 1.6s (64ms/batch)
+[diag] epoch  2: train_loss=2.6620 val_loss=2.6274 hit_1cm(va)=0.6411 | best@2 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch  3: train_loss=2.6457 val_loss=2.6232 hit_1cm(va)=0.6426 | best@3 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch  4: train_loss=2.6480 val_loss=2.6205 hit_1cm(va)=0.6431 | best@4 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch  5: train_loss=2.6305 val_loss=2.6101 hit_1cm(va)=0.6426 | best@5 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch  6: train_loss=2.6294 val_loss=2.5957 hit_1cm(va)=0.6411 | best@6 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch  7: train_loss=2.6057 val_loss=2.5871 hit_1cm(va)=0.6421 | best@7 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch  8: train_loss=2.6013 val_loss=2.5849 hit_1cm(va)=0.6416 | best@8 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch  9: train_loss=2.5877 val_loss=2.5816 hit_1cm(va)=0.6421 | best@9 no_improve=0 | n_batch=25 1.6s (62ms/batch)
+[diag] epoch 10: train_loss=2.5812 val_loss=2.5769 hit_1cm(va)=0.6411 | best@10 no_improve=0 | n_batch=25 1.6s (62ms/batch)
+[diag] epoch 11: train_loss=2.5785 val_loss=2.5762 hit_1cm(va)=0.6436 | best@11 no_improve=0 | n_batch=25 1.6s (62ms/batch)
+[diag] epoch 12: train_loss=2.5761 val_loss=2.5769 hit_1cm(va)=0.6431 | best@11 no_improve=1 | n_batch=25 1.6s (62ms/batch)
+[diag] epoch 13: train_loss=2.5681 val_loss=2.5759 hit_1cm(va)=0.6431 | best@13 no_improve=0 | n_batch=25 1.5s (62ms/batch)
+[diag] epoch 14: train_loss=2.5621 val_loss=2.5798 hit_1cm(va)=0.6450 | best@13 no_improve=1 | n_batch=25 1.6s (62ms/batch)
+[diag] epoch 15: train_loss=2.5558 val_loss=2.5740 hit_1cm(va)=0.6431 | best@15 no_improve=0 | n_batch=25 1.5s (62ms/batch)
+[diag] epoch 16: train_loss=2.5601 val_loss=2.5746 hit_1cm(va)=0.6436 | best@15 no_improve=1 | n_batch=25 1.6s (62ms/batch)
+[diag] epoch 17: train_loss=2.5552 val_loss=2.5737 hit_1cm(va)=0.6421 | best@17 no_improve=0 | n_batch=25 1.5s (62ms/batch)
+[diag] epoch 18: train_loss=2.5471 val_loss=2.5736 hit_1cm(va)=0.6416 | best@18 no_improve=0 | n_batch=25 1.6s (63ms/batch)
+[diag] epoch 19: train_loss=2.5435 val_loss=2.5743 hit_1cm(va)=0.6431 | best@18 no_improve=1 | n_batch=25 1.6s (62ms/batch)
+[diag] epoch 20: train_loss=2.5543 val_loss=2.5739 hit_1cm(va)=0.6431 | best@18 no_improve=2 | n_batch=25 1.5s (62ms/batch)
+[diag] epoch 21: train_loss=2.5509 val_loss=2.5738 hit_1cm(va)=0.6431 | best@18 no_improve=3 | n_batch=25 1.6s (62ms/batch)
+[diag] early stop @ epoch 21 (patience=3)
+
+[diag] === SUMMARY ===
+[diag] train_time=34.5s total=36.8s
+[diag] n_epoch ran=22 (PRE+FINE=22)
+[diag] best_epoch=18 best_val_loss=2.5736
+[diag] final fold 0 hit_1cm=0.6416 hit_1.5cm=0.8173
+[diag] → /workspace/daycon-muflight/.claude/worktrees/plan-024-spec/analysis/plan-024/diagnose_training.json

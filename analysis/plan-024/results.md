@@ -87,23 +87,36 @@ per-fold std ≈ 0.0034 (낮은 variance OK). 단 *모든 fold* 가 plan-022 car
 - → channel dropout off 효과 없음. over-regularization 가설 기각.
 - 단 top1_acc: 0.1227 → 0.1273 (+0.0046 mild) — channel drop off 가 ranking 능력 약간 ↑ 단 hit rate 변화 없음.
 
-### 5.1+5.4+5.6 종합 — **architecture + FE max lever 자체의 inherent fail (4 variant 확정)**
+### 5.1+5.4+5.6+5.8 종합 — **architecture + FE max lever 자체의 inherent fail (5 variant + diagnose 확정)**
 
-| variant | hit_1cm | top1_acc | gap_ranking | time | 핵심 변경 |
-|:--|--:|--:|--:|--:|:--|
-| v1 spec default | 0.6370 | 0.1227 | 0.1934 | 167s | hidden=384, drop 0.3/0.2, lr 7e-4, wd 0.02 |
-| v2 | 0.6370 | 0.1227 | 0.1934 | 171s | + patience 999 (under-converged 가설 기각) |
-| v3 | 0.6373 | 0.1273 | 0.1950 | 170s | + channel drop 0/0 (over-reg 가설 기각) |
-| **v4 PB-default** | **0.6375** | **0.1355** | **0.1919** | **78s** | hidden=128, lr 1e-3, wd 0.01, drop 0 (PB framework default carry) |
+| variant | hit_1cm | top1_acc | gap_ranking | soft_CE | time | 핵심 변경 |
+|:--|--:|--:|--:|--:|--:|:--|
+| v1 spec default | 0.6370 | 0.1227 | 0.1934 | 2.566 | 167s | hidden=384, drop 0.3/0.2, lr 7e-4, wd 0.02 |
+| v2 | 0.6370 | 0.1227 | 0.1934 | 2.566 | 171s | + patience 999 (under-converged 가설 기각) |
+| v3 | 0.6373 | 0.1273 | 0.1950 | 2.568 | 170s | + channel drop 0/0 (over-reg 가설 기각) |
+| v4 PB-default | 0.6375 | 0.1355 | 0.1919 | 2.562 | 78s | hidden=128, lr 1e-3, wd 0.01, drop 0 (PB carry) |
+| **v5 A7 embed** | **0.6372** | **0.1389** | **0.1904** | **2.558** | **172s** | + nn.Parameter(14, 8) learnable anchor embedding |
+
+### 5.8 ⚠️ A7 Learnable anchor embedding 가설 — **기각 (v5 결과)**
+- 진단 결과 (diagnose_training.json) 의 가장 promising lever 였음 — anchor 14 사이 *차별화 capacity 부족* (cand_dim 150D 중 anchor-discriminating 22D 만, 128D 는 broadcast) 의 직접 fix.
+- 식: `nn.Parameter(14, 8) init=0.02`, fwd 후 cand_feat 에 broadcast concat. 14 × 8 = 112 학습 params 추가.
+- 결과: hit_1cm 0.6372 (v1 0.6370 vs +0.0002 미미). top1_acc 0.1227 → 0.1389 (+0.0162 mild), soft_CE 2.566 → 2.558 (-0.008 mild). **hit rate 회복 X**.
+- → A7 가설 *부분 기각* (top1_acc/soft_CE 약간 ↑ 단 hit_1cm fundamental cap 의 진짜 lever 아님). architecture limit 확정.
 
 모든 variant 가 0.6370~0.6375 = **systematic ~0.6373 ± 0.0003** OOF hit_1cm. plan-022 LGBM 0.6528 보다 **−0.0153 ~ −0.0158** below. *재현 가능* 한 systematic underperformance.
 
 **결론**:
 - (a) under-converged 가설 (5.1) **기각** — patience 변경 효과 0.
 - (b) over-regularization 가설 (5.4) **기각** — channel drop off 효과 0.
-- (c) hyperparam tuning 가설 (5.6) **부분 기각** — PB default carry 도 fail. 단 top1_acc 0.1227 → 0.1355 mild lift, hit rate 변화 없음.
-- (d) **architecture + FE max lever 자체 inherent fail** — plan-024 의 cross-attention + 16 lever FE input 가 plan-022 LGBM sample-weight expansion 보다 *약함* 확정. plan-009 의 listwise loss fail 패턴 의 *재발견*.
-- (e) plan-025 영역으로 분리 권장 axis: (i) Tier S/A 일부 lever 제거 ablation, (ii) path_signature_L2 / Learnable embedding 추가, (iii) anchor pool 변경 (plan-026), (iv) ensemble (plan-027).
+- (c) hyperparam tuning 가설 (5.6) **부분 기각** — PB default carry 도 fail.
+- (d) anchor identity capacity 부족 가설 (5.8) **부분 기각** — A7 learnable embedding 도 hit_1cm 변화 X.
+- (e) **architecture + FE max lever 자체 inherent fail (5 variant 확정)** — plan-024 의 cross-attention + 14 BCC anchor classification 의 *fundamental ceiling*. plan-009 ranking_loss fail 패턴 의 *architecture-level 재발견*.
+- (f) **진단의 deeper finding (diagnose_training.json)**: val_loss 2.5736 ≈ log(14) − 0.066 = uniform softmax 에서 *약간만* 벗어남. 즉 model 이 본질적으로 **near-uniform 출력** 으로 plateau → q_pred · anchors ≈ 0 → pred ≈ pred_F0 → hit ≈ F0 baseline + ε.
+- (g) **진짜 lever (plan-025/026/027 영역)**:
+  - (i) **LGBM sample-weight expansion mimic** — cross-attn 의 N=10k 학습 vs LGBM 의 N×K=140k effective row 의 14× gap 직접 fix. pointwise (sample, anchor) row expansion 또는 K independent forward.
+  - (ii) **anchor pool 변경** — 14 static BCC → sample-conditional dynamic anchor (plan-004 패턴, plan-026 radius 확장 + multi-shell).
+  - (iii) **plan-022 LGBM + plan-024 cross-attn ensemble** — 두 paradigm 의 cancel 안 되는 영역 (plan-027). 단 plan-024 base hit 0.6372 + LGBM 0.6528 의 ensemble = 0.65~0.66 가 한계 추정.
+  - (iv) **다른 architecture paradigm** — Trajectron-CLIP / KNN retrieval pool / Variance-aware MDN (ideas.md ★★★ Tier, plan-028).
 
 ### 5.2 dim 폭증 (caveat #11)
 - cand 14×150 = 2100 element + seq 7×95 = 665 element = sample 당 ~2800 element. N=10k → ratio ~3.6 sample/dim.

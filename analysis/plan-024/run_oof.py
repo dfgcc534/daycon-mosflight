@@ -116,8 +116,8 @@ def train_one_fold(
     pre_epochs: int = 12,
     fine_epochs: int = 10,
     batch_size: int = 256,
-    lr: float = 1e-3,         # G2 v4: PB framework default carry
-    weight_decay: float = 0.01,  # G2 v4: PB framework default carry
+    lr: float = 7e-4,         # v5: original v1 spec carry
+    weight_decay: float = 0.02,  # v5: original v1 spec carry
     val_frac: float = 0.2,
     patience: int = 999,   # G2 재학습 (under-converged fix): early stop 사실상 disable
     seed: int = SEED,
@@ -137,14 +137,9 @@ def train_one_fold(
     cand_val = torch.from_numpy(cand_tr[val_split:]).float().to(device)
     q_val = torch.from_numpy(q_true_tr[val_split:]).float().to(device)
 
-    # G2 ablation v4: PB framework default (hidden=128, dropout=0.08, channel drop=0)
-    import torch.nn as _nn
-    model = model_mod.CrossAttentionAnchorSelector(
-        hidden=128, cand_drop_p=0.0, seq_drop_p=0.0,
-    ).to(device)
-    # GRU dropout PB default 0.08 (model.py default 0.10), Head MLP 0.10 (default 0.15)
-    for m in model.backbone.gru.parameters():
-        pass  # GRU dropout 은 nn.GRU 의 internal, 외부 변경 어려움 — hidden 만 적용 (가장 큰 lever)
+    # G2 ablation v5 (A7 Learnable anchor embedding): cross-attention 의 anchor
+    # identity capacity 부족 fix — nn.Parameter(14, 8) 학습 추가. v1 default config 유지.
+    model = model_mod.CrossAttentionAnchorSelector(anchor_embed_dim=8).to(device)
     optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     total_steps = (pre_epochs + fine_epochs) * (val_split // batch_size + 1)
     warm_steps = max(1, total_steps // 10)

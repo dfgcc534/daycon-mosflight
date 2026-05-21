@@ -1,0 +1,16 @@
+inline selector loaded: 27 candidates
+[plan-024 run_oof] loading data ... device=cpu
+[run_oof] N=10000 folds=[2020, 2047, 1921, 2020, 1992]
+  fold 0: tr=7980 va=2020 seq.shape=(7980, 7, 95) cand.shape=(7980, 14, 150)
+    fold 0 hit@1cm=0.6431 time=34s
+  fold 1: tr=7953 va=2047 seq.shape=(7953, 7, 95) cand.shape=(7953, 14, 150)
+    fold 1 hit@1cm=0.6375 time=33s
+  fold 2: tr=8079 va=1921 seq.shape=(8079, 7, 95) cand.shape=(8079, 14, 150)
+    fold 2 hit@1cm=0.6356 time=36s
+  fold 3: tr=7980 va=2020 seq.shape=(7980, 7, 95) cand.shape=(7980, 14, 150)
+    fold 3 hit@1cm=0.6381 time=34s
+  fold 4: tr=8008 va=1992 seq.shape=(8008, 7, 95) cand.shape=(8008, 14, 150)
+    fold 4 hit@1cm=0.6315 time=36s
+
+[run_oof] hit_1cm=0.6372 hit_1.5cm=0.8094 Δ_1cm=+0.0052 gap_ranking=0.1904
+[run_oof] total 172.7s → analysis/plan-024/results_xattn_v5_a7embed.json

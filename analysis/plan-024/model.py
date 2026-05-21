@@ -88,7 +88,12 @@ class CandidateAttentionGRUSelectorCarry(nn.Module):
 
 
 class CrossAttentionAnchorSelector(nn.Module):
-    """v1.1-rev2 plan-024 model: input adaptor + PB backbone + softmax."""
+    """v1.1-rev2 plan-024 model: input adaptor + PB backbone + softmax.
+
+    v5 patch (G2 diagnose finding): A7 Learnable anchor embedding 추가
+    (14 × embed_dim, default 8). cross-attention 의 anchor-specific
+    learnable capacity 보강 — fwd 후 cand_feat 에 broadcast concat.
+    """
 
     def __init__(
         self,
@@ -98,6 +103,8 @@ class CrossAttentionAnchorSelector(nn.Module):
         cand_count: int = 14,
         cand_drop_p: float = 0.3,
         seq_drop_p: float = 0.2,
+        anchor_embed_dim: int = 0,    # v5 patch: 0 = disable (default carry)
+                                       # 8 = A7 learnable anchor embedding 활성
     ):
         super().__init__()
         self.fwd = fwd_mod.FeatureWeightedDropout(
@@ -106,15 +113,28 @@ class CrossAttentionAnchorSelector(nn.Module):
             cand_drop_p=cand_drop_p,
             seq_drop_p=seq_drop_p,
         )
+        self.anchor_embed_dim = anchor_embed_dim
+        if anchor_embed_dim > 0:
+            self.anchor_embed = nn.Parameter(
+                torch.randn(cand_count, anchor_embed_dim) * 0.02
+            )
+            backbone_cand_dim = cand_dim + anchor_embed_dim
+        else:
+            self.register_parameter("anchor_embed", None)
+            backbone_cand_dim = cand_dim
         self.backbone = CandidateAttentionGRUSelectorCarry(
             seq_dim=seq_dim,
-            cand_dim=cand_dim,
+            cand_dim=backbone_cand_dim,
             hidden=hidden,
             cand_count=cand_count,
         )
 
     def forward(self, seq: torch.Tensor, cand_feat: torch.Tensor):
         cand_feat, seq = self.fwd(cand_feat, seq, training=self.training)
+        if self.anchor_embed is not None:
+            b = cand_feat.shape[0]
+            embed_bc = self.anchor_embed.unsqueeze(0).expand(b, -1, -1)
+            cand_feat = torch.cat([cand_feat, embed_bc], dim=-1)
         score = self.backbone(seq, cand_feat)
         q_pred = F.softmax(score, dim=-1)
         return q_pred, score
