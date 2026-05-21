@@ -4,10 +4,11 @@ version: 1.1-rev2
 date: 2026-05-21 (Asia/Seoul)
 status: all_complete
 band: negative
-best_hit_1cm: 0.6370
-best_hit_1.5cm: 0.8092
-best_delta_1cm: +0.0050
-best_delta_1.5cm: +0.0059
+best_hit_1cm: 0.6387
+best_hit_1.5cm: 0.8096
+best_delta_1cm: +0.0067
+best_delta_1.5cm: +0.0063
+best_variant: 3seed_ensemble_combo_h128_aug
 gap_ranking: 0.1934
 g1_pass: true
 g2_pass: false
