@@ -116,7 +116,7 @@ band: null
 | # | type | spec section | status |
 |---|---|---|---|
 | c1 | docs | `plans/plan-025-candidate-concat-input-max.md` v1 작성 (plan-review-master 자동 fix BLOCKER 0 도달) | [TODO] |
-| c2 | chore | plan-024 **8 file** cherry-pick (= code 6 module + data 1 + __init__.py) from `worktree-plan-024-combo` (commit 915dd26 이후 최신) → main `analysis/plan-024/` : `__init__.py` + `anchor_vocab.py` + `cand_builder.py` + `seq_builder.py` + `torsion_calc.py` + `quantile_carry.py` + `multiwindow_trim_build.py` + `multiwindow_trim.json`. **code only**, results / log / `model.py` (cross-attention) / `run_oof*.py` / `diagnose_*.py` / `feature_weighted_dropout.py` 는 *cherry-pick 제외*. | [TODO] |
+| c2 | chore | plan-024 **8 file** cherry-pick (= code 6 module + data 1 + __init__.py) from `worktree-plan-024-combo` (commit 915dd26 이후 최신) → main `analysis/plan-024/` : `__init__.py` + `anchor_vocab.py` + `cand_builder.py` + `seq_builder.py` + `torsion_calc.py` + `quantile_carry.py` + `multiwindow_trim_build.py` + `multiwindow_trim.json`. **code only**, results / log / `model.py` (cross-attention) / `run_oof*.py` / `diagnose_*.py` / `feature_weighted_dropout.py` 는 *cherry-pick 제외*. | [DONE — 91b02a0] |
 | c3 | code | `analysis/plan-025/build_feat_1080.py` (block ① + ② + ③ + ④ concat + 8-stat 압축 + 1080D per row 출력 + smoke test) | [TODO] |
 | c4 | code | `analysis/plan-025/run_oof.py` (5-fold OOF runner + C1/C2 cell config + plan-022 `run_oof_cell` carry import + CLI: `--cell {C1, C2}`) | [TODO] |
 | c5 | test | `tests/test_plan025_smoke.py` (≥ 8 pytest: import / block dim / 8-stat 산식 / row-expand / LgbmSelectorOnly K=14 + 1080D fit/predict smoke / F0 carry / soft label sum=1 / plan-024 module import) | [TODO] |
