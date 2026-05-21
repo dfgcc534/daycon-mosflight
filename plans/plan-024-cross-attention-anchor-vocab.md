@@ -177,7 +177,7 @@ plan-022 결과 + 사용자 통찰 (2026-05-21 session "main"):
 **audit C (Q4 plan-004 / plan-022 input audit)**:
 - **누락 family**:
   1. macro_stat 9D (plan-021 `_macro_stat_9d`) — cand_feat ③ ctx broadcast.
-  2. L1 EWMA 27D (= p/v/a 의 EWMA 9D × 3α; plan-022 lgbm_extra 의 부분집합) — plan-024 outline 의 seq J 묶음은 *residual* EWMA 9D 만, 두 source 분리 필요. **L1 EWMA 는 sample-level broadcast 로 cand_feat ③ ctx** (27D 추가).
+  2. L1 EWMA 27D (= p/v/a 의 EWMA 9D × 3α; plan-022 lgbm_extra 의 부분집합) — plan-024 outline 의 seq J 묶음은 *residual* EWMA 9D 만, 두 source 분리 필요. **L1 EWMA 는 sample-level broadcast 로 cand_feat ③ ctx** (27D 추가). **v1.1 decision-note**: L1 EWMA 27D 는 v1.1 의도적 *미박제* (cand ③ ctx 128D 가 이미 macro_stat 8 + Multi-window 60D 로 trajectory-level aggregation 충분 cover, L1 EWMA 의 redundancy 우려) → **plan-025 후보로 분리** (followed_by 의 priority 5 와 함께 ablation).
   3. turn_cos, curvature, direction_flag per step (plan-004 make_seq_features 9D 의 부분) — seq 신규 channel.
   4. regime bin 18-class (plan-004 `assign_regimes`) — cand_feat ③ ctx (18D one-hot).
   5. F0-pred 자체의 Frenet 좌표 per step (현 outline 은 잔차만, pred 위치 자체 빠짐) — seq 신규 묶음.
@@ -191,7 +191,7 @@ plan-022 결과 + 사용자 통찰 (2026-05-21 session "main"):
 
 ### §1.4 가설
 
-**H_main**: plan-022 winner (LGBM, 170D) 의 selector 를 cross-attention GRU (62D cand + 89D seq + hidden=256) 로 교체 + FE 최대화 시, **gap_ranking 의 절반 이상 회수** (= 0.0516 → ≤ 0.025) + **hit_1cm +0.01 lift** (0.6528 → 0.6628).
+**H_main**: plan-022 winner (LGBM, 170D) 의 selector 를 cross-attention GRU (**v1.1: 162D cand + 95D seq + hidden=384**) 로 교체 + FE 최대화 시, **gap_ranking 의 절반 이상 회수** (= 0.0516 → ≤ 0.025) + **hit_1cm +0.01 lift** (0.6528 → 0.6628).
 
 **H_secondary**:
 - H1 (architecture lever > loss lever): plan-009 의 listwise loss fail 위에서 cross-attention 의 inner product 가 ranking 능력 직접 학습 → top1_ranking_acc ≥ 0.20 (plan-008 extended 0.17 보다 ↑).
@@ -205,7 +205,7 @@ plan-022 결과 + 사용자 통찰 (2026-05-21 session "main"):
 
 plan-022 가 21-cell sweep 으로 *anchor layout* 변수 ablation 했다면, plan-024 는 **single config full FE max** — *architecture + input FE 묶음* 을 한 번에 측정. ablation (각 묶음 contribution 분해) = G3 통과 후 plan-025 영역.
 
-**한 변수 원칙**: plan-022 winner cell 기준에서 변경 = (1) selector architecture LGBM → cross-attention, (2) input dim 170D 1-vector → 62D cand + 89D seq 2-input 구조. 단 anchor / τ_cls / hit radius / F0 baseline / 5-fold split = 모두 plan-022 carry.
+**한 변수 원칙**: plan-022 winner cell 기준에서 변경 = (1) selector architecture LGBM → cross-attention, (2) input dim 170D 1-vector → **v1.1: 162D cand + 95D seq 2-input 구조** (+ per-channel learnable scale + channel dropout). 단 anchor / τ_cls / hit radius / F0 baseline / 5-fold split = 모두 plan-022 carry.
 
 **Out-of-scope (절대 안 함)**:
 - anchor layout 변경 (A6_bcc14 고정)
@@ -393,6 +393,8 @@ seq_torsion_t = [tau_t, sign(tau_t) * log(1 + |tau_t|), valid_mask_t.float()]
 
 ### §4.6 model spec (c6 `analysis/plan-024/model.py`) — v1.1
 
+**PB framework arch 의 anchor-vocab task fit 정합**: PB framework `CandidateAttentionGRUSelector` 의 원래 task = 27 physics candidate 의 selector (plan-004 LB 0.6822). plan-024 의 task = 14 BCC anchor 의 corrector-free `Σ q · a` (plan-022 carry). 둘 다 **K-cand softmax classifier with GRU-attended past-seq + per-cand spec query** 의 동일 abstraction — PB 의 `cand_count=27, cand_dim=32` 가 plan-024 의 `cand_count=14, cand_dim=162` 로 *parametric swap* 만 필요, *gradient path / loss form / output 구조* 모두 fit. 단 plan-024 의 anchor-vocab encoding (input ↔ output 같은 anchor 어휘) + per-channel learnable scale + channel dropout 은 PB framework 위 *추가 input adaptor 층* 으로 박제 (model.py 안 thin wrapper).
+
 ```python
 # PB framework 그대로 import (src/pb_0_6822/selector.py:697)
 from src.pb_0_6822.selector import CandidateAttentionGRUSelector
@@ -408,7 +410,16 @@ class CrossAttentionAnchorSelector(nn.Module):
             seq_drop_p=0.2,             # EWMA J + WAP + Multi-broadcast slice
             cand_drop_start=24,         # ①3 + ②21 = 24 까지 보호 (drop X)
             cand_drop_end=152,          # ③ 끝 (24 + 128). 이후 ④10 보호
-            seq_drop_indices=...,       # J 9D + WAP per-step 5D 등 (redundant slice)
+            seq_drop_indices=list(range(62, 71)) + list(range(81, 86)),
+            # = J EWMA(α=0.1/0.3/0.5) 9D channel index [62..70] + A5 WAP per-step 5D channel [81..85] = 14 channel.
+            # seq 95D ordering (§4.3 표 순서, 0-indexed): A 0-2 / B 3-5 / C 6-8 / S1 jerk 9-11 /
+            # S2 ω 12-14 / Vz 15 / D 16-18 / angle 19-20 / pred_F0 21-23 / E 24-25 /
+            # F 26-39 / G 40 / H 41-54 / F2 55 / I 56-58 / Δ² 59-61 / J 62-70 / K 71 /
+            # S5 PE 72-75 / L 76 / M 77 / O 78 / A9 79 / A11 80 / A5 WAP 81-85 / A8 86 /
+            # S3 saccade 87-88 / turn_cos 89 / curv 90 / dir 91 / torsion 92-94.
+            # drop 대상: J EWMA (62-70) + A5 WAP per-step (81-85) — *redundant smoothing/composite*.
+            # kinematic (A/B/C/jerk/ω), residual (D/angle/pred/E), anchor-vocab (F/G/H/F2),
+            # Δ/Δ², meta (K/S5 PE/L/M/O), saccade-relevant (A9/A11/A8/S3), geometry (turn/curv/dir/torsion) 보호.
         )
         self.backbone = CandidateAttentionGRUSelector(
             seq_dim=95,                 # v1.1 §4.3
@@ -534,7 +545,7 @@ tests/test_plan024_smoke.py     # c8 — 10 pytest (v1.1: weight + channel mask 
 
 ### §5.3 G0 합격
 
-- 8/8 pytest green
+- **10/10 pytest green** (§5.2 의 10 test 모두 pass, c8 박제 일치)
 - 모듈 import 시간 < 10s
 - model forward inference (b=256) < 200ms (CPU)
 
@@ -574,24 +585,57 @@ va_idx = where(folds == k)
 q_true_tr = build_soft_label_with_tau(Y[tr], R_wfn[tr], pred_F0_world[tr],
                                        ANCHORS_A6, tau_cls=0.001)
 
-# build inputs (sign-unified, τ_past=0.003)
+# v1.1: build inputs (sign-unified, τ_past=0.003, quantile carry for saccade/peak threshold)
+quantile_carry_train = quantile_carry.build(X[tr], pred_F0_world[tr], ANCHORS_A6)
+# = {'omega_p90': float, 'jerk_p90': float, 'levy_tail_threshold': float, ...} — train fold only
 seq_tr  = build_seq(X[tr], R_wfn[tr], pred_F0_world[tr], ANCHORS_A6,
-                    tau_past=0.003)              # (n_tr, 7, 89)
+                    tau_past=0.003, quantile_carry=quantile_carry_train,
+                    regimes=regimes[tr])           # (n_tr, 7, 95)  # v1.1
 cand_tr = build_cand(X[tr], R_wfn[tr], pred_F0_world[tr], ANCHORS_A6,
-                     regimes[tr])                 # (n_tr, 14, 62)
-seq_va  = build_seq(X[va], ...)
-cand_va = build_cand(X[va], ...)
+                     regimes=regimes[tr], macro_stat=macro_stat[tr],
+                     ewma_alphas=(0.1, 0.3, 0.5),
+                     multiwindow_trim_path="analysis/plan-024/multiwindow_trim.json",
+                     quantile_carry=quantile_carry_train)            # (n_tr, 14, 162)  # v1.1
+# valid fold: train fold 의 quantile_carry 적용 (test fold quantile 사용 X, fold-leakage 차단)
+seq_va  = build_seq(X[va], ..., quantile_carry=quantile_carry_train)
+cand_va = build_cand(X[va], ..., quantile_carry=quantile_carry_train)
 
+# v1.1 hyperparam (§4.6 표와 일치)
 model = CrossAttentionAnchorSelector().cuda()
-optim = AdamW(model.parameters(), lr=1e-3, weight_decay=0.01)
-scheduler = cosine_warmup(optim, warm=10%, total=epochs)
+optim = AdamW(model.parameters(), lr=7e-4, weight_decay=0.02)   # v1.1: lr 1e-3 → 7e-4
+scheduler = cosine_warmup(optim, warm=10%, total=epochs)         # total = 12 pre + 10 fine = 22
 
-# pre + fine training
-for epoch in range(10 + 8):
-    for batch in DataLoader(seq_tr, cand_tr, q_true_tr, batch_size=256):
+# v1.1: validation early stop (§12.6 carry, train fold 의 마지막 20% holdout)
+val_split_idx = int(len(tr) * 0.8)
+tr_train, tr_val = tr[:val_split_idx], tr[val_split_idx:]
+best_val_loss = float('inf')
+best_state = None
+patience = 3
+no_improve = 0
+
+# pre + fine training (v1.1: 12 + 10 = 22 epoch)
+for epoch in range(12 + 10):
+    model.train()
+    for batch in DataLoader(seq_tr[tr_train], cand_tr[tr_train],
+                            q_true_tr[tr_train], batch_size=256):
         q_pred, score = model(batch.seq, batch.cand)
         loss = -(batch.q_true * log(q_pred + 1e-12)).sum(-1).mean()
         loss.backward(); optim.step(); scheduler.step()
+    # validation
+    model.eval()
+    with torch.no_grad():
+        q_val, _ = model(seq_tr[tr_val], cand_tr[tr_val])
+        val_loss = -(q_true_tr[tr_val] * log(q_val + 1e-12)).sum(-1).mean()
+    if val_loss < best_val_loss:
+        best_val_loss = val_loss
+        best_state = {k: v.detach().clone() for k, v in model.state_dict().items()}
+        no_improve = 0
+    else:
+        no_improve += 1
+        if no_improve >= patience:
+            break  # early stop
+# load best state for inference
+model.load_state_dict(best_state)
 
 # inference
 q_pred_va, _ = model(seq_va, cand_va)              # (n_va, 14)
@@ -657,12 +701,26 @@ pred_world_test = einsum("nij,nj->ni", R_wfn_test, final_frenet_test) + pred_F0_
 
 ### §8.2 LB 회수 (c13)
 
-`dacon-submit` skill 자율 호출 (CLAUDE.md autonomous policy):
+`dacon-submit` skill 호출 분기 spec (3 branch, §0.5 severe / warn 일관):
+
+| G2 / G3 결과 | 분기 | dacon-submit |
+|:--|:--|:--|
+| **G2 fail** (xattn_no_improvement, hit_1cm < 0.6528) | submission 생성 안 함 | **skip** (사용자 confirm 도 없음, §0.5 c12 [SKIPPED] 박제 후 G_final 의 LB skip 진입) |
+| **G2 pass + G3 partial** (xattn_partial_pass: hit_1cm ∈ [0.6528, 0.6628) OR hit_1.5cm < 0.8104 OR gap_ranking > 0.04) | submission 생성 ✓ | **사용자 confirm 요청** (memory feedback "dacon-submit user approval required" 일치, CV 마진 부족으로 DACON quota 자동 소모 회피) |
+| **G2 + G3 모두 pass** (hit_1cm ≥ 0.6628 AND hit_1.5cm ≥ 0.8104 AND gap_ranking ≤ 0.04) | submission 생성 ✓ | **자율 호출** (CLAUDE.md autonomous policy, 사용자 confirm 없이 자동 1회 quota 소모) |
 
 ```bash
-# 사용자 confirm 없이 자동 (DACON 일일 5회 quota 안에서 1회 사용)
-# 단 memory feedback "dacon-submit user approval required" 박제:
-# CV 좋고 (G3 pass) 만 자동 submit. G2 만 통과 G3 부분 미달 (xattn_partial_pass) 시 사용자 confirm 요청.
+# 의사코드 (run_oof.py 의 c12/c13 분기 박제):
+if g2_pass and g3_pass_all:
+    dacon_submit(submission_csv)                # 자동
+elif g2_pass and g3_partial:
+    user_confirm = ask_user("G3 partial pass — DACON quota 1회 소모 OK?")
+    if user_confirm:
+        dacon_submit(submission_csv)
+    else:
+        log_skipped("g3_partial_no_confirm")
+else:  # g2_fail
+    log_skipped("xattn_no_improvement, submission 생성 skip")
 ```
 
 `analysis/plan-024/lb_log.md` 박제:
@@ -714,7 +772,7 @@ LB < plan-022 carry (미박제 시 plan-004 LB 0.6806 floor) → `lb_below_floor
 
 1. **plan-009 ranking_loss fail 패턴 비교**: plan-024 가 plan-009 의 G1 fail (oof_soft_hit 0.6482, gap_ranking 0.108) 을 *avoid* 했는지 직접 비교 표.
 2. **architecture-extractable headroom 측정**: plan-008 gap_ranking 0.0516 의 plan-024 회수율 = (0.0516 - plan-024 gap_ranking) / 0.0516. 100% 회수 시 oracle 도달 (~0.7562 hit).
-3. **LB-OOF gap 측정**: plan-004 패턴 (OOF 0.6624 → LB 0.6806 = +0.018) 와 plan-024 의 LB-OOF gap 비교. positive gap = generalization 양호, negative = overfit 신호.
+3. **LB-OOF gap 측정**: plan-004 패턴 (`runs/baseline/P001_pb-0-6822-fullrun/boundary_tiny_correction_report.json` 의 boundary OOF soft_hit = 0.6624 → DACON LB 0.6806 = +0.018, §14 참조의 plan-004.results.md carry) 와 plan-024 의 LB-OOF gap 비교. positive gap = generalization 양호, negative = overfit 신호.
 
 ---
 
@@ -724,7 +782,7 @@ LB < plan-022 carry (미박제 시 plan-004 LB 0.6806 floor) → `lb_below_floor
 2. **single config 측정 의존**: hyperparam sweep 없음. PB framework default (hidden=128 → 256 만 변경) 가 plan-022 carry 위에서 optimum 일 가능성 미검증. **caveat 박제**: 본 plan 의 +0.01 lift 가 architecture 본질 effect 인지 vs hyperparam optimum 의 우연인지 미분리.
 3. **torsion τ numerical collapse risk**: muflight low-curvature 비행에서 `collinear_rate > 0.7` 가능 → τ feature 신호 ≈ 0 (mask 영향). G3 통과 후 plan-025 의 ablation 후보로 분리.
 4. **sign convention 통일의 backward compatibility**: plan-021 L2 의 `pred - actual` 그대로 import 시 plan-024 의 anchor-vocab encoding 이 silent bug. **반드시 negate**. tests #3 (sign sanity) 로 검증.
-5. **regime 18-class one-hot 의 high dim**: cand_feat ③ ctx 18D = anchor 14 × 18 broadcast = 252 element. GRU hidden=256 의 capacity 안 OK 단 sparsity high. scalar idx 대체 가능 (decision-note 가능).
+5. **regime 18-class one-hot 의 high dim**: cand_feat ③ ctx 18D = anchor 14 × 18 broadcast = 252 element. GRU hidden=**384** 의 capacity 안 OK 단 sparsity high. **v1.1 default = one-hot 18D 박제** (§4.4 ③ ctx 의 "regime 18" 표기 그대로). scalar `regime_idx/18` 대체는 decision-note 자율 변경 가능 단 default 는 one-hot.
 6. **GRU hidden 256 의 overfit risk**: N=10k small dataset. PB framework 가 N=10k 환경에서 hidden=128 로 LB 0.6806 도달 → hidden=256 이 capacity 과잉 가능. mitigation = dropout 0.08 PB carry + AdamW weight_decay 0.01 + early stop (validation loss 기준). validation = 5-fold 안 train split 의 마지막 20%.
 7. **L2 timing alignment ambiguity**: step i=0..6 의 *target time = t = 4..10* (= -160..0ms relative to end). plan-024 의 K (time offset) 묶음에 `target time / 10` 으로 표현 → positional encoding 일관.
 8. **LB-OOF gap 의 plan-004 비교 caveat**: plan-004 의 OOF 측정 framework (selector_soft_hit / boundary_soft_hit) 와 plan-024 의 OOF (corrector-free `Σ q · a` 위 hit) 가 *동일 metric 정의 아님*. plan-004 의 +0.018 gap 을 plan-024 에 직접 적용 시 metric drift caveat.
