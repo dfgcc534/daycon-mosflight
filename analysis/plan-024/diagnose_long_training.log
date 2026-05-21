@@ -1,0 +1,32 @@
+inline selector loaded: 27 candidates
+[long-diag] EPOCHS=100, lr=0.0005 constant, batch=256, log every 5
+[long-diag] load ...
+[long-diag] build seq/cand ...
+[long-diag] epoch   0: train_loss=2.6800 val_loss=2.6294 hit_1cm=0.6411 1.7s
+[long-diag] epoch   5: train_loss=2.6213 val_loss=2.6132 hit_1cm=0.6421 1.5s
+[long-diag] epoch  10: train_loss=2.5793 val_loss=2.5771 hit_1cm=0.6411 1.6s
+[long-diag] epoch  15: train_loss=2.5616 val_loss=2.5709 hit_1cm=0.6421 1.5s
+[long-diag] epoch  20: train_loss=2.5458 val_loss=2.5699 hit_1cm=0.6436 1.5s
+[long-diag] epoch  25: train_loss=2.5053 val_loss=2.5744 hit_1cm=0.6406 1.5s
+[long-diag] epoch  30: train_loss=2.4629 val_loss=2.6033 hit_1cm=0.6426 1.6s
+[long-diag] epoch  35: train_loss=2.4125 val_loss=2.6374 hit_1cm=0.6495 1.5s
+[long-diag] epoch  40: train_loss=2.3121 val_loss=2.7470 hit_1cm=0.6475 1.6s
+[long-diag] epoch  45: train_loss=2.1842 val_loss=2.8382 hit_1cm=0.6391 1.6s
+[long-diag] epoch  50: train_loss=2.1542 val_loss=2.9344 hit_1cm=0.6436 1.6s
+[long-diag] epoch  55: train_loss=1.9864 val_loss=3.0583 hit_1cm=0.6351 1.5s
+[long-diag] epoch  60: train_loss=1.8243 val_loss=3.1737 hit_1cm=0.6376 1.5s
+[long-diag] epoch  65: train_loss=1.8166 val_loss=3.2292 hit_1cm=0.6381 1.5s
+[long-diag] epoch  70: train_loss=1.7963 val_loss=3.2679 hit_1cm=0.6322 1.5s
+[long-diag] epoch  75: train_loss=1.6456 val_loss=3.3584 hit_1cm=0.6297 1.5s
+[long-diag] epoch  80: train_loss=1.6252 val_loss=3.4173 hit_1cm=0.6302 1.5s
+[long-diag] epoch  85: train_loss=1.5217 val_loss=3.4079 hit_1cm=0.6297 1.6s
+[long-diag] epoch  90: train_loss=1.5132 val_loss=3.4533 hit_1cm=0.6312 1.6s
+[long-diag] epoch  95: train_loss=1.4681 val_loss=3.4943 hit_1cm=0.6317 1.5s
+[long-diag] epoch  99: train_loss=1.4442 val_loss=3.4050 hit_1cm=0.6292 1.5s
+
+[long-diag] === SUMMARY ===
+[long-diag] total epochs=100 time=142s
+[long-diag] best hit_1cm=0.6495 @ epoch 35
+[long-diag] best val_loss=2.5699
+[long-diag] *** plan-022 winner 0.6528 = -0.0033 ***
+[long-diag] → /workspace/daycon-muflight/.claude/worktrees/plan-024-spec/analysis/plan-024/diagnose_long_training.json
