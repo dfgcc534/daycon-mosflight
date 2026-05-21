@@ -119,7 +119,7 @@ def train_one_fold(
     lr: float = 7e-4,
     weight_decay: float = 0.02,
     val_frac: float = 0.2,
-    patience: int = 3,
+    patience: int = 999,   # G2 재학습 (under-converged fix): early stop 사실상 disable
     seed: int = SEED,
     device: str = DEVICE,
 ) -> np.ndarray:
@@ -137,7 +137,8 @@ def train_one_fold(
     cand_val = torch.from_numpy(cand_tr[val_split:]).float().to(device)
     q_val = torch.from_numpy(q_true_tr[val_split:]).float().to(device)
 
-    model = model_mod.CrossAttentionAnchorSelector().to(device)
+    # G2 ablation v3: channel dropout off (over-regularization 의심)
+    model = model_mod.CrossAttentionAnchorSelector(cand_drop_p=0.0, seq_drop_p=0.0).to(device)
     optim = torch.optim.AdamW(model.parameters(), lr=lr, weight_decay=weight_decay)
     total_steps = (pre_epochs + fine_epochs) * (val_split // batch_size + 1)
     warm_steps = max(1, total_steps // 10)

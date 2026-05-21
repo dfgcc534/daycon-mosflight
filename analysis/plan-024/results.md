@@ -75,11 +75,20 @@ per-fold std ≈ 0.0034 (낮은 variance OK). 단 *모든 fold* 가 plan-022 car
 
 ## §5 fail 원인 분석 — 7가지 가설
 
-### 5.1 ⚠️ CPU under-converged (가장 강한 의심)
-- 5-fold OOF 학습 시간 = **167s total** (spec §10 추정 GPU 5-7h 의 1/100 ~ 1/150).
-- per fold ≈ 32s = 약 1500 batch (n_tr~8000 × 22 epoch / 256 batch). 단 forward+backward(2M params)+optim ≈ 50-100ms/batch → 75-150s 예상 vs 측정 32s = 학습 step **너무 일찍 early-stop** 추정.
-- early stop trigger: patience=3 + val_loss decrease margin 1e-5. CPU 학습 noise 안에서 trigger 가능.
-- **테스트 안 됨**: epoch 강제 22 + patience 늘림 또는 no early stop 으로 재학습 시 hit_1cm 회복 가능성.
+### 5.1 ⚠️ CPU under-converged 가설 — **기각** (v2 ablation 결과)
+- 초기 의심: 5-fold OOF 학습 시간 = **167s total** (spec §10 GPU 5-7h 가정의 1/100).
+- v2 재학습 (patience 3→999, no early stop 강제): hit_1cm = **0.6370 (v1 과 동일)**, time = 171s.
+- → patience 변경 효과 없음. 학습은 *정상 수렴*, under-converged 아님.
+- 결론: 학습이 167s 짧은 이유 = *2M params + GRU+attention CPU 가 batch 당 0.24s, 22 epoch × 32 batch ≈ 700 step × 0.24s ≈ 168s* 로 합리적 시간. 학습 정상.
+
+### 5.4 ⚠️ channel dropout over-regularization 가설 — **기각** (v3 ablation 결과)
+- 초기 의심: ③ ctx 128D p=0.3 channel drop = 평균 38D drop per batch. dim 폭증의 redundancy 가정이 부정확하면 information drop 손해.
+- v3 재학습 (cand_drop_p=0, seq_drop_p=0): hit_1cm = **0.6373 (v1 0.6370 와 ~동일)**.
+- → channel dropout off 효과 없음. over-regularization 가설 기각.
+- 단 top1_acc: 0.1227 → 0.1273 (+0.0046 mild) — channel drop off 가 ranking 능력 약간 ↑ 단 hit rate 변화 없음.
+
+### 5.1+5.4 종합 — **architecture + FE max lever 자체의 inherent fail**
+v1/v2/v3 모두 ~0.6370 ± 0.0003 = **systematic underperformance vs plan-022 LGBM 0.6528**. *재현 가능* 한 −0.0158 gap. plan-009 의 listwise loss fail 패턴 (architecture lever 자체가 LGBM 보다 약함) 의 *재발견*.
 
 ### 5.2 dim 폭증 (caveat #11)
 - cand 14×150 = 2100 element + seq 7×95 = 665 element = sample 당 ~2800 element. N=10k → ratio ~3.6 sample/dim.
