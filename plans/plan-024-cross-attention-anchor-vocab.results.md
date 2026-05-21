@@ -1,45 +1,43 @@
 ---
 plan_id: 024
-finished_at: null
-status: draft
-band: null
+finished_at: 2026-05-21 (Asia/Seoul)
+status: all_complete
+band: negative
 best_metric:
-  hit_1cm: null
-  hit_1.5cm: null
-  delta_1cm: null
-  delta_1.5cm: null
-  gap_ranking: null
-exp_ids_completed: []
+  hit_1cm: 0.6370
+  hit_1.5cm: 0.8092
+  delta_1cm: +0.0050
+  delta_1.5cm: +0.0059
+  gap_ranking: 0.1934
+exp_ids_completed:
+  - Z024_xattn_anchor_vocab
 exp_ids_skipped: []
 lb_score: null
+xattn_no_improvement: true
+g_final_state: g2_no_improvement_skip
 ---
 
 # plan-024.results pair (WORKFLOW.md §11)
 
-핵심 결과는 `analysis/plan-024/results.md` 의 11 항목 (G_final 시점 박제) 에 박제 예정. 본 pair file 은 frontmatter 4-way 토큰 일치 (WORKFLOW.md §4 / §11) 의무 충족용 stub. 현재 status=draft (c1.5 spec v1.1 박제 단계 — 4-way ML expert review 결과 반영).
+핵심 결과는 `analysis/plan-024/results.md` 의 12 항목에 박제. 본 pair file 은 frontmatter 4-way 토큰 일치 (WORKFLOW.md §4 / §11) 의무 충족용 stub.
 
-## 진행 상태 (G_final 미도달 — placeholder)
+## 핵심 결과 요약
 
-- G0 (인프라): [TODO]
-- G1 (F0 + plan-022 carry reproduce): [TODO]
-- G2 (cross-attention 5-fold OOF 최소 동등성): [TODO]
-- G3 (lift + gap_ranking): [TODO]
-- G_final (LB 회수 + 3-file sync): [TODO]
+- **G2 FAIL**: `xattn_no_improvement` severe — cross-attention GRU + 16 lever FE max (cand 150D + seq 95D + hidden 384) 가 plan-022 LGBM winner 보다 −0.0158 below (OOF hit_1cm = 0.6370 vs 0.6528).
+- **G_final pass band=negative**: §0.5 / §8.3 분기 — c12/c13 [SKIPPED], LB 미회수, follow-up plan-025/026/027 박제.
+- **gap_ranking 0.1934** — plan-009 ranking_loss fail (0.108) 의 1.8× 악화. architecture lever 자체 *underperform*.
+- **CPU under-converged 의심**: 학습 167s (spec §10 GPU 5-7h 가정의 100× 빠름) — plan-025 ablation 의 *최우선 변수* = 충분 학습 시간 + epoch 강제.
+- **14-anchor oracle = 0.7928** — plan-024 framework 의 상한, plan-022 LGBM 의 0.6528 + plan-008 carry 27-cand 의 0.7562 보다 모두 높음. selector 가 oracle 의 80.4% 만 회수.
 
-## 핵심 spec 위치
+## 상세 분석 위치
 
-- `plans/plan-024-cross-attention-anchor-vocab.md` — 본 plan 의 §0~§14 spec 본문
-- `analysis/plan-024/results.md` — G_final 시점 박제 예정 (현재 미생성)
-- `analysis/plan-024/per_anchor_dist.json` — plan-022 carry 비교 박제 예정
+- `analysis/plan-024/results.md` — 12 항목 G_final 종합 (fail mode 7 가설 + ablation slot + follow-up plan-025/026/027)
+- `analysis/plan-024/results_xattn.json` — G2 OOF metric (167s elapsed)
+- `analysis/plan-024/baseline_carry.json` — G1 carry pass
 
-## carry reference
+## follow-up plan 후보
 
-- plan-022 winner: A6_bcc14_τ001 (hit_1cm 0.6528 / hit_1.5cm 0.8104 / Δ_1cm +0.0208 / Δ_1.5cm +0.0071)
-- plan-008 measured gap_ranking: 0.0516 (base 27 cand) — architecture-extractable headroom
-- plan-009 ranking_loss G1 fail: oof_soft_hit 0.6482 / gap_ranking 0.108 — 본 plan 의 caveat anchor
-
-## follow-up plan 후보 (G_final 시점 박제 예정)
-
-- plan-025 (가칭): ideas.md priority 5 (A1 Multi-window stat / A6 WAP composite / B3 STA/LTA / Multi-Parse Input / B2 Pct-of-rolling-std)
-- plan-026 (가칭): anchor radius 확장 + F0 baseline ML 화
-- plan-027 (가칭): plan-022 LGBM + plan-024 cross-attn ensemble
+- **plan-025**: ablation + CPU under-converged fix + hyperparam mini-sweep + path_signature_L2 / Learnable anchor embedding head-to-head
+- **plan-026**: anchor radius 확장 (0.5cm → 0.7~1.0cm, oracle 0.7928 → 0.85+ 추정) + F0 baseline ML 화
+- **plan-027**: ensemble (plan-022 LGBM + plan-024/025 best variant)
+- **plan-028** (가칭): ideas.md ★★★ paradigm shift (Trajectron-CLIP / KNN pool / MDN)

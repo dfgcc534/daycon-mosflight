@@ -2,7 +2,18 @@
 plan_id: 024
 version: 1.1-rev2
 date: 2026-05-21 (Asia/Seoul)
-status: draft
+status: all_complete
+band: negative
+best_hit_1cm: 0.6370
+best_hit_1.5cm: 0.8092
+best_delta_1cm: +0.0050
+best_delta_1.5cm: +0.0059
+gap_ranking: 0.1934
+g1_pass: true
+g2_pass: false
+g3_pass: false
+g_final_state: g2_no_improvement_skip
+xattn_no_improvement: true
 based_on:
   - 022 (winner cell A6_bcc14_tau001: K=14 BCC anchor, τ_cls=0.001, OOF hit_1cm=0.6528 / hit_1.5cm=0.8104, Δ_1cm=+0.0208, Δ_1.5cm=+0.0071, 14-anchor codebook + LGBM sample-weight expansion selector. selector-only paradigm = corrector-free `pred_world = R_wfn · Σ_k q_k · a_k + pred_F0_world`.)
   - 021 (input augment 170D LGBM: L1=Frenet (p,v,a) 11step×9, L2=F0 residual 7step×3, L4=soft hit 7step×2, lgbm_extra 36D = macro_stat 9 + EWMA(p,v,a) 27. build_input_common / build_input_lgbm_extra / build_soft_label / build_frenet_basis_3d / to_frenet)

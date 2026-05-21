@@ -1,0 +1,17 @@
+inline selector loaded: 27 candidates
+[plan-024 run_oof] loading data ... device=cpu
+[run_oof] N=10000 folds=[2020, 2047, 1921, 2020, 1992]
+[run_oof] multiwindow_trim.json 없음 → build (full train)
+  fold 0: tr=7980 va=2020 seq.shape=(7980, 7, 95) cand.shape=(7980, 14, 150)
+    fold 0 hit@1cm=0.6416 time=34s
+  fold 1: tr=7953 va=2047 seq.shape=(7953, 7, 95) cand.shape=(7953, 14, 150)
+    fold 1 hit@1cm=0.6370 time=33s
+  fold 2: tr=8079 va=1921 seq.shape=(8079, 7, 95) cand.shape=(8079, 14, 150)
+    fold 2 hit@1cm=0.6366 time=36s
+  fold 3: tr=7980 va=2020 seq.shape=(7980, 7, 95) cand.shape=(7980, 14, 150)
+    fold 3 hit@1cm=0.6386 time=27s
+  fold 4: tr=8008 va=1992 seq.shape=(8008, 7, 95) cand.shape=(8008, 14, 150)
+    fold 4 hit@1cm=0.6310 time=36s
+
+[run_oof] hit_1cm=0.6370 hit_1.5cm=0.8092 Δ_1cm=+0.0050 gap_ranking=0.1934
+[run_oof] total 167.2s → analysis/plan-024/results_xattn.json
