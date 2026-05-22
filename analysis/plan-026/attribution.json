@@ -1,0 +1,57 @@
+{
+  "plan_id": 26,
+  "spec_version": "v1.1",
+  "date": "2026-05-22",
+  "baseline": {
+    "source": "plan-025 G2.C1 (results_C1.json)",
+    "hit_1cm": 0.6320,
+    "hit_1p5cm": 0.8033,
+    "max_class_ratio": 0.0714
+  },
+  "cells": {
+    "A1_no_block2": {
+      "D_masked": 952,
+      "hit_1cm": 0.6320,
+      "hit_1p5cm": 0.8033,
+      "max_class_ratio": 0.0714,
+      "runtime_s": 301.7
+    },
+    "A2_no_block3": {
+      "D_masked": 1058,
+      "hit_1cm": 0.6509,
+      "hit_1p5cm": 0.8118,
+      "max_class_ratio": 0.106,
+      "runtime_s": 778.9
+    },
+    "A3_no_block4": {
+      "D_masked": 320,
+      "hit_1cm": 0.6320,
+      "hit_1p5cm": 0.8033,
+      "max_class_ratio": 0.0714,
+      "runtime_s": 132.1
+    }
+  },
+  "attribution": {
+    "drop_A1_block2_removed": 0.0000,
+    "drop_A2_block3_removed": -0.0189,
+    "drop_A3_block4_removed": 0.0000,
+    "convention": "drop_X = baseline_hit_1cm - hit_A{X}. positive = block 이 도움됨. negative = block 이 noise lever."
+  },
+  "dominant_finding": {
+    "type": "PARADIGM REVERSAL — block ③ 가 noise lever (mode collapse 원인)",
+    "hypothesis_predicted": "H1: block ③ per-anchor 22D 제거 시 큰 drop (selector 가 sample-level 으로 회귀, 0.95+ hit 손실)",
+    "actual_result": "block ③ 제거 시 hit_1cm +0.0189 lift (0.6320 → 0.6509), mode collapse 해소 (max_class_ratio 0.071 → 0.106)",
+    "root_cause": "block ③ 22D 가 anchor 별 다른 값이라 LGBM row-expand 에서 row k 가 항상 class k 예측하도록 trivial 학습. selector self-consistency 가 결국 self-prediction 으로 collapse → softmax 후 self-row 확률 ≈ 1 → diag extraction + row-normalize 후 거의 uniform 분포. block ③ 제거 시 row k 가 어느 anchor 인지 모름 → meaningful sample-conditional learning."
+  },
+  "comparison_vs_p022_winner": {
+    "p022_winner_hit_1cm": 0.6531,
+    "A2_hit_1cm": 0.6509,
+    "delta": -0.0022,
+    "remark": "A2 가 plan-022 winner 의 99.66% 회수. 1058D LGBM (= plan-022 170D + ctx 128D + seq 8-stat 760D) 가 plan-022 170D 와 거의 동등 성능. 추가 lift X — feature 추가가 결과 향상 안 함."
+  },
+  "follow_up_priorities": {
+    "plan-027_ensemble": "baseline carry 갱신 검토: plan-025 C1 (0.6320) → plan-026 A2 (0.6509). band 조건 분기 시 plan-026 A2 가 0.6531 plan-022 winner 의 -0.0022 → 3-way ensemble (p022 + p023 + p026_A2) 가능 (band=positive_near 으로 격상).",
+    "plan-028_F0_ML": "F0 자체 lever 가 plan-025 결과 = F0 ceiling 확인 + plan-026 A2 도 plan-022 winner 거의 회수 = anchor selection lever 자체의 ceiling 도 80% 안팎. F0 개선이 가장 큰 잠재력.",
+    "plan-029_row_expand_redesign": "LGBM row-expand selector design 자체 재검토. block ③ self-prediction 우회 위해 (a) anchor identity feature 를 row-wise feature 아닌 별도 head 로 분리, OR (b) sample-level model 로 paradigm shift."
+  }
+}

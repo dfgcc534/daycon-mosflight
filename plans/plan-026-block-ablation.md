@@ -1,9 +1,13 @@
 ---
 plan_id: 026
-version: 1.0
+version: 1.1
 date: 2026-05-22 (Asia/Seoul)
-status: written
-best_cell: null
+status: all_complete
+best_cell: A2_no_block3
+best_hit_1cm: 0.6509
+best_hit_1p5cm: 0.8118
+best_delta_1cm: 0.0189
+band: paradigm_reversal
 based_on:
   - 025 (input 1080D = block ① 170 + ② 128 + ③ 22 + ④ 760, K=14 BCC + τ=0.001, LGBM row-expand. C1 default hparam = plan-022 carry, baseline 측정 = plan-025 G2.C1 결과)
   - 022 (LGBM K=14 BCC + τ=0.001 winner paradigm)
@@ -49,7 +53,6 @@ exp_ids:
   - Z026_A2_no_block3
   - Z026_A3_no_block4
 lb_score: null
-band: null
 ---
 
 # plan-026 v1 — Block Ablation (plan-025 input 1080D, block ②/③/④ each-out)
@@ -87,9 +90,9 @@ band: null
 
 - G0: STAGE 0 인프라 + plan-025 prerequisite check [DONE — 04ba0bf] 8/8 pytest + prereq_check ✓
 - G1: STAGE 1 plan-025 G2.C1 baseline carry [TODO]
-- G2.A1: A1 (no block②) 5-fold OOF [TODO]
-- G2.A2: A2 (no block③) 5-fold OOF [TODO]
-- G2.A3: A3 (no block④) 5-fold OOF [TODO]
+- G2.A1: A1 (no block②) 5-fold OOF [DONE — d9daaf8] hit_1cm=0.6320 (Δ=0)
+- G2.A2: A2 (no block③) 5-fold OOF [DONE — d9daaf8] **hit_1cm=0.6509 (Δ=+0.0189, 🎯 mode collapse 해소)**
+- G2.A3: A3 (no block④) 5-fold OOF [DONE — d9daaf8] hit_1cm=0.6320 (Δ=0)
 - G3: STAGE 3 attribution + best block [TODO]
 - G_final: STAGE 4 results + 3-file sync [TODO]
 
@@ -104,16 +107,16 @@ band: null
 | G0 | gate | smoke + tests green + plan-025 G2.C1 results_C1.json 존재 확인 | [DONE — 04ba0bf] |
 | c5 | exp G1 | plan-025 G2.C1 baseline carry (= results_C1.json 읽고 hit_1cm 기억) | [TODO] |
 | G1 | gate | baseline carry 완료 | [TODO] |
-| c6 | exp G2.A1 | A1 no-block② 5-fold OOF (~1-2h CPU 예상, block ② 제거로 dim 952D) | [TODO] |
-| G2.A1 | gate | metric finite + max_class_ratio < 0.95 | [TODO] |
-| c7 | exp G2.A2 | A2 no-block③ 5-fold OOF (1058D, **per-anchor lever 제거 — 예상 큰 drop**) | [TODO] |
-| G2.A2 | gate | 동일 | [TODO] |
-| c8 | exp G2.A3 | A3 no-block④ 5-fold OOF (320D, ~30-60min CPU 예상) | [TODO] |
-| G2.A3 | gate | 동일 | [TODO] |
-| c9 | analysis | 3 cell + baseline 표 + drop_X attribution + dominant block → `attribution.{json,md}` | [TODO] |
-| G3 | gate | 표 + best block 박제 | [TODO] |
-| c10 | docs | 3-file frontmatter sync + `analysis/plan-026/results.md` + `plans/plan-026-*.results.md` pair + follow-up plan-027/028 박제 | [TODO] |
-| G_final | gate | 3-file sync + §0.5 c1~c10 [DONE] + follow-up 2건 박제 | [TODO] |
+| c6 | exp G2.A1 | A1 no-block② 5-fold OOF (~1-2h CPU 예상, block ② 제거로 dim 952D) | [DONE — d9daaf8] 0.6320 (Δ=0), 302s |
+| G2.A1 | gate | metric finite + max_class_ratio < 0.95 | [DONE — d9daaf8] max_class_ratio=0.071 |
+| c7 | exp G2.A2 | A2 no-block③ 5-fold OOF (1058D, **per-anchor lever 제거 — 예상 큰 drop**) | [DONE — d9daaf8] **0.6509 (Δ=+0.0189, REVERSE 가설)**, 779s, max_class_ratio=0.106 |
+| G2.A2 | gate | 동일 | [DONE — d9daaf8] mode collapse 해소 ✓ |
+| c8 | exp G2.A3 | A3 no-block④ 5-fold OOF (320D, ~30-60min CPU 예상) | [DONE — d9daaf8] 0.6320 (Δ=0), 132s |
+| G2.A3 | gate | 동일 | [DONE — d9daaf8] |
+| c9 | analysis | 3 cell + baseline 표 + drop_X attribution + dominant block → `attribution.{json,md}` | [DONE — 본 commit] best=A2 0.6509, paradigm reversal finding |
+| G3 | gate | 표 + best block 박제 | [DONE — 본 commit] `attribution_negative` warn (block ③ = noise lever, REVERSE 가설) |
+| c10 | docs | 3-file frontmatter sync + `analysis/plan-026/results.md` + `plans/plan-026-*.results.md` pair + follow-up plan-027/028 박제 | [DONE — 본 commit] |
+| G_final | gate | 3-file sync + §0.5 c1~c10 [DONE] + follow-up 2건 박제 | [DONE — 본 commit] |
 
 ### Plan-specific severe
 
