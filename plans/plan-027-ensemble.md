@@ -1,9 +1,13 @@
 ---
 plan_id: 027
-version: 1.0
+version: 1.1
 date: 2026-05-22 (Asia/Seoul)
-status: written
-best_cell: null
+status: all_complete
+best_cell: E3_weighted
+best_hit_1cm: 0.6529
+best_hit_1p5cm: 0.8118
+best_delta_1cm: -0.0001
+band: negative_ensemble
 based_on:
   - 022 (winner A6_bcc14_tau001 hit_1cm 0.6528 / hit_1p5cm 0.8104. K=14 BCC + τ=0.001)
   - 023 (winner B4_fib50_tau001 hit_1cm 0.6532 / hit_1p5cm 0.8108. K=50 Fibonacci)
@@ -58,7 +62,6 @@ exp_ids:
   - Z027_E2_eq_3way
   - Z027_E3_weighted_optim
 lb_score: null
-band: null
 ---
 
 # plan-027 v1 — Ensemble (plan-022/023/[025] winner soft-vote)
@@ -98,35 +101,35 @@ band: null
 
 ### G-gates
 
-- G0: STAGE 0 인프라 [TODO]
-- G1: STAGE 1 base predictor reproduce + plan-025 band 결정 [TODO]
-- G2.E1: equal-weight 2-way ensemble [TODO]
-- G2.E2: equal-weight 3-way ensemble (band 조건부) [TODO]
-- G2.E3: weighted optim [TODO]
-- G3: paradigm — band 판정 [TODO]
-- G_final: results + 3-file sync [TODO]
+- G0: STAGE 0 인프라 [DONE — bqxddnj9i]
+- G1: STAGE 1 base predictor reproduce + plan-025 band 결정 [DONE — bqxddnj9i]
+- G2.E1: equal-weight 2-way ensemble [DONE — bqxddnj9i]
+- G2.E2: equal-weight 3-way ensemble (band 조건부) [DONE — bqxddnj9i]
+- G2.E3: weighted optim [DONE — bqxddnj9i]
+- G3: paradigm — band 판정 [DONE — bqxddnj9i]
+- G_final: results + 3-file sync [DONE — bqxddnj9i]
 
 ### Commit chain (next-up)
 
 | # | type | spec section | status |
 |---|---|---|---|
-| c1 | docs | `plans/plan-027-ensemble.md` v1 작성 | [TODO] |
-| c2 | code | `analysis/plan-027/ensemble_predict.py` — `predict_p022_oof(X, gt, folds) -> np.ndarray (N, 3)`, `predict_p023_oof(...)`, `predict_p026_A2_oof(...)`, `ensemble_soft_vote(preds: list[np.ndarray], weights: list[float]) -> (N, 3)` | [TODO] |
-| c3 | code | `analysis/plan-027/run_oof.py` — 3 cell runner + band 분기 + CLI `--cell {E1,E2,E3}` | [TODO] |
-| c4 | test | `tests/test_plan027_smoke.py` — predict OOF shape + ensemble weight sum=1 + band 분기 smoke | [TODO] |
-| G0 | gate | smoke + tests green | [TODO] |
-| c5 | exp G1 | base predictor (p022 + p023) reproduce + plan-026 A2 carry → `base_preds.json` 박제 (sample 별 final_pred) + band 결정 | [TODO] |
-| G1 | gate | p022 reproduce hit ∈ [0.6523, 0.6533] + p023 reproduce hit ∈ [0.6527, 0.6537] + plan-026 A2 carry OK | [TODO] |
-| c6 | exp G2.E1 | E1 equal-weight 2-way (w=0.5/0.5) — `results_E1.json` 박제 | [TODO] |
-| G2.E1 | gate | metric finite | [TODO] |
-| c7 | exp G2.E2 | E2 equal-weight 3-way (w=1/3) — band 조건 충족 시만. 미충족 시 skip (decision-note 박제) → `results_E2.json` 또는 skip log | [TODO] |
-| G2.E2 | gate | metric finite OR skip 박제 | [TODO] |
-| c8 | exp G2.E3 | E3 weighted optim — 2-way grid sweep (5-point or 9-point) + (band 충족 시) 3-simplex sweep — `results_E3.json` 박제 | [TODO] |
-| G2.E3 | gate | metric finite + best weight 박제 | [TODO] |
-| c9 | analysis | 3 cell 비교 + best cell + lift vs single winner + paired Δ → `ensemble_analysis.{json,md}` | [TODO] |
-| G3 | gate | band 박제 | [TODO] |
-| c10 | docs | 3-file frontmatter sync + `analysis/plan-027/results.md` + pair + follow-up plan-028/029 박제 | [TODO] |
-| G_final | gate | 3-file sync + §0.5 c1~c10 [DONE] | [TODO] |
+| c1 | docs | `plans/plan-027-ensemble.md` v1 작성 | [DONE — bqxddnj9i] |
+| c2 | code | `analysis/plan-027/ensemble_predict.py` — `predict_p022_oof(X, gt, folds) -> np.ndarray (N, 3)`, `predict_p023_oof(...)`, `predict_p026_A2_oof(...)`, `ensemble_soft_vote(preds: list[np.ndarray], weights: list[float]) -> (N, 3)` | [DONE — bqxddnj9i] |
+| c3 | code | `analysis/plan-027/run_oof.py` — 3 cell runner + band 분기 + CLI `--cell {E1,E2,E3}` | [DONE — bqxddnj9i] |
+| c4 | test | `tests/test_plan027_smoke.py` — predict OOF shape + ensemble weight sum=1 + band 분기 smoke | [DONE — bqxddnj9i] |
+| G0 | gate | smoke + tests green | [DONE — bqxddnj9i] |
+| c5 | exp G1 | base predictor (p022 + p023) reproduce + plan-026 A2 carry → `base_preds.json` 박제 (sample 별 final_pred) + band 결정 | [DONE — bqxddnj9i] |
+| G1 | gate | p022 reproduce hit ∈ [0.6523, 0.6533] + p023 reproduce hit ∈ [0.6527, 0.6537] + plan-026 A2 carry OK | [DONE — bqxddnj9i] |
+| c6 | exp G2.E1 | E1 equal-weight 2-way (w=0.5/0.5) — `results_E1.json` 박제 | [DONE — bqxddnj9i] |
+| G2.E1 | gate | metric finite | [DONE — bqxddnj9i] |
+| c7 | exp G2.E2 | E2 equal-weight 3-way (w=1/3) — band 조건 충족 시만. 미충족 시 skip (decision-note 박제) → `results_E2.json` 또는 skip log | [DONE — bqxddnj9i] |
+| G2.E2 | gate | metric finite OR skip 박제 | [DONE — bqxddnj9i] |
+| c8 | exp G2.E3 | E3 weighted optim — 2-way grid sweep (5-point or 9-point) + (band 충족 시) 3-simplex sweep — `results_E3.json` 박제 | [DONE — bqxddnj9i] |
+| G2.E3 | gate | metric finite + best weight 박제 | [DONE — bqxddnj9i] |
+| c9 | analysis | 3 cell 비교 + best cell + lift vs single winner + paired Δ → `ensemble_analysis.{json,md}` | [DONE — bqxddnj9i] |
+| G3 | gate | band 박제 | [DONE — bqxddnj9i] |
+| c10 | docs | 3-file frontmatter sync + `analysis/plan-027/results.md` + pair + follow-up plan-028/029 박제 | [DONE — bqxddnj9i] |
+| G_final | gate | 3-file sync + §0.5 c1~c10 [DONE] | [DONE — bqxddnj9i] |
 
 ### Plan-specific severe
 

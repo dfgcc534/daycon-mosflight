@@ -1,0 +1,27 @@
+inline selector loaded: 27 candidates
+[G1] p022 OOF reproduce...
+[p022] fold 0 runtime=45.7s
+[p022] fold 1 runtime=45.9s
+[p022] fold 2 runtime=46.1s
+[p022] fold 3 runtime=45.3s
+[p022] fold 4 runtime=45.6s
+[p022] FINAL hit_1cm=0.6530 hit_1p5cm=0.8108
+[G1] p023 OOF reproduce...
+[p023] fold 0 runtime=311.6s
+[p023] fold 1 runtime=313.3s
+[p023] fold 2 runtime=316.4s
+[p023] fold 3 runtime=310.5s
+[p023] fold 4 runtime=316.5s
+[p023] FINAL hit_1cm=0.6530 hit_1p5cm=0.8113
+[G1] p026_A2 OOF reproduce (1058D)...
+[p026_A2] fold 0 runtime=150.6s
+[p026_A2] fold 1 runtime=149.6s
+[p026_A2] fold 2 runtime=152.1s
+[p026_A2] fold 3 runtime=148.2s
+[p026_A2] fold 4 runtime=151.2s
+[p026_A2] FINAL hit_1cm=0.6509 hit_1p5cm=0.8118
+[G1] base_max=0.6530, PASS threshold=0.6550
+[E1] equal-3way: hit_1cm=0.6523 hit_1p5cm=0.8118
+[E2] equal-2way(p022+p023): hit_1cm=0.6524 hit_1p5cm=0.8110
+[E3] best weight=[0.3, 0.3, 0.4], hit_1cm=0.6529 hit_1p5cm=0.8118
+saved → analysis/plan-027/results_ensemble.json
