@@ -81,7 +81,7 @@ band: null
 > **paradigm rationale** (사용자 진단 + plan-024 results.md §5.1+§5.8+§5.9+§5.10+§5.13+§5.14 종합):
 > 1. **plan-024 의 본질적 fail (사용자, 2026-05-22)**: `query = query_mlp(cand_feat)` 에서 cand_feat (B, K=14, 150) 의 channel 구성 = par/perp/dist 3D + anchor spec 9D + ctx broadcast 128D + interactions 10D. sample × anchor *interaction* (b,k 마다 모두 다른 값) = 3 + 10 = **13D 만**. ctx 128D 는 anchor 무관 (K 축 broadcast 동일), anchor spec 9D 는 sample 무관 (B 축 broadcast 동일). attention 의 query 가 anchor 별 differential 정보 13D 위에서만 작동 → attention scoring 의 discrimination 학습 자체 불가. plan-024 의 v1~v5 / poss 1~3 / long-diag / combo / 3-seed *모든 variant* 가 이 sample-invariant query 위에서 학습 → 모든 ablation 이 0.6370~0.6387 plateau 에 묶인 *진짜 root cause*. CPU under-converged §5.1 / over-reg §5.4 / anchor identity A7 §5.8 등 plan-024 가 시도한 가설은 모두 *query 약함 위에서의 보조 lever 효과* 측정이었음 → 모두 plateau 안 noise.
 > 2. **본 plan 의 핵심 lever (4 axis 동시)**:
->     - (a) **query enrichment** (N_new=15 박제, 사용자 확정): 신규 `analysis/plan-029/anchor_query_extend.py` 에서 plan-024 cand_builder 150D 위에 *sample × anchor interaction channel 15개* 추가 → cand_ext (B, 14, 165). 5 group: **A.dist** (past 5 step t=5..9 의 anchor world distance norm, 5 ch) + **A.tangent_proj** (past 3 step t=8..10 의 Frenet 0-axis projection, 3 ch) + **B.cos** (anchor_dir vs velocity cosine sim, 1 ch) + **D.regime_anchor_prob** (`P(gt=k | regime[b])` train-fold empirical lookup table, fold-leakage 차단, 1 ch) + **F.2 multi-step anchor·v** (t∈{5..9} 의 anchor·v_frenet 시계열, 5 ch). plan-024 ④ interactions 10 ch (single t=10 만) 의 *시간 axis 확장* 이 핵심 novel — 중복 ≤30%. 사용자 진단 ("query sample invariant") 의 직접 fix.
+>     - (a) **query enrichment** (N_new=15 박제, 사용자 확정): 신규 `analysis/plan-029/anchor_query_extend.py` 에서 plan-024 cand_builder 150D 위에 *sample × anchor interaction channel 15개* 추가 → cand_ext (B, 14, 165). 5 group: **A.dist** (past 5 step t=5..9 의 anchor world distance norm, 5 ch) + **A.tangent_proj** (past 3 step t=8..10 의 Frenet 0-axis projection, 3 ch) + **B.cos** (anchor_dir vs velocity cosine sim, 1 ch) + **D.regime_anchor_prob** (`P(gt=k | regime[b])` train-fold empirical lookup table, fold-leakage 차단, 1 ch) + **F.2 multi-step anchor·v** (t∈{5..9} 의 anchor·v_frenet 시계열, 5 ch). plan-024 ④ interactions 10 ch (single t=10 만) 의 *시간 axis 확장* 이 핵심 novel — novel ≈67% (sub-agent 실측). 사용자 진단 ("query sample invariant") 의 직접 fix.
 >     - (b) **anchor embedding 학습**: `nn.Parameter(K=14, d_embed=8)` learnable, **init = randn × 0.1** (사용자 결정, plan-024 v5 의 0.02 carry 대비 5× 증가 — lever (c) 환경 보정). query 와 key 양쪽 broadcast concat 또는 add. plan-024 v5 (§5.8) 는 query 에만 broadcast concat + init 0.02 → "부분 기각 (hit_1cm 변화 X)" 였으나 본 plan 은 *key 에도 동시 적용* + query enrichment 환경 + init 5× → 환경 자체 다름.
 >     - (c) **key anchor-conditional**: key (B, T=7, hidden=196) 에 anchor embedding broadcast add → key_anchor (B, K=14, T=7, hidden). 식: `key_anchor[b,k,t,:] = key[b,t,:] + anchor_proj(anchor_embed[k,:])`. attn_logits = einsum("bkh,bkth->bkt", query, key_anchor) / sqrt(196). 즉 key 가 anchor 별로 다른 sequence representation. plan-024 attention 식은 key 가 anchor 무관 (B, T, hidden) — 본 plan 은 key 도 anchor-conditional.
 >     - (d) **보조 head raw skip 차단**: head_in = event_ctx (B, 14, 196) only. h_final_bc / cand_feat / block1_bc / block4_bc 모두 head 에 부재. head = `Linear(196, 1)` 단순. PB framework carry 의 raw cand_feat 직통 제거 → attention path 가 score 의 main 신호.
@@ -132,7 +132,7 @@ band: null
 | c6 | code | `analysis/plan-029/run_oof.py` — orchestrator + G1 reproduce + 5-fold concat OOF + final metric. CLI `--cell X1` 또는 `--g1`. | [TODO] |
 | c7 | test | `tests/test_plan029_smoke.py` — 15+ pytest (import / cand_ext shape (B, 14, 165) / cand_ext sample×anchor 차이 assertion / regime_anchor_table fold-leakage / anchor_embed shape (14,8) + init scale ∈ [0.05, 0.15] + requires_grad / query_in shape (B,14,173) / key_anchor shape (B,14,7,196) / attn_logits shape (B,14,7) / attn row-sum=1 / event_ctx shape (B,14,196) / head Linear(196,1) shape (B,14) / forward end-to-end / soft label sum=1 / Frenet→world 식 / no raw skip in head / anchor_embed gradient). | [TODO] |
 | G0 | gate | smoke + tests green (예상 < 300s) | [TODO] |
-| c8 | exp G1 | F0 + plan-022 winner reproduce (plan-025 baseline_carry.json 재사용 또는 재산출) → `baseline_carry.json` | [TODO] |
+| c8 | exp G1 | G1 carry verification: plan-025 baseline_carry.json load + tight band assert (§5.1). file 부재 또는 hash drift 시 fallback = train.py `--cell G1` 별도 commit 으로 재산출 후 `baseline_carry.json` 박제 | [TODO] |
 | G1 | gate | F0 hit ∈ tight band ✓ AND plan-022 winner hit ∈ tight band ✓ | [TODO] |
 | c9 | exp G2.X1 | X1 5-fold OOF (4 lever 동시) 학습. 예상 runtime: CPU **7-15 min (~420-900s, §6.2 추정)**. plan-024 167s 의 ~2.4× (batch 256→64 4× step + epoch 22→50 2.27× + hidden 196 0.27× FLOPs). key_anchor (B,K,T,H) FLOPs 는 K expansion 가 plan-024 einsum 의 K 합산 이미 포함 이라 ~0.51× (감소). cache miss 추가 1-2×. `results_X1.json` + `train_X1.log` 박제 + per-epoch anchor_embed grad norm trajectory 박제. | [TODO] |
 | G2.X1 | gate | metric finite + max_class_ratio < 0.95. 또한 epoch 50 fully trained 검증 (early stop disabled) + anchor_embed gradient norm > 0 (학습 진행 검증) | [TODO] |
@@ -146,9 +146,11 @@ band: null
 - `infra_drift`: plan-024 cherry-pick 또는 plan-025 carry module import 실패.
 - `f0_reproduce_drift` / `plan022_reproduce_drift`: G1 reproduce tight band 위반.
 - `numerical`: PyTorch forward / backward NaN/Inf.
-- `mode_collapse` (warn): max_class_ratio ∈ **[0.05, 0.10)** (1/K=0.0714 근방 ± tolerance). H3 임계 (> 0.10) 와 정확히 align — uniform 출력 = paradigm mismatch finding 으로 박제, G2 계속 진행.
-- `model_capacity_overflow`: GPU/CPU OOM 또는 학습 시간 > 30 min (§6.2 추정 7-15 min 의 ~2-4× 초과 시 spec 가정 위반 — key anchor-conditional (B,K,T,H) memory bottleneck 또는 DataLoader I/O 등 사후 분석 trigger). 30 min 미만이면 정상 진행.
-- `plan024_cherry_pick_missing`: c2 cherry-pick 후 model.py / feature_weighted_dropout.py importlib 실패 → halt.
+- `mode_collapse` (warn): max_class_ratio ∈ **[0.05, 0.10)** (1/K=0.0714 근방). H3 임계 (> 0.10) 와 align. paradigm mismatch finding 박제 후 G2 계속.
+- `mode_collapse_attention` (warn): epoch 5 시점 anchor_embed grad norm ≤ 1e-4 (warmup 종료 직후 cold start). lever (b)(c) 학습 무효 진단 — paradigm_analysis 박제 후 G2 계속, G3 partial_below_p024 가능성 시그널.
+- `fold_leakage_violation` (severe halt): regime_anchor_table 산출이 test-fold gt 사용 시. test (`test_regime_anchor_table_fold_leakage`) 가 잡으면 G0 단계 halt. silent 통과 시 G2 결과 invalid → paradigm 판정 신뢰성 0.
+- `model_capacity_overflow`: GPU/CPU OOM 또는 학습 시간 > 30 min.
+- `plan024_cherry_pick_missing`: c2 cherry-pick 후 import 실패 → halt.
 
 ### Plan-specific paths
 
@@ -158,23 +160,13 @@ band: null
   - `analysis/plan-024/{model.py, feature_weighted_dropout.py}` — **c2 cherry-pick 단계 유일 plan-024 path 수정 허용** (add only)
 - blacklist: `analysis/plan-{001..028}/**` (read-only import 예외)
 
-### Decision-note 사용 예
+### Decision-note (사용자 결정 + 본문 미박제 핵심 5건만)
 
-- `decision-note: spec-default — GRU encoder input = raw seq (B, T=7, C=95) from seq_builder.build(). GRU output = key source.`
-- `decision-note: spec-default — query = anchor_query_extend.build (B, K=14, 165) 위에 anchor_embed (14, 8) broadcast concat → (B, K, 173) → query_mlp Linear(173 → 196) GELU Linear(196 → 196) → (B, K, 196). cand_feat sample × anchor interaction enrichment + anchor identity learnable.`
-- `decision-note: spec-default — **key anchor-conditional**: key_anchor (B, K=14, T=7, hidden=196) = gru_out.unsqueeze(1) + anchor_key_proj(anchor_embed).unsqueeze(0).unsqueeze(2). broadcast add. anchor_key_proj = Linear(8, 196) (anchor embedding → key dim). attention 식 modify: attn_logits = einsum("bkh,bkth->bkt", query, key_anchor) / sqrt(196). value = key_anchor (단순화, value projection 별도 안 둠). event_ctx = einsum("bkt,bkth->bkh", attn, key_anchor) → (B, K, 196).`
-- `decision-note: spec-default — head_in = event_ctx (196D) only. h_final_bc / cand_feat / block1_bc / block4_bc 모두 head 부재. head = Linear(196, 1) 단순. param=197. head_dropout 행 제거 (Linear(196,1) 만이라 dropout 무의미).`
-- `decision-note: spec-default — anchor_embed_dim=8, **init = randn × 0.1** (사용자 결정, 2026-05-22). plan-024 v5 §5.8 의 carry init 0.02 대비 5× 증가 — lever (c) key 환경 보정. plan-024 v5 의 anchor_embed=8 lever 는 query 에만 broadcast + init 0.02 → hit_1cm 변화 X (부분 기각). 본 plan 은 *query + key 양쪽 동시 적용* + init 5× + query enrichment lever 와 환경 자체 다름 → §5.8 finding 의 carry 가 아님. init 0.1 로 lever (c) anchor_key_proj 의 anchor bias 가 GRU out (norm 1~3) 의 ≥5% scale 되어 학습 초기 visible.`
-- `decision-note: spec-default — anchor_embed 학습 진단: paradigm_analysis.{json,md} 에 per-epoch anchor_embed grad norm trajectory 박제 (epoch 5/25/50 비교 + warmup 종료 직후 epoch=5 시점 grad norm > 1e-4 G2 검증).`
-- `decision-note: spec-default — query enrichment channel set **N_new=15 확정** (사용자, 2026-05-22): (A.dist 5 ch) past 5 step t=5..9 의 `norm(anchor_world - X[b,t,:])`, anchor_world = pred_F0_world + R_wfn @ ANCHORS_A6; (A.tangent_proj 3 ch) past 3 step t=8..10 의 past_disp Frenet 0-axis projection; (B.cos 1 ch) `cos(anchor_dir_w, vel_w)` normalized; (D.regime_anchor_prob 1 ch) train-fold `P(gt=k | regime[b])` empirical lookup table (fold-leakage 차단 — train.py 의 per-fold loop 안 `regime_anchor_table = build_lookup(gt_train, regimes_train)` 산출 후 `anchor_query_extend.build()` 의 `regime_anchor_table` arg 로 inject); (F.2 multi-step anchor·v 5 ch) t∈{5..9} 의 `ANCHORS_A6 · v_t_frenet`. cand_ext = (B, 14, 165). plan-024 ④ interactions 10 ch (single t=10) 의 *시간 axis 확장* 이 핵심 novel — 중복 ≤30%.`
-- `decision-note: spec-default — hidden=196 (사용자 명시). plan-024 384 의 51%. capacity 축소 + key_anchor (B,K,T,196) memory budget 고려.`
-- `decision-note: spec-default — training schedule = epoch=50 fixed (no early stop). plan-024 §5.1 under-converged 가설 *기각* 후, 50 epoch 은 §5.10 long-diag best ep=35 + 안전 마진. lr=7e-4 + SequentialLR([LinearLR warmup 5 ep, CosineAnnealingLR T_max=45 ep]). AdamW (wd=1e-4). GRU dropout=0.10. gradient_clip=1.0. batch=64. soft cross-entropy loss.`
-- `decision-note: spec-default — FWD (FeatureWeightedDropout) **off**. plan-024 §5.4 v3 (cand_drop_p=0, seq_drop_p=0) 가 v1 대비 noise (+0.0003). outer wrapper 자체 import X.`
-- `decision-note: spec-default — wrapper class `GRUNetX1` = plan-024 backbone 의 GRU + query_mlp 만 carry. attention forward 는 본 plan 자체 식 (key_anchor 적용). backbone.head + outer FWD wrapper 둘 다 import X.`
-- `decision-note: spec-default — attention scaling 1/sqrt(196) ≈ 0.0714 (plan-024 1/sqrt(384) ≈ 0.0510 대비 40% 큰 분모). warmup 5 epoch + lr=7e-4 가 attention 학습 초기 안정 마진.`
-- `decision-note: spec-default — random_state=20260522 (본 plan layer). 모든 fold 동일 seed (plan-024 §5.13 carry 와 일관). anchor_embed init = randn(14,8) * 0.1 (사용자 결정, plan-024 v5 의 0.02 carry 대비 5×).`
-- `decision-note: spec-default — input feature 의 NaN/Inf 처리 = torch.nan_to_num(input, nan=0.0, posinf=1e3, neginf=-1e3) before forward.`
-- `decision-note: spec-default — model.train() 명시 호출 (§6.1 fold loop epoch 진입 직전). GRU dropout=0.10 + anchor_embed gradient 가 self.training 분기 영향 없으나 future-safe.`
+- `decision-note: 사용자 결정 (2026-05-22) — anchor_embed init = randn(14,8) * 0.1. plan-024 v5 §5.8 의 0.02 carry 대비 5×. lever (c) key 환경 보정 (anchor_key_proj 의 anchor bias 가 GRU out norm 1~3 의 ≥5% scale).`
+- `decision-note: 사용자 결정 (2026-05-22) — N_new=15 (5 group: A.dist 5 + A.tangent_proj 3 + B.cos 1 + D.regime_anchor_prob 1 + F.2 multi-step anchor·v 5). 사용자 EWQ 예시 무시. 식 정의 §3.4.1.`
+- `decision-note: spec-default — FWD off. plan-024 §5.4 v3 noise (+0.0003) — outer wrapper 자체 import X.`
+- `decision-note: spec-default — NaN/Inf 처리 = torch.nan_to_num(input, nan=0.0, posinf=1e3, neginf=-1e3) before forward + anchor_query_extend.build 마지막 numpy nan_to_num. double safety.`
+- `decision-note: spec-default — model.train() 명시 호출 (§6.1 fold loop epoch 진입 직전). GRU dropout self.training 분기 + future-safe.`
 
 ---
 
@@ -198,7 +190,7 @@ band: null
 본 plan 의 응답:
 - **plan-024 진단 재정의 (사용자, 2026-05-22)**: query 가 sample invariant — cand_feat 150D 중 sample×anchor interaction 13D 만, 137D 가 sample-broadcast (ctx 128D) + anchor-only (spec 9D). attention discrimination 학습 불가가 0.6370~0.6387 plateau 의 진짜 root cause. plan-024 의 §5.1/§5.4/§5.8 기각된 가설들은 모두 *sample-invariant query 위에서의 보조 lever 측정* 이었음.
 - **본 plan 의 4 lever (attention 강화)**:
-  - (a) query enrichment — `anchor_query_extend.build` (B, 14, **165** = 150+15), 5 group (A.dist 5 + A.tangent_proj 3 + B.cos 1 + D.regime_anchor_prob 1 + F.2 multi-step anchor·v 5). sample × anchor interaction novel ≥70%
+  - (a) query enrichment — `anchor_query_extend.build` (B, 14, **165** = 150+15), 5 group (A.dist 5 + A.tangent_proj 3 + B.cos 1 + D.regime_anchor_prob 1 + F.2 multi-step anchor·v 5). novel ≈67% vs plan-024 ④ (sub-agent 실측)
   - (b) anchor embedding 학습 — `nn.Parameter(14, 8)` learnable, query + key 양쪽 broadcast
   - (c) key anchor-conditional — key_anchor (B,K,T,196) = gru_out broadcast + anchor_key_proj(anchor_embed)
   - (d) 보조 head raw skip 차단 — head_in = event_ctx only (PB framework carry 의 paradigm-confound 제거)
@@ -247,14 +239,11 @@ plan-024 honest ceiling 0.6387 (3-seed) / 0.6375 ± 0.0004 (4-way OOF plateau) b
 | **Lever (d) Head raw skip 차단** | head_in = event_ctx (196D) only. head = Linear(196, 1). PB framework carry 의 raw cand_feat 직통 (paradigm-confound) 제거 | **✓ 보조 lever 4** |
 | GRU hidden | 384 → 196 (사용자 명시) | sub-decision |
 | Batch size | 256 → 64 (effective step 4×) | sub-decision |
-| anchor_embed_dim | 0 → **8** (학습) | lever (b) 의 sub-param |
+| anchor_embed_dim | 0 → **8** (학습, init 0.1) | lever (b) sub-param |
 | FWD | off (§5.4 기각) | ✗ (carry) |
-| Training schedule | 50 epoch fixed + cosine + warmup 5 | (보조 schedule lever) |
-| anchor_embed_dim | 0 (plan-024 v5 default OFF, §5.8 부분 기각) | ✗ (carry) |
-| FWD | off (plan-024 §5.4 기각) | ✗ (carry) |
-| Training schedule | 50 epoch fixed + cosine + warmup 5 (§5.1 under-conv 기각 후 lever) | (보조 — schedule = lever (a)(b)(c) 지원) |
+| Training schedule | 50 epoch fixed + cosine + warmup 5 | 보조 schedule lever |
 
-본 plan 의 **3개 새 lever 동시 적용** (단일 cell X1 = 3 lever 묶음). plan-024 §5.5 "16 lever 동시 추가 → bottleneck 분해 불가" caveat 재발 risk 인지 — H1 PASS 시 plan-030 = single-lever ablation (head only / hidden only / batch only) 분해 follow-up. 사용자 plan-026/027 GRU-attention 의도 통합 + 사용자 hidden=196 명시 위에서 X1 = 3 lever 통합 검증 1회 plan.
+본 plan = **4 lever 동시 적용** (단일 cell X1). plan-024 §5.5 "다중 lever bottleneck 분해 불가" caveat 인지 — H1 PASS 시 plan-030 = single-lever ablation (a/b/c/d 각각 단독) follow-up.
 
 ---
 
@@ -286,59 +275,119 @@ plan-024 honest ceiling 0.6387 (3-seed) / 0.6375 ± 0.0004 (4-way OOF plateau) b
 
 ### §3.4 Model spec (X1 cell, 4 lever 통합)
 
+#### §3.4.1 anchor_query_extend.build 내부 식 (cand_ext 15 ch 산출)
+
 ```python
-# §3.4.1 forward path (단일 cell X1)
-B = batch_size; K = 14; T = 7; H = 196; D_EMBED = 8; N_new = 15  # 5 group: A.dist 5 + A.tangent 3 + B.cos 1 + D.regime_prob 1 + F.2 anchor·v 5
-seq         = seq_builder.build(X, R_wfn, ANCHORS_A6, f0_baseline, quantile_carry)   # (B, 7, 95)
+# R_wfn shape (N, 3, 3) columns = [t̂, n̂, b̂] (plan-021 carry).
+# ANCHORS_A6 shape (K=14, 3) Frenet coord (plan-022 carry).
+# world ← frenet: einsum("nij,kj->nki", R_wfn, ANCHORS_A6) — anchor 별 world 변환
+# frenet ← world: einsum("nij,nj->ni", R_wfn.transpose(0,2,1), v_world)
 
-# === lever (a) query enrichment (N_new=15 박제) ===
-cand_ext    = anchor_query_extend.build(                                              # (B, K=14, 165)
-                X, R_wfn, pred_F0, ANCHORS_A6, f0_baseline, regimes, quantile_carry,
-                regime_anchor_table=regime_anchor_lookup)
-              # plan-024 cand_builder.build (B,K,150) + 15 ch novel sample × anchor interaction:
-              #   A.dist 5 — past 5 step (t=5..9) anchor world distance norm
-              #   A.tangent_proj 3 — past 3 step (t=8..10) Frenet 0-axis projection
-              #   B.cos 1 — anchor_dir vs vel_w cosine similarity
-              #   D.regime_anchor_prob 1 — train-fold P(gt=k | regime[b]) lookup (fold-leakage 차단)
-              #   F.2 multi-step anchor·v 5 — t∈{5..9} anchor · v_t_frenet 시계열
+# ---- anchor_world (N, K=14, 3) ----
+anchor_world = pred_F0_world[:, None, :] + np.einsum("nij,kj->nki", R_wfn, ANCHORS_A6)
 
-# === lever (b) anchor embedding 학습 (init scale 0.1, 사용자 결정) ===
-# self.anchor_embed = nn.Parameter(torch.randn(K=14, D_EMBED=8) * 0.1)  # plan-024 v5 carry 의 0.02 대비 5×
-anchor_embed_bc = anchor_embed.unsqueeze(0).expand(B, -1, -1)                         # (B, 14, 8)
-query_in    = concat([cand_ext, anchor_embed_bc], dim=-1)                             # (B, 14, 165+8=173)
+# ---- A.dist (5 ch) — past 5 step (t=5..9) × ||anchor_world - X[:,t,:]|| ----
+diff   = anchor_world[:, :, None, :] - X[:, None, 5:10, :]                           # (N, K, 5, 3)
+A_dist = np.linalg.norm(diff, axis=-1).astype(np.float32)                            # (N, K, 5)
 
-# === query projection ===
-# self.query_mlp = Sequential(Linear(173 → H), GELU, Linear(H → H))  # plan-024 carry, input dim 만 변경
-query       = query_mlp(query_in)                                                     # (B, 14, 196)
+# ---- A.tangent_proj (3 ch) — past 3 step (t=8..10) Frenet t̂-axis (index 0) ----
+past_disp_w = X[:, None, 8:11, :] - anchor_world[:, :, None, :]                      # (N, K, 3, 3)
+R_t         = np.transpose(R_wfn, (0, 2, 1))                                         # (N, 3, 3) world→Frenet
+past_disp_f = np.einsum("nij,nkpj->nkpi", R_t, past_disp_w)                          # (N, K, 3, 3) Frenet
+A_tangent   = past_disp_f[..., 0].astype(np.float32)                                 # (N, K, 3) — t̂ axis
 
-# === GRU encoder (key source) ===
-out, h      = GRU(input_size=95, hidden=H, num_layers=2, dropout=0.10, batch_first=True)(seq)  # out (B, T, H), h (2, B, H)
+# ---- B.cos (1 ch) — cos(anchor_dir_w, vel_w), normalized + eps ----
+anchor_dir_w = np.einsum("nij,kj->nki", R_wfn, ANCHORS_A6)                           # (N, K, 3) = anchor_world - F0
+vel_w        = (X[:, 10, :] - X[:, 9, :])[:, None, :]                                # (N, 1, 3)
+num          = (anchor_dir_w * vel_w).sum(axis=-1)                                   # (N, K)
+den          = np.linalg.norm(anchor_dir_w, axis=-1) * np.linalg.norm(vel_w, axis=-1) + 1e-9
+B_cos        = (num / den).astype(np.float32)[:, :, None]                            # (N, K, 1)
 
-# === lever (c) key anchor-conditional ===
-# self.anchor_key_proj = nn.Linear(D_EMBED=8, H=196)  # anchor embedding → key dim
-anchor_key_bias = anchor_key_proj(anchor_embed)                                       # (14, 196)
-key_anchor  = out.unsqueeze(1) + anchor_key_bias.unsqueeze(0).unsqueeze(2)            # (B, K=14, T=7, H=196)
-              # broadcast add: out[b,t,:] + anchor_key_bias[k,:] = key_anchor[b,k,t,:]
-              # → 같은 sequence 에서 anchor 별 다른 representation
+# ---- D.regime_anchor_prob (1 ch) — train-fold lookup, fold-leakage 차단 ----
+D = regime_anchor_table[regimes][:, :, None].astype(np.float32)                      # (N, K, 1)
 
-# === Cross-attention (key anchor-conditional 위에) ===
-attn_logits = einsum("bkh,bkth->bkt", query, key_anchor) / sqrt(H)                    # (B, 14, 7)
-attn        = softmax(attn_logits, dim=-1)                                            # (B, 14, 7)
-event_ctx   = einsum("bkt,bkth->bkh", attn, key_anchor)                               # (B, 14, 196)
-              # value = key_anchor (simplification: separate value projection 미사용)
-              # → event_ctx 가 anchor-conditional attention 가중 합
+# ---- F.2 multi-step anchor·v (5 ch) — t∈{5..9} ANCHORS_A6 · v_t_frenet ----
+v_w_seq = X[:, 6:11, :] - X[:, 5:10, :]                                              # (N, 5, 3) world
+v_f_seq = np.einsum("nij,ntj->nti", R_t, v_w_seq)                                    # (N, 5, 3) Frenet
+F2      = np.einsum("kj,ntj->nkt", ANCHORS_A6, v_f_seq).astype(np.float32)           # (N, K, 5)
 
-# === lever (d) head raw skip 차단 — head_in = event_ctx only ===
-# self.head = nn.Linear(H=196, 1)  # 단순. h_final_bc / cand_ext / block1/4 모두 head 부재.
-score       = head(event_ctx).squeeze(-1)                                             # (B, 14)
-probs       = softmax(score, dim=-1)                                                  # (B, 14)
+# ---- concat 15 ch on top of plan-024 cand_builder 150D ----
+cand_base = cand_builder.build(X, R_wfn, pred_F0_world, ANCHORS_A6, f0_baseline_fn,
+                                regimes, quantile_carry, ...)                        # (N, K, 150)
+extra = np.concatenate([A_dist, A_tangent, B_cos, D, F2], axis=-1)                   # (N, K, 15)
+cand_ext = np.concatenate([cand_base, extra], axis=-1)                               # (N, K, 165)
+cand_ext = np.nan_to_num(cand_ext, nan=0.0, posinf=1e3, neginf=-1e3)                 # safety net
 ```
 
-**4 lever 의 함의**:
-- **lever (a) query enrichment**: 사용자 진단 ("query sample invariant") 의 직접 fix. cand_ext 의 **15개 novel channel** (A.dist 5 + A.tangent_proj 3 + B.cos 1 + D.regime_anchor_prob 1 + F.2 multi-step anchor·v 5) 이 sample × anchor interaction 정보 (b,k 마다 모두 다른 값) → attention scoring 의 discrimination 신호 확장. plan-024 cand_feat 의 invariant 137D 약점 해결.
-- **lever (b) anchor embedding 학습**: anchor identity 가 query 와 key 양쪽에 동시 박힘. plan-024 §5.8 v5 (query 만 broadcast, 부분 기각) 와 *환경 자체 다름* — 본 plan 은 key 도 anchor-conditional.
-- **lever (c) key anchor-conditional**: plan-024 attention 식 (key 가 anchor 무관) modify. key_anchor 가 anchor 별 다른 sequence representation → attention 의 query × key 매칭이 anchor 별 차별화. plan-024 미시도 axis.
-- **lever (d) head raw skip 차단**: head_in = event_ctx only. PB framework carry 의 raw cand_feat 직통 (paradigm-confound) 제거. block ③ self-prediction trigger 경로 *물리적 부재* (cand_feat 가 head 안 들어가므로). head = Linear(196, 1) 단순 param 197 → attention path 가 score 의 main carrier.
+#### §3.4.2 build_regime_anchor_lookup (D channel source)
+
+```python
+def build_regime_anchor_lookup(
+    gt_train: np.ndarray,           # (N_tr, 3) world
+    regimes_train: np.ndarray,      # (N_tr,) int ∈ [0, regime_count)
+    ANCHORS_A6: np.ndarray,         # (K=14, 3) Frenet
+    R_wfn_train: np.ndarray,        # (N_tr, 3, 3)
+    F0_train: np.ndarray,           # (N_tr, 3) world
+    regime_count: int = 18,
+    laplace: float = 1.0,
+) -> np.ndarray:                    # (regime_count, K) float32, row-sum = 1
+    R_t = np.transpose(R_wfn_train, (0, 2, 1))
+    gt_res_f = np.einsum("nij,nj->ni", R_t, gt_train - F0_train)                     # (N_tr, 3) Frenet
+    dist = np.linalg.norm(ANCHORS_A6[None, :, :] - gt_res_f[:, None, :], axis=-1)    # (N_tr, K)
+    gt_anchor = dist.argmin(axis=1)                                                  # (N_tr,)
+    table = np.full((regime_count, ANCHORS_A6.shape[0]), laplace, np.float32)        # Laplace smoothing
+    np.add.at(table, (regimes_train, gt_anchor), 1.0)
+    table /= table.sum(axis=1, keepdims=True)                                        # row-sum = 1
+    return table
+```
+
+#### §3.4.3 GRUNetX1 forward path (model.py)
+
+```python
+# §3.4.3 forward path (단일 cell X1)
+B = batch_size; K = 14; T = 7; H = 196; D_EMBED = 8; N_new = 15
+
+# cand_ext + seq 가 input
+seq      = seq_builder.build(X, R_wfn, ANCHORS_A6, f0_baseline, quantile_carry)      # (B, 7, 95)
+# cand_ext (B, 14, 165) 은 §3.4.1 산출 결과
+
+# === lever (a) query enrichment: cand_ext (B, K, 165) 가 forward 의 input ===
+# === lever (b) anchor embedding 학습 (init scale 0.1) ===
+# self.anchor_embed = nn.Parameter(torch.randn(K=14, D_EMBED=8) * 0.1)
+anchor_embed_bc = anchor_embed.unsqueeze(0).expand(B, -1, -1)                        # (B, 14, 8)
+query_in = concat([cand_ext, anchor_embed_bc], dim=-1)                               # (B, 14, 173)
+
+# === query projection (Linear(D_EMBED+165 → H) param 화 권장) ===
+# self.query_mlp = Sequential(Linear(173 → hidden), GELU, Linear(hidden → hidden))
+query    = query_mlp(query_in)                                                       # (B, 14, 196)
+
+# === GRU encoder (key source) ===
+out, h   = GRU(input_size=95, hidden=H, num_layers=2, dropout=0.10, batch_first=True)(seq)  # out (B, T, H)
+
+# === lever (c) key anchor-conditional ===
+# self.anchor_key_proj = nn.Linear(D_EMBED, hidden)  # D_EMBED=8, hidden=196
+anchor_key_bias = anchor_key_proj(anchor_embed)                                      # (14, 196)
+key_anchor      = out.unsqueeze(1) + anchor_key_bias.unsqueeze(0).unsqueeze(2)       # (B, K=14, T=7, H=196)
+
+# === Cross-attention (key anchor-conditional 위에, value=key_anchor 단순화) ===
+attn_logits = einsum("bkh,bkth->bkt", query, key_anchor) / sqrt(H)                   # (B, 14, 7)
+attn        = softmax(attn_logits, dim=-1)                                           # (B, 14, 7)
+event_ctx   = einsum("bkt,bkth->bkh", attn, key_anchor)                              # (B, 14, 196)
+
+# === lever (d) head raw skip 차단 — head_in = event_ctx only ===
+# self.head = nn.Linear(hidden, 1)  # hidden 변경 시 param 화 필수
+score    = head(event_ctx).squeeze(-1)                                               # (B, 14)
+probs    = softmax(score, dim=-1)                                                    # (B, 14)
+```
+
+**c4 구현 가이드 (hardcoded literal 회피)**: 위 code 의 `Linear(173 → 196)` / `Linear(8, 196)` / `Linear(196, 1)` literal 은 *식 예시*. 실제 c4 source 는 `Linear(D_EMBED + cand_in_dim, hidden)` / `Linear(D_EMBED, hidden)` / `Linear(hidden, 1)` 로 param 화 — hidden ≠ 196 sweep (§9 plan-030 후보) 시 silent bug 회피.
+
+#### §3.4.4 4 lever 의 함의
+
+- (a) query enrichment: §0 paradigm rationale 참조 (cand_ext 15 ch 가 sample × anchor interaction novel ~67%, plan-024 ④ 와 중복 ~33%).
+- (b) anchor embedding: query + key 양쪽 broadcast. plan-024 §5.8 v5 (query 만, init 0.02) 와 환경 다름.
+- (c) key anchor-conditional: key_anchor (B,K,T,H) broadcast add. plan-024 미시도 axis.
+- (d) head raw skip 차단: head_in = event_ctx (196) only. PB framework carry 의 raw cand_feat 직통 (paradigm-confound) 제거 → attention path 가 score main carrier.
 
 **param budget**:
 - GRU(95→196, 2-layer): ~343K
@@ -540,22 +589,37 @@ for fold in range(5):
     )
     
     # Training (epoch=50 fixed, no early stop). model.train() 명시.
+    N_tr = len(train_idx)
     for epoch in range(50):
         model.train()
-        for batch in batched(64):
+        # per-epoch shuffle (seed = random_state + epoch * 1000 + fold, drop_last=False)
+        rng = np.random.default_rng(20260522 + epoch * 1000 + fold)
+        perm = rng.permutation(N_tr)
+        for b_start in range(0, N_tr, 64):
+            idx = perm[b_start : b_start + 64]                          # batch_size 64, last batch < 64 면 그대로 사용
+            seq_batch    = seq_tr[idx]
+            cand_batch   = cand_ext_tr[idx]
+            q_batch      = q_tr[idx]
             optimizer.zero_grad()
-            score = model(seq_batch, cand_ext_batch)                   # score logits (B, 14) — 2-arg forward (no feat_1080)
+            score = model(seq_batch, cand_batch)                        # score logits (B, 14)
             log_probs = log_softmax(score, dim=-1)
             loss = -(q_batch * log_probs).sum(dim=-1).mean()
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), 1.0)
             optimizer.step()
-        scheduler.step()
+        scheduler.step()                                                # epoch 단위 step
+        # per-epoch anchor_embed grad norm 박제 (G2 검증 + paradigm_analysis)
+        log_anchor_embed_grad_norm(epoch, model.anchor_embed.grad)
     
-    # Eval
+    # Eval — N_te 가 1 batch (memory ~170MB for key_anchor) 면 분할 권장
     model.eval()
     with torch.no_grad():
-        probs_te = softmax(model(seq_te, cand_ext_te), dim=-1).cpu().numpy()  # (N_te, 14)
+        probs_te = []
+        for e_start in range(0, len(test_idx), 256):                    # eval batch 256 (key_anchor memory ~22MB)
+            sb = seq_te[e_start : e_start + 256]
+            cb = cand_ext_te[e_start : e_start + 256]
+            probs_te.append(softmax(model(sb, cb), dim=-1).cpu().numpy())
+        probs_te = np.concatenate(probs_te, axis=0)                     # (N_te, 14)
         residual_frenet = (probs_te[:, :, None] * ANCHORS_A6[None, :, :]).sum(axis=1)
         residual_world = np.einsum("nij,nj->ni", R_wfn_te, residual_frenet)
         final_pred = F0_te + residual_world
@@ -567,6 +631,11 @@ err = np.linalg.norm(oof_pred - gt, axis=1)
 hit_1cm = (err <= 0.01).mean()
 hit_1p5cm = (err <= 0.015).mean()
 max_class_ratio = oof_probs.mean(axis=0).max()
+# gt_anchor_label = gt → ANCHORS_A6 nearest neighbor (Frenet 좌표)
+# 산식: R_t @ (gt - F0) 후 ANCHORS_A6 와 norm argmin (build_regime_anchor_lookup 동일)
+R_t = np.transpose(R_wfn, (0, 2, 1))
+gt_res_f = np.einsum("nij,nj->ni", R_t, gt - F0)
+gt_anchor_label = np.linalg.norm(ANCHORS_A6[None, :, :] - gt_res_f[:, None, :], axis=-1).argmin(axis=1)
 top1_acc = (oof_probs.argmax(axis=1) == gt_anchor_label).mean()
 ```
 
@@ -603,50 +672,44 @@ top1_acc = (oof_probs.argmax(axis=1) == gt_anchor_label).mean()
 
 ### §7.1 X1 결과 표
 
-| Metric | X1 | F0 (G1.a) | plan-022 (G1.b) | plan-024 v1 | plan-024 3-seed (§5.14) | plan-024 §5.10 1-fold lucky | plan-025 C1 |
-|:--|--:|--:|--:|--:|--:|--:|--:|
-| hit_1cm | ?.???? | 0.6320 | 0.6531 | 0.6370 | 0.6387 | 0.6505 | 0.6320 |
-| hit_1p5cm | ?.???? | 0.8033 | 0.8108 | 0.8092 | 0.8096 | — | 0.8033 |
-| max_class_ratio | ?.??? | — | 0.1054 | 0.1047 | ? | ? | 0.0714 |
-| top1_acc | ?.???? | — | 0.1707 | 0.1227 | ? | ? | 0.0879 |
-| oracle 회수율 | ?.??% | — | 82.4% | 80.4% | 80.6% | 82.3% | 79.7% |
-| runtime | ?s | — | (carry) | 167s | 3×167s | 154s 1-fold | 334s |
-| paradigm 위치 | — | — | LGBM floor | spec default | **honest ceiling** | lucky catch | LGBM mode collapse |
+| Metric | X1 | F0 | plan-022 | plan-024 honest |
+|:--|--:|--:|--:|--:|
+| hit_1cm | ?.???? | 0.6320 | 0.6531 | 0.6387 |
+| hit_1p5cm | ?.???? | 0.8033 | 0.8108 | 0.8096 |
+| max_class_ratio | ?.??? | — | 0.1054 | ? |
+| oracle 회수율 | ?.??% | — | 82.4% | 80.6% |
+| paradigm 위치 | — | — | LGBM floor | 3-seed ceiling (§5.14) |
 
-### §7.2 G3 판정
+(plan-024 v1 0.6370 / §5.10 lucky 0.6505 / plan-025 0.6320 mode collapse 비교는 §1.1 참조.)
 
-- **PASS** (band=positive): hit_1cm > 0.6528 → 사용자 진단 옳음. 4 lever (query enrichment + anchor embed + key conditional + head raw skip 차단) 동시 적용 의 합산 효과. follow-up plan-030 = single-lever ablation (lever a/b/c/d 각각 단독).
-- **partial_above_p024** (band=partial_above): 0.6387 < hit_1cm ≤ 0.6528 → attention 강화 가 plan-024 ceiling 위 lift 단 LGBM floor 미달. follow-up = (i) lever ablation + (ii) augmentation (plan-024 §5.10 poss 3) + (iii) 3-seed ensemble.
-- **partial_below_p024** (band=partial_below): 0.6320 ≤ hit_1cm ≤ 0.6387 → attention 강화 4 lever 전체 무효. 사용자 진단 (query sample invariant) 자체 falsify — plan-024 plateau 가 paradigm 본질 한계. follow-up = paradigm-distinct (F0 ML / corrector / KNN).
-- **regression** (band=negative): hit_1cm < 0.6320 → 4 lever 동시 적용 가 attention 학습 destabilize. follow-up = lever (a)/(b)/(c)/(d) 단독 cell 4개 재실험.
+### §7.2 G3 판정 + Hypothesis 검증
 
-### §7.3 Hypothesis 검증
+§0 PASS criterion 그대로. H1~H4 + plan-030 follow-up 1 table:
 
-- **H1 (강, 핵심)** (hit_1cm ≥ 0.6528): PASS / FAIL — 사용자 진단 valid 여부의 main criterion
-- **H1a (보조)** (hit_1cm > 0.6387 plan-024 honest ceiling): PASS / FAIL — 4 lever 가 어떤 lift 라도 만들었는지
-- **H2 (약)** (hit_1cm > 0.6531 plan-022/023 winner 초과): PASS / FAIL — attention paradigm 이 LGBM ceiling 위 lift
-- **H3 (강)** (max_class_ratio > 0.10): PASS / FAIL — mode collapse 미발생. lever (d) head raw skip 차단 으로 trigger 경로 부재 → PASS 강예상
-- **H4 (보조, 사용자 진단 자체)** (anchor_embed cosine similarity off-diagonal mean < 0.5): PASS / FAIL — anchor 별 distinct embedding 학습 성공 여부. FAIL 시 lever (b)(c) 효과 0 진단
+| H | 조건 | PASS 의미 | plan-030 follow-up |
+|---|---|---|---|
+| **H1** (핵심) | hit_1cm ≥ 0.6528 | 사용자 진단 옳음, 4 lever 합산 효과 | single-lever ablation (a/b/c/d 각 단독) |
+| **H1a** | hit_1cm > 0.6387 | 4 lever 가 plan-024 ceiling 위 lift | ablation + augmentation + 3-seed ensemble |
+| **H2** | hit_1cm > 0.6531 | attention paradigm 이 LGBM 위 lift | — |
+| **H3** | max_class_ratio > 0.10 | mode collapse 미발생 (lever d 차단 효과) | — |
+| **H4** | anchor_embed cosine off-diag mean < 0.5 | anchor 별 distinct learnable (lever b/c 효과) | (FAIL 시 lever b/c 식 재설계) |
 
-조합 시나리오:
-- H1 PASS → 사용자 진단 옳음 (query sample invariant 가 plan-024 plateau root cause). 4 lever 가 진짜 lift mechanism. plan-030 = single-lever ablation 분해
-- H1 FAIL + H1a PASS → attention 강화 부분 효과 (plan-030 = ablation + augmentation + ensemble)
-- H1 FAIL + H1a FAIL + H4 PASS → attention 강화 가 정상 학습되었으나 lift 없음 → 사용자 진단 falsify (query sample invariant 는 root cause 아님). plan-030 = paradigm-distinct
-- H1 FAIL + H4 FAIL → anchor_embed 학습 못함 (gradient 0 또는 collapse). lever (b)(c) 자체 무효. plan-030 = lever (b)(c) 식 재설계
-- H3 FAIL → mode collapse trigger. 매우 unlikely (lever d 차단). 발생 시 cand_ext 채널 중 sample × anchor interaction 약점 진단
+조합 → follow-up matrix:
 
-### §7.4 paradigm finding 박제
+| 결과 | plan-030 우선순위 |
+|---|---|
+| H1 PASS | single-lever ablation 분해 |
+| H1 FAIL + H1a PASS | ablation + augmentation + ensemble |
+| H1 FAIL + H1a FAIL + H4 PASS | paradigm-distinct (F0 ML / corrector / KNN) — 사용자 진단 falsify |
+| H1 FAIL + H4 FAIL | lever (b)(c) 식 재설계 (per-anchor key projection 등) |
+| regression (< 0.6320) | lever 단독 cell 4개 재실험 |
 
-- plan-024 §5.13 honest ceiling 0.6387 대비 본 plan 4 lever 동시 적용의 lift 분해 (H1 / H1a 결과)
-- **사용자 진단 (query sample invariant) 의 검증 결론**: H1 PASS 시 진단 옳음 / H1 FAIL + H4 PASS 시 진단 falsify
-- **anchor_embed 학습 결과 진단**: cosine similarity matrix (K=14), distinct embedding 분포, **per-epoch gradient norm trajectory** (epoch 1/5/25/50 시점 비교 — cold start / linear ramp / plateau / convergence 단계 진단)
-- plan-025 mode collapse 의 GRU-attention 위 재현 여부 (H3 결과)
-- plan-030 후속 lever 우선순위 결정:
-  - H1 PASS → single-lever ablation (lever a/b/c/d 각각 단독 cell)
-  - H1 FAIL + H1a PASS → ablation + augmentation (plan-024 poss 3) + 3-seed ensemble
-  - H1 FAIL + H1a FAIL + H4 PASS → paradigm-distinct (F0 ML / corrector / KNN)
-  - H1 FAIL + H4 FAIL → lever (b)(c) 식 재설계 (per-anchor key projection / attention bias 등)
-  - regression → lever 단독 cell 4개 재실험
+### §7.3 paradigm finding 박제
+
+- plan-024 §5.14 honest ceiling 0.6387 대비 lift 분해 (H1 / H1a)
+- 사용자 진단 (query sample invariant) valid / falsify 결론 (H1 PASS / H1 FAIL+H4 PASS)
+- anchor_embed cosine similarity matrix (K=14) + per-epoch grad norm trajectory (epoch 1/5/25/50)
+- H3 mode collapse 진단 (plan-025 LGBM 0.0714 와 비교)
 
 ---
 
@@ -669,25 +732,19 @@ top1_acc = (oof_probs.argmax(axis=1) == gt_anchor_label).mean()
 
 ## §9. Out of scope
 
-- Ensemble (plan-030 후보)
-- DACON LB submit (별개 결정)
-- boundary corrector (plan-030 후보)
-- F0 baseline ML (plan-028 후보)
-- anchor layout 변경 (K=14 BCC fix)
-- τ_cls 변경 (0.001 fix)
-- hidden ≠ 196 sweep (단일 cell)
-- batch ≠ 64, lr ≠ 7e-4 sweep
-- corrector / 2-stage residual regression
-- **anchor_embed_dim ≠ 8** sweep (단일 cell)
-- **N_new ≠ 15 sweep** (단일 cell — N_new=15 박제)
-- **lever (a)/(b)/(c)/(d) single-lever ablation** — H1 결과 후 plan-030 후보 (PASS 시 어느 lever 가 main contribution 분해, FAIL 시 단독 cell 4개 재실험)
-- **input augmentation σ=0.05 (plan-024 §5.10 poss 3 의 +0.0135 1-fold lever)** — plan-030 후보 (H1 FAIL + H1a PASS 시 우선)
-- **3-seed ensemble** (plan-024 §5.14 의 variance reduction +0.0010) — plan-030 후보
-- **FWD (FeatureWeightedDropout) on** — plan-024 §5.4 기각 lever
-- **head raw skip 부활** (h_final_bc / cand_ext / block1 / block4 head 직통) — plan-030 후보 (lever d 효과 ablation 시)
-- **per-anchor key projection** (현재 spec = broadcast add 단순. 대안: K=14 별도 Linear projection) — plan-030 후보 (lever c 식 재설계 시)
-- **attention bias on logits** (key 자체는 anchor 무관 + attn_logits[k,t] += anchor_pos_bias[k,t]) — plan-030 후보 (lever c memory 단축 시)
-- **head 2-layer MLP** (현재 spec = Linear(196, 1) 단순 단일 layer, non-linear discrimination 불가) — plan-030 후보 (head capacity 부족 진단 시)
+- 단일 cell fix: hidden=196, batch=64, lr=7e-4, anchor_embed_dim=8, N_new=15, τ_cls=0.001, K=14 BCC (모두 sweep 미포함).
+- DACON LB submit (별개 결정).
+- 별개 paradigm: F0 ML (plan-028 후보), corrector / 2-stage residual regression, anchor layout 변경.
+- FWD on (§5.4 기각 lever).
+- **plan-030 후보 lever group** (§7.2 H 시나리오 별 우선순위):
+  - single-lever ablation (lever a/b/c/d 각 단독)
+  - input augmentation σ=0.05 (plan-024 §5.10 poss 3, +0.0135 1-fold)
+  - 3-seed ensemble (plan-024 §5.14, +0.0010 variance reduction)
+  - head raw skip 부활 (lever d 효과 ablation)
+  - per-anchor key projection (lever c 식 재설계)
+  - attention bias on logits (lever c memory 단축)
+  - head 2-layer MLP (head capacity 부족 진단 시)
+  - ensemble / boundary corrector
 
 ---
 
