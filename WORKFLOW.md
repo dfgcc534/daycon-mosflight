@@ -77,7 +77,7 @@ plan-{NNN}-{slug}.results.md    ← 응답 (server)
 - `prefix`: 프로젝트가 정의 (단일 namespace면 하나, 종류별 분리면 여러 개).
 - `NNN`: zero-pad 3자리, **재사용 금지**. 실패한 실험도 번호를 소진한다.
 - `NNN`은 plan_id와 별개 카운터. 한 plan에서 여러 exp_id를 발행할 수 있다.
-- `slug`: 그 실험의 단일 변경 변수 또는 데이터/loss 키워드.
+- `slug`: 그 실험의 변경 변수 (단일 권장) 또는 데이터/loss 키워드.
 
 ### Config / Run 위치
 
@@ -119,7 +119,7 @@ runs/{type}/{exp_id}/
 |---|---|
 | 배경 | 어떤 결과/관찰을 보고 이 plan을 짰는지 — 인과. **선행 plan 의 *부정 evidence / lessons learned* 만 인계** (예: "plan-NNN 의 X 가 실패 → 본 plan 은 Y 시도"). *선행 plan 의 코드 / arch / framework 자동 carry 의무 없음* — 명시적 reuse 가 필요하면 frontmatter `code_reuse` 에 항목별 박제. default = from-scratch implementation 으로 *paradigm 재발명 자유* 확보. |
 | 가설 | 무엇을 검증/반박하려 하는지 — 명제 |
-| 실험 목록 | 각 exp_id마다: type, baseline, 단일 변경 변수, config 경로, 기대 runtime, 성공 기준, 실패 시 분기 |
+| 실험 목록 | 각 exp_id마다: type, baseline, 변경 변수 (단일 권장), config 경로, 기대 runtime, 성공 기준, 실패 시 분기 |
 | 서버 작업 순서 | enumerated 단계. server는 이 외 작업을 수행하지 않는다 |
 | Out of scope | 이 plan에서 *명시적으로 안 할 것* |
 | 참조 | 선행 results, 영구 결정 문서 등의 링크 |
