@@ -181,8 +181,9 @@ def _stratified_inner_split(
 # ── G1 reproduce (F0 + plan-022 winner) ────────────────────────────
 def run_g1_reproduce(verbose: bool = True) -> dict:
     """G1: F0 baseline + plan-022 A6_bcc14_tau001 reproduce."""
-    X, _ids = load_all_samples()
-    gt = load_labels(_ids)
+    _ids, X = load_all_samples()
+    _ids_gt, gt = load_labels()
+    assert _ids == _ids_gt, "id mismatch between samples and labels"
 
     # G1 a: F0 baseline 5-fold concat OOF
     F0_pred = _bf.f0_baseline(X, end_idx=10)
@@ -197,14 +198,16 @@ def run_g1_reproduce(verbose: bool = True) -> dict:
     # G1 b: plan-022 winner A6_bcc14 + τ=0.001 reproduce
     # plan-022 run_oof_cell signature 확인 후 호출
     _run_oof_p022 = _load(_PLAN022 / "run_oof.py", "p025_oof_p022_run")
-    folds = stable_fold_id(np.arange(X.shape[0]))
+    folds = np.asarray([stable_fold_id(str(sid), N_FOLDS) for sid in _ids], dtype=int)
+    if verbose:
+        print(f"[G1 b] running plan-022 run_oof_cell (5-fold LGBM)...")
     result_p022 = _run_oof_p022.run_oof_cell(
         X=X.astype(np.float32),
-        gt=gt.astype(np.float32),
+        Y=gt.astype(np.float32),
         anchors=_p022_anchors.ANCHORS_A6,
         folds=folds,
         tau_cls=0.001,
-        verbose=False,
+        verbose=verbose,
     )
     result_p022 = _normalize_p022_result(result_p022)
     hit_1cm_p022 = float(result_p022["hit_1cm"])
@@ -236,12 +239,14 @@ def run_oof_plan025(
     cfg = CELL_CONFIGS[cell_id]
 
     t0 = time.time()
-    X, _ids = load_all_samples()
-    gt = load_labels(_ids).astype(np.float32)
+    _ids, X = load_all_samples()
+    _ids_gt, gt = load_labels()
+    assert _ids == _ids_gt, "id mismatch between samples and labels"
+    gt = gt.astype(np.float32)
     X = X.astype(np.float32)
     N = X.shape[0]
     anchors = _p022_anchors.ANCHORS_A6
-    folds = stable_fold_id(np.arange(N))
+    folds = np.asarray([stable_fold_id(str(sid), N_FOLDS) for sid in _ids], dtype=int)
 
     oof_pred = np.zeros((N, 3), dtype=np.float32)
     oof_probs_sel = np.zeros((N, K_ANCHORS), dtype=np.float32)
