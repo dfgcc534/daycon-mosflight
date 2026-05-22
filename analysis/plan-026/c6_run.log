@@ -1,0 +1,8 @@
+inline selector loaded: 27 candidates
+[A1] fold 0 hit_1cm=0.6401 hit_1p5cm=0.8129 runtime=61.9s
+[A1] fold 1 hit_1cm=0.6292 hit_1p5cm=0.7953 runtime=55.6s
+[A1] fold 2 hit_1cm=0.6304 hit_1p5cm=0.8053 runtime=69.6s
+[A1] fold 3 hit_1cm=0.6351 hit_1p5cm=0.8119 runtime=55.0s
+[A1] fold 4 hit_1cm=0.6250 hit_1p5cm=0.7912 runtime=58.8s
+[A1] FINAL hit_1cm=0.6320 hit_1p5cm=0.8033 max_class_ratio=0.071 runtime=301.7s
+saved → /workspace/daycon-muflight/.claude/worktrees/plan-025-spec/analysis/plan-026/results_A1.json
