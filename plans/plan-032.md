@@ -1,11 +1,17 @@
 ---
 plan_id: plan-032
-status: written
+status: complete
 based_on: plan-031
+followed_by: null (반전 부분 성공, axis B 단독 +0.0041, PB target -0.0073 미달)
 title: PB target 0.6511 도달 시도 — multi-axis ablation (τ_cls 완화 + boundary corrector + fine-distill)
 data_window: train_labels.csv 전체 (plan-024/29/30/31 carry)
 fold_pin: stable_fold_id(sid, 5) (plan-024 carry, MD5)
 horizon: 80ms (2 step × DT=40ms)
+g_final_hit_1cm: 0.6438
+g_final_band: STRONG
+best_axis: B
+best_axis_lift: +0.0041
+pb_target_reached: false
 ---
 
 # plan-032 — PB target 0.6511 도달 시도 (multi-axis ablation)

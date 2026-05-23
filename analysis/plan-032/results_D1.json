@@ -1,0 +1,14 @@
+{
+  "ablation_axis": "D",
+  "variant": "D1",
+  "drop": "residual_a",
+  "gate": "G2",
+  "fold": 0,
+  "N_te": 2020,
+  "hit_1cm": 0.6455445544554456,
+  "hit_1p5cm": 0.8148514851485148,
+  "max_class_ratio": 0.2727722772277228,
+  "delta_vs_plan_031_G1": 0.000544554455445545,
+  "elapsed_s": 126.6042065359652,
+  "final_score_std": 1.1737381219863892
+}
