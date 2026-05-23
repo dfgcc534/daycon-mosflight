@@ -1,0 +1,12 @@
+{
+  "gate": "G1",
+  "fold": 0,
+  "N_te": 2020,
+  "hit_1cm": 0.6435643564356436,
+  "hit_1p5cm": 0.8123762376237624,
+  "max_class_ratio": 0.12475247524752475,
+  "elapsed_s": 140.13943279255182,
+  "final_score_std": 2.7363924980163574,
+  "PASS_threshold_hit_1cm": 0.629,
+  "PASS": true
+}
