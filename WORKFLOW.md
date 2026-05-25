@@ -59,14 +59,22 @@ local과 server를 분리하고 plan → run → plan 반복으로 실험을 진
 ### Plan 파일
 
 ```
-plan-{NNN}-{slug}.md            ← 요청 (local)
-plan-{NNN}-{slug}.results.md    ← 응답 (server)
+plan-{lane}-{NNN}-{slug}.md            ← 요청 (local)
+plan-{lane}-{NNN}-{slug}.results.md    ← 응답 (server)
 ```
 
-- `NNN`: zero-pad 3자리, monotonic 증가.
-- gap 금지 — 취소된 plan도 빈 results.md (`status: canceled`, reason 필수)로 자리를 채운다.
+- `lane`: 소문자 알파벳 1자 (`a`~`z`). **병렬 worktree 의 mutex 단위** — 각 worktree(병렬 track)는 미사용 lane 1개를 점유하고, *그 lane 안의 번호 발행을 단독 소유*한다. 서로 다른 lane 끼리는 번호가 겹쳐도 충돌이 아니다 (`plan-a-005` ≠ `plan-b-005`).
+- `NNN`: lane **내부**에서 zero-pad 3자리, monotonic 증가. **카운터는 lane 별로 독립** (전역 단일 카운터 아님).
+- gap 금지 — lane 내부에서 취소된 plan도 빈 results.md (`status: canceled`, reason 필수)로 자리를 채운다.
 - `slug`: kebab-case, 1~3 단어. 그 plan이 다루는 *질문* 또는 *변경 변수*. 모델/도구/백본 이름으로만 짓지 않는다.
-- 요청과 응답은 같은 NNN-slug 페어 — 1:1.
+- 요청과 응답은 같은 `{lane}-{NNN}-{slug}` 페어 — 1:1.
+
+#### Lane mutex 규약 (병렬 worktree 충돌 방지)
+
+- **도입 사유**: 여러 worktree 가 동시에 plan 을 발행할 때 *전역 단일 `NNN` 카운터*는 race condition (둘 다 같은 다음 번호를 집어 충돌) 을 만든다. lane 을 worktree 별로 분리하면 번호 발행이 lane-local 이 되어 **lock 없이 mutex** 가 성립한다.
+- **lane 점유** = worktree 진입 시 미사용 알파벳 1개 claim. 한 lane 의 번호 발행은 *그 lane 을 점유한 worktree 만* 수행 → 병렬 worktree 간 `plan_id` 충돌 0.
+- **점유 현황 판정**: 별도 lock 파일 불요. `ls plans/plan-{lane}-*` grep 으로 어떤 lane 이 쓰였는지, lane 내 다음 번호가 무엇인지 판정.
+- **legacy backward-compat**: lane 없는 `plan-{NNN}-{slug}` (plan-001 ~ plan-032) 는 그대로 유효 — *개명/이전 금지*. 이들은 암묵적으로 *lane 없는 단일 직렬 track* 으로 취급한다. **신규 plan 부터 lane 형식**을 사용한다.
 
 ### Experiment ID
 
@@ -106,7 +114,7 @@ runs/{type}/{exp_id}/
 
 ### Frontmatter (YAML)
 
-- `plan_id`: NNN
+- `plan_id`: `{lane}-{NNN}` (lane 형식, 예: `a-001`). legacy plan 은 `NNN` 단독 유지 (§4 backward-compat).
 - `date`: 작성일 (timezone 명시)
 - `inspired_by`: 선행 plan_id 또는 exp_id 목록 (★ **약한 관계** — 동기 / lesson / evidence 출처만. 코드 인계 의미 X).
   - *기존 plan-NNN 의 `based_on` field 는 backward-compat 으로 동등 의미로 유지. 신규 plan 부터 `inspired_by` 사용.*
@@ -200,7 +208,7 @@ plan written  ──▶  in_progress  ──▶  results written  ──▶  ana
 
 ## §9. 불변 규약 (invariants)
 
-1. **ID 단조성** — plan_id, exp_id 모두 monotonic, 재사용 금지.
+1. **ID 단조성** — plan_id, exp_id 모두 monotonic, 재사용 금지. **단, plan_id 의 monotonic 은 *lane 내부* 에서 성립** (lane 간 번호는 독립 — `plan-a-005` 와 `plan-b-005` 공존 정상; §4 lane mutex 규약).
 2. **한 변수 원칙** — 한 exp의 config는 baseline 대비 최소한의 키만 변경한다. 변경 키 수는 results의 diff 섹션에 정확히 기록된다.
 3. **Plan 자기-완결** — plan은 외부 컨텍스트(채팅 로그, 메모리 등)에 의존하지 않고 단독으로 재구성 가능해야 한다.
 4. **Registry append-only** — 도구로만 갱신, 직접 편집 금지. 정정도 새 행 추가로 표현한다 (`type: correction`, `corrects: <id>`).

@@ -1,5 +1,5 @@
 ---
-plan_id: NNN
+plan_id: {lane}-{NNN}     # lane 형식 (예: a-001). legacy plan 은 NNN 단독. WORKFLOW.md §4 참조.
 version: 1
 date: YYYY-MM-DD (Asia/Seoul)
 status: draft
@@ -12,7 +12,7 @@ scope: (selection-only / full-stack / 등)
 # impl_path: {project value, 예: self_reimpl / vendor_call}
 ---
 
-# plan-NNN v1 — (제목)
+# plan-{lane}-{NNN} — (제목)
 
 ## §0. 한 줄 목적
 
