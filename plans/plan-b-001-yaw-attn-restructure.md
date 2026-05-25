@@ -15,8 +15,11 @@ code_reuse:
     symbols: [build_residuals]
     reason: 잔차 (a)/(b) 산출 골격 carry. frame Frenet→yaw, 5-coord→직교 3-coord 로 개작.
   - module: analysis/plan-030/query_builder.py
-    symbols: [build_query]
-    reason: per-anchor query 골격. 잔차(b) 35D 제거 (→ attention bias 로 이동), yaw projection 으로 개작.
+    symbols: [build_query, extract_slim7_from_cand_ext_165]
+    reason: per-anchor query 골격. 잔차(b) 35D 제거 (→ attention bias 로 이동), yaw projection 으로 개작. slim7 추출 (D.regime_anchor_prob 1 + B.cos 1 + F.2 5) 도 carry.
+  - module: analysis/plan-024/seq_builder.py
+    symbols: [build]
+    reason: GRU input 의 **seq 95채널 × 7step** 원천 (plan-029/030 carry). 95D = anchor_vocab + torsion + frenet local 등 raw 시계열. 본 plan 미개작 (그대로 GRU input 의 95채널). 잔차(a) yaw 3 만 concat.
   - module: analysis/plan-030/head_summary.py
     symbols: [build_head_summary]
     reason: sample summary 골격. Bz/Tz drop + log1p + noise + Tier3 추가.
@@ -190,15 +193,22 @@ attention 표준: **Q = anchor 별 *static 정체성*** (K=14 query), **K/V = se
 `yaw_angle(v)=atan2(v[:,1],v[:,0])`; `to_yaw(vec,θ)` (forward/lateral/vert), `from_yaw(vec,θ)` (역). 항등성 smoke (yaw_identity_fail). degenerate fallback θ=0.
 
 ### §2.3 residual_builder.py (c3)
-plan-030 `build_residuals` 개작. baseline 인자화 (F0 또는 Kalman). 잔차(a)=raw(t+2)−baseline(t) → yaw 3-coord (N,7,3, GRU input용). 잔차(b)=raw(t+2)−anchor_world_k(t), anchor_world_k(t)=baseline(t)+R_wfy@ANCHORS_A6[k] → yaw 3-coord (N,14,7,3, bias용). step align/zero-pad (i=5,6) plan-030 carry.
+plan-030 `build_residuals` 개작. baseline 인자화 (F0 또는 Kalman). 잔차(a)=raw(t+2)−baseline(t) → yaw 3-coord (N,7,3, GRU input용). 잔차(b)=raw(t+2)−anchor_world_k(t), anchor_world_k(t)=baseline(t)+R_wfy@ANCHORS_A6[k] (R_wfy = **단일 v_last 기준 yaw 역회전, step-invariant** — §0.5 θ=atan2(v_last) 정합; step별 θ(t) 아님) → yaw 3-coord (N,14,7,3, bias용). **step align**: step i=0..6 의 wall-clock t=(−6+i); 잔차는 raw(t+2) 필요 → i=5,6 (t=−1,0) 은 raw(+1,+2) 미관측이라 **zero-pad** (plan-030 carry).
 
 ### §2.4 query_builder.py (c4)
-static anchor 정체성만 (~29D): anchor_spec + yaw par/perp/dist + interactions + slim7. **잔차(b) 제거** (F1). 모든 projection yaw 재계산.
+static anchor 정체성만 (anchor_spec 9 + yaw par/perp/dist 3 + interactions 10 + slim7 7 = **29D**) — **모두 plan-030 query_builder carry**: anchor_spec=anchor world coord 파생 9, interactions=anchor·(res/v/a) dot+sign+physics 10쌍, slim7=`extract_slim7_from_cand_ext_165` (D.regime_anchor_prob 1 + B.cos 1 + F.2 5). 본 plan 개작 = **잔차(b) 35D 제거**(F1) + par/perp/dist 등 projection 을 yaw 로 재계산. (anchor_spec/interactions 의 정확 산식은 pinned 모듈 그대로 재사용.)
 
 ### §2.5 noise_estimator.py + tier3.py + head_summary.py (c5)
-- noise: poly2 잔차 std + savgol(w5p2) 잔차 std (C3). log1p.
-- tier3: cum_path(누적 경로장), rolling speed mean×DT, a×DT²·j×DT³ 단위통일 norm 요약 (③). 
-- head_summary: plan-030 carry 에서 **Bz/Tz drop**, macro/A1/A6/A10/A12/plan-021 long-tail 에 **log1p**(C2), noise·tier3 통합. F3 대비 compact 유지.
+- **noise (C3)** — 관측 궤적 X (N, T_obs=11, 3), 시간축 t=arange(11):
+  - `poly2`: 각 축 j 위치를 t 에 대해 **2차 다항 fit** (`np.polyfit(t, X[:,:,j], deg=2)` 후 평가) → residual = X − fit; 3축 residual 합친 std → 스칼라/샘플.
+  - `savgol`: `savgol_filter(X, window_length=5, polyorder=2, axis=time)` → residual = X − smoothed; 3축 평균 std → 스칼라/샘플.
+  - 둘 다 `log1p`. (LOO spline 미도입 — §6.)
+- **tier3 (③)** — 전부 **world frame, m 단위** 통일 (notebook 방식). `disp=diff(X,axis=time)` (N,10,3), `v=disp/DT`, `a=diff(v)/DT`, `j=diff(a)/DT` (DT=0.040):
+  - `cum_path` = Σ‖disp‖ (누적 경로장, m).
+  - `roll_mean`,`roll_std` = ‖v‖ 의 window=3 rolling mean × DT (m) 의 mean·std (2 스칼라).
+  - `a_unit`,`j_unit` = `‖a·DT²‖` mean, `‖j·DT³‖` mean (m, 2 스칼라).
+  - 출력 = 5 스칼라, long-tail 은 log1p.
+- **head_summary**: plan-030 carry 에서 **Bz/Tz drop**, macro/A1/A6/A10/A12/plan-021 long-tail magnitude 에 **log1p**(C2), 위 noise(2)·tier3(5) 통합. sample_summary → Linear proj 64 (F3 compact).
 
 ---
 
@@ -207,15 +217,18 @@ static anchor 정체성만 (~29D): anchor_spec + yaw par/perp/dist + interaction
 plan-030 `GRUNetX2` 파생. 변경점:
 1. **F1**: `forward` 에 `residual_b_yaw (B,K,T,3)` 인자 추가. `bias = self.resb_proj(residual_b_yaw).squeeze(-1) * self.lambda_bias` (Linear(3,1), λ learnable). `attn_logits = einsum(q,kv)/√d + bias`.
 2. **F2**: `kv = kv_proj(gru_out)` (잔차a 인자 제거). seq_dim=98.
-3. **F3**: head_in = `cat[attn_context, sample_proj(64), slim7]`; `gru_hidden_last` drop. head_hidden 256.
-4. decode: `R_wfn` → `R_wfy` (yaw→world), `baseline_pred` 인자 (F0/Kalman). ANCHORS_A6 buffer 그대로.
+3. **F3**: head_in = `cat[attn_context, sample_proj(64), slim7]`; `gru_hidden_last` drop. head_hidden 256. head_mlp → (B,14) anchor logit → **`softmax(dim=K=14)` → probs** (= selector 분포; attention 의 step-softmax(dim=T=7) 와 별개 2-축 softmax).
+4. decode: `R_wfn` → `R_wfy` (yaw→world), `baseline_pred` 인자 (F0/Kalman). ANCHORS_A6 buffer 그대로. **decode 경로(`probs @ ANCHORS_A6` → `from_yaw` → `+ baseline_pred`) 전체 torch tensor 연산** (from_yaw torch mirror, numpy 금지) — softhit gradient path 보존.
 smoke: shape/finite/probs 분포/gradient flow + softhit decode gradient (softhit_no_gradient).
 
 ---
 
 ## §4. Training (c7)
 
-- loss = `soft_CE(probs, q_τ) + 0.3·softhit(decoded_world, y)`. q_τ = build_soft_label_with_tau(gt, R_yaw, baseline, ANCHORS_A6, τ=0.001). softhit = σ((‖decoded−y‖−0.01)/0.002).mean(). softhit gradient = probs→(probs@ANCHORS)→from_yaw→decoded → hit metric 직접 최적화.
+- loss = `soft_CE(probs, q_τ) + 0.3·softhit(decoded_world, y)`.
+  - `soft_CE = −Σ_k q_τ[k]·log(probs[k])`, batch **mean** reduction.
+  - `q_τ` = build_soft_label_with_tau(gt, R_yaw, baseline, ANCHORS_A6, τ=0.001) → 반환 = (N, K=14) **확률분포 (행합=1)**. 산식: 각 샘플의 yaw-frame 잔차 `to_yaw(gt−baseline, θ)` 와 14 anchor 간 거리 `d_k` → `q = softmax(−d_k / τ)` (τ=0.001 = sharpness, 작을수록 nearest anchor one-hot 근접).
+  - `softhit = σ((‖decoded_world − y‖ − 0.01)/0.002).mean()`. gradient = probs→(probs@ANCHORS)→from_yaw→decoded → hit metric 직접 최적화.
 - 3-seed (②): fold 별 s=0,1,2, decoded world pred 평균 → OOF/test.
 - 2-arm: B001 baseline=F0, B002 baseline=Kalman. config dispatch (`--baseline {f0,kalman}`). 그 외 hyperparam·seed·fold 동일.
 - carry: 50ep cosine+warmup5, AdamW lr7e-4 wd1e-4, batch64, grad_clip1.0, 5-fold stable_fold_id.
