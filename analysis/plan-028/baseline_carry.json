@@ -1,0 +1,22 @@
+{
+  "f0": {
+    "hit_1cm": 0.632,
+    "hit_1p5cm": 0.8033
+  },
+  "plan022_winner": {
+    "hit_1cm": 0.653,
+    "hit_1p5cm": 0.8108,
+    "cell": "A6_bcc14_tau001"
+  },
+  "plan025_C1": {
+    "hit_1cm": 0.632,
+    "hit_1p5cm": 0.8033,
+    "max_class_ratio": 0.07142779231071472,
+    "top1_acc": 0.0879,
+    "input_dim": 1080
+  },
+  "dataset_hash": "7912ce71a8acd5e9",
+  "fold_seed": "stable_fold_id MD5",
+  "n_folds": 5,
+  "runtime_s_total": 810.2625997066498
+}

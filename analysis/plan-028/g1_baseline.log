@@ -1,0 +1,40 @@
+/home/ahn/.local/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+    fold 4: hit@1cm=0.6471
+[G1 b] plan-022 reproduce hit_1cm=0.6530 hit_1p5cm=0.8108
+
+[G1.c] running B4 (= plan-025 C1) 5-fold OOF...
+[B4] hypothesis=baseline slice=B4 weight=ON tau=0.001 model=subclass
+/workspace/daycon-muflight/.claude/worktrees/plan-028-spec/analysis/plan-021/build_input.py:131: RuntimeWarning: overflow encountered in exp
+  return np.where(z >= 0, 1.0 / (1.0 + np.exp(-z)), np.exp(z) / (1.0 + np.exp(z)))
+/home/ahn/.local/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+  fold 0 hit_1cm=0.6401 runtime=101.4s
+/workspace/daycon-muflight/.claude/worktrees/plan-028-spec/analysis/plan-021/build_input.py:131: RuntimeWarning: overflow encountered in exp
+  return np.where(z >= 0, 1.0 / (1.0 + np.exp(-z)), np.exp(z) / (1.0 + np.exp(z)))
+/home/ahn/.local/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+  fold 1 hit_1cm=0.6292 runtime=104.0s
+/workspace/daycon-muflight/.claude/worktrees/plan-028-spec/analysis/plan-021/build_input.py:131: RuntimeWarning: overflow encountered in exp
+  return np.where(z >= 0, 1.0 / (1.0 + np.exp(-z)), np.exp(z) / (1.0 + np.exp(z)))
+/home/ahn/.local/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+  fold 2 hit_1cm=0.6304 runtime=105.9s
+/workspace/daycon-muflight/.claude/worktrees/plan-028-spec/analysis/plan-021/build_input.py:131: RuntimeWarning: overflow encountered in exp
+  return np.where(z >= 0, 1.0 / (1.0 + np.exp(-z)), np.exp(z) / (1.0 + np.exp(z)))
+/home/ahn/.local/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+  fold 3 hit_1cm=0.6351 runtime=103.6s
+/workspace/daycon-muflight/.claude/worktrees/plan-028-spec/analysis/plan-021/build_input.py:131: RuntimeWarning: overflow encountered in exp
+  return np.where(z >= 0, 1.0 / (1.0 + np.exp(-z)), np.exp(z) / (1.0 + np.exp(z)))
+/home/ahn/.local/lib/python3.11/site-packages/sklearn/utils/validation.py:2691: UserWarning: X does not have valid feature names, but LGBMClassifier was fitted with feature names
+  warnings.warn(
+  fold 4 hit_1cm=0.6250 runtime=68.5s
+[B4] FINAL hit_1cm=0.6320 hit_1p5cm=0.8033 max_class_ratio=0.0714 top1_acc=0.0879 runtime=484.2s
+
+[G1] baseline_carry.json saved: /workspace/daycon-muflight/.claude/worktrees/plan-028-spec/analysis/plan-028/baseline_carry.json
+  F0:    0.6320 / 0.8033
+  p022:  0.6530 / 0.8108
+  B4:    0.6320 / 0.8033 (max_class_ratio=0.0714)
+  total runtime: 810.3s
+[c10 carry] results_B4.json saved: /workspace/daycon-muflight/.claude/worktrees/plan-028-spec/analysis/plan-028/results_B4.json

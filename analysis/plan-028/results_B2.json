@@ -1,0 +1,61 @@
+{
+  "cell_id": "B2",
+  "hypothesis": "d",
+  "config": {
+    "slice": "B2",
+    "weight": "ON",
+    "tau": 0.001,
+    "model": "subclass",
+    "hypothesis": "d"
+  },
+  "hit_1cm": 0.632,
+  "hit_1p5cm": 0.8033,
+  "top1_acc": 0.0892,
+  "max_class_ratio": 0.07142779231071472,
+  "per_fold": [
+    {
+      "fold": 0,
+      "n_test": 2020,
+      "hit_1cm": 0.6400990099009901,
+      "hit_1p5cm": 0.8128712871287128,
+      "max_class_ratio_fold": 0.0714286113267922,
+      "runtime_s_fold": 22.247595071792603
+    },
+    {
+      "fold": 1,
+      "n_test": 2047,
+      "hit_1cm": 0.6292134831460674,
+      "hit_1p5cm": 0.7953102100635075,
+      "max_class_ratio_fold": 0.07142861168176155,
+      "runtime_s_fold": 22.064778089523315
+    },
+    {
+      "fold": 2,
+      "n_test": 1921,
+      "hit_1cm": 0.6304008328995315,
+      "hit_1p5cm": 0.8053097345132744,
+      "max_class_ratio_fold": 0.07142861338735745,
+      "runtime_s_fold": 23.477980613708496
+    },
+    {
+      "fold": 3,
+      "n_test": 2020,
+      "hit_1cm": 0.6351485148514852,
+      "hit_1p5cm": 0.8118811881188119,
+      "max_class_ratio_fold": 0.07142861264456976,
+      "runtime_s_fold": 24.008389711380005
+    },
+    {
+      "fold": 4,
+      "n_test": 1992,
+      "hit_1cm": 0.625,
+      "hit_1p5cm": 0.7911646586345381,
+      "max_class_ratio_fold": 0.07142861051097327,
+      "runtime_s_fold": 19.956576108932495
+    }
+  ],
+  "runtime_s": 112.54463934898376,
+  "seed": 20260522,
+  "n_folds": 5,
+  "K": 14
+}

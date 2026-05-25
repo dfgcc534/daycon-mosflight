@@ -1,0 +1,61 @@
+{
+  "cell_id": "B1",
+  "hypothesis": "d",
+  "config": {
+    "slice": "B1",
+    "weight": "ON",
+    "tau": 0.001,
+    "model": "subclass",
+    "hypothesis": "d"
+  },
+  "hit_1cm": 0.632,
+  "hit_1p5cm": 0.8033,
+  "top1_acc": 0.0821,
+  "max_class_ratio": 0.07142779231071472,
+  "per_fold": [
+    {
+      "fold": 0,
+      "n_test": 2020,
+      "hit_1cm": 0.6400990099009901,
+      "hit_1p5cm": 0.8128712871287128,
+      "max_class_ratio_fold": 0.07142861189685396,
+      "runtime_s_fold": 16.245660066604614
+    },
+    {
+      "fold": 1,
+      "n_test": 2047,
+      "hit_1cm": 0.6292134831460674,
+      "hit_1p5cm": 0.7953102100635075,
+      "max_class_ratio_fold": 0.07142861170653843,
+      "runtime_s_fold": 15.693470239639282
+    },
+    {
+      "fold": 2,
+      "n_test": 1921,
+      "hit_1cm": 0.6304008328995315,
+      "hit_1p5cm": 0.8053097345132744,
+      "max_class_ratio_fold": 0.07142861306984964,
+      "runtime_s_fold": 15.821152687072754
+    },
+    {
+      "fold": 3,
+      "n_test": 2020,
+      "hit_1cm": 0.6351485148514852,
+      "hit_1p5cm": 0.8118811881188119,
+      "max_class_ratio_fold": 0.07142861311670524,
+      "runtime_s_fold": 14.693363428115845
+    },
+    {
+      "fold": 4,
+      "n_test": 1992,
+      "hit_1cm": 0.625,
+      "hit_1p5cm": 0.7911646586345381,
+      "max_class_ratio_fold": 0.07142861002885084,
+      "runtime_s_fold": 14.56300663948059
+    }
+  ],
+  "runtime_s": 77.7859160900116,
+  "seed": 20260522,
+  "n_folds": 5,
+  "K": 14
+}

@@ -1,0 +1,26 @@
+{
+  "best_cell": "B3",
+  "best_hit_1cm": 0.6509,
+  "best_hit_1p5cm": 0.8118,
+  "paired_delta": {
+    "vs_f0": {
+      "hit_1cm": 0.018900000000000028
+    },
+    "vs_p022": {
+      "hit_1cm": -0.0020999999999999908
+    },
+    "vs_p025_C1": {
+      "hit_1cm": 0.018900000000000028
+    }
+  },
+  "oracle_recovery": 0.8210141271442988,
+  "hypothesis_verdict": {
+    "(a) tau_cls_sharp_gap": "inconclusive",
+    "(b) sample_weight": "inconclusive",
+    "(c) subclass_self_consistency": "inconclusive",
+    "(d) broadcast_dominance": "inconclusive",
+    "(e) seq_compression_lossy": "inconclusive"
+  },
+  "g2b_branch": "\u03b4",
+  "band": "partial"
+}
