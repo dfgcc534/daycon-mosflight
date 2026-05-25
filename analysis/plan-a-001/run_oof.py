@@ -212,6 +212,7 @@ def main():
     N = X.shape[0]
 
     fold_ids = np.array([stable_fold_id(i, 5) for i in ids])
+    predicted_mask = np.isin(fold_ids, folds)  # full=전체, g1=fold subset (비교 일관)
     theta = _yaw.yaw_from_last_step(X)
     kalman_main = _kalman.kalman_predict(X, sigma_obs=_kalman.SIGMA_OBS_MAIN, sigma_proc=_kalman.SIGMA_PROC_MAIN)
     kalman_alt = _kalman.kalman_predict(X, sigma_obs=_kalman.SIGMA_OBS_ALT, sigma_proc=_kalman.SIGMA_PROC_ALT)
@@ -232,9 +233,10 @@ def main():
     seq_rot_class = {c: ("rotate" if i < 6 else ("rotate" if i < 9 else "invariant"))
                      for i, c in enumerate(_feat.SEQ_CHANNELS)}  # rel/v/a 전부 rotate 대상
 
-    # Kalman-alone baseline (G1 비교 기준점 — GRU/잔차 미적용)
-    kalman_alone_hit = hit_rate(kalman_main, y)
-    kalman_alone_hit15 = hit_rate(kalman_main, y, R_HIT_LOOSE)
+    # Kalman-alone baseline (G1 비교 기준점 — GRU/잔차 미적용). predicted_mask subset 기준.
+    pm = predicted_mask
+    kalman_alone_hit = hit_rate(kalman_main[pm], y[pm])
+    kalman_alone_hit15 = hit_rate(kalman_main[pm], y[pm], R_HIT_LOOSE)
 
     # per-config OOF residual
     oof_res = {}
@@ -242,20 +244,20 @@ def main():
         oof_res[c] = run_config(
             c, X, y, ids, fold_ids, theta, kalman_main, seq, scal,
             tgt_main, tgt_F, tgt_W, folds, seeds, epochs, args.patience, device, args.quiet)
-        h = hit_rate(kalman_main + oof_res[c], y)
+        h = hit_rate((kalman_main + oof_res[c])[pm], y[pm])
         print(f"  config {c} OOF hit_1cm={h:.4f}", flush=True)
 
-    # ensemble residual (mean of configs)
+    # ensemble residual (mean of configs). headline hit = predicted_mask subset.
     ens_res = np.mean([oof_res[c] for c in configs], axis=0)
     pred_uncal = kalman_main + ens_res
-    hit_1cm = hit_rate(pred_uncal, y)
-    hit_1p5cm = hit_rate(pred_uncal, y, R_HIT_LOOSE)
-    per_sample_hit = hit_mask(pred_uncal, y)
+    hit_1cm = hit_rate(pred_uncal[pm], y[pm])
+    hit_1p5cm = hit_rate(pred_uncal[pm], y[pm], R_HIT_LOOSE)
+    per_sample_hit = hit_mask(pred_uncal, y)  # full array (npz 용)
 
-    # calibration add-on
+    # calibration add-on (predicted_mask subset 기준)
     pred_hard = kalman_main + ens_res * BEST_ALPHAS[None, :]
-    hit_hardcal = hit_rate(pred_hard, y)
-    alpha_fit, hit_fitcal = fit_alpha_grid(ens_res, kalman_main, y)
+    hit_hardcal = hit_rate(pred_hard[pm], y[pm])
+    alpha_fit, hit_fitcal = fit_alpha_grid(ens_res[pm], kalman_main[pm], y[pm])
     # overfit-risk flag (c0 rev1): |α_fit − hardcode| > 0.05 어느 축 또는 calibrated < uncalibrated
     flag_dev = bool(np.any(np.abs(alpha_fit - BEST_ALPHAS) > 0.05))
     flag_drop = bool(hit_fitcal < hit_1cm)
@@ -268,10 +270,11 @@ def main():
     result = dict(
         exp=("KR002" if args.input_yaw else "KR001"),
         gate=args.gate, input_yaw=args.input_yaw, device=device,
-        N=int(N), folds=[int(f) for f in folds], seeds=[int(s) for s in seeds],
+        N=int(N), n_predicted=int(pm.sum()),
+        folds=[int(f) for f in folds], seeds=[int(s) for s in seeds],
         epochs=epochs, configs=configs,
         hit_1cm=hit_1cm, hit_1p5cm=hit_1p5cm,
-        config_hit_1cm={c: hit_rate(kalman_main + oof_res[c], y) for c in configs},
+        config_hit_1cm={c: hit_rate((kalman_main + oof_res[c])[pm], y[pm]) for c in configs},
         kalman_alone_hit_1cm=kalman_alone_hit, kalman_alone_hit_1p5cm=kalman_alone_hit15,
         g_repro_band=band, g1_pass_gt_kalman_alone=g1_pass,
         calibration=dict(
