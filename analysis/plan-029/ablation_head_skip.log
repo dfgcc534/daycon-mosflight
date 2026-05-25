@@ -1,0 +1,85 @@
+inline selector loaded: 27 candidates
+
+============================================================
+[X2] head_skip_mode=no_anchor_spec
+============================================================
+/opt/conda/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+  [X2] fold=0 ep=10/50 loss=2.4274 grad_norm=1.2953e-01
+  [X2] fold=0 ep=20/50 loss=2.2878 grad_norm=4.8495e-02
+  [X2] fold=0 ep=30/50 loss=2.1965 grad_norm=5.6930e-02
+  [X2] fold=0 ep=40/50 loss=2.1388 grad_norm=2.9569e-02
+  [X2] fold=0 ep=50/50 loss=1.9738 grad_norm=3.7537e-02
+[X2 fold 0] done in 118.3s, final_grad=3.7537e-02
+  [X2] fold=1 ep=10/50 loss=2.4492 grad_norm=8.1741e-02
+  [X2] fold=1 ep=20/50 loss=2.3457 grad_norm=7.1672e-02
+  [X2] fold=1 ep=30/50 loss=2.3447 grad_norm=4.1814e-02
+  [X2] fold=1 ep=40/50 loss=1.8379 grad_norm=4.9956e-02
+  [X2] fold=1 ep=50/50 loss=1.8943 grad_norm=3.6692e-02
+[X2 fold 1] done in 119.1s, final_grad=3.6692e-02
+  [X2] fold=2 ep=10/50 loss=2.6256 grad_norm=4.7652e-02
+  [X2] fold=2 ep=20/50 loss=2.2884 grad_norm=6.9300e-02
+  [X2] fold=2 ep=30/50 loss=2.3615 grad_norm=3.4777e-02
+  [X2] fold=2 ep=40/50 loss=1.9816 grad_norm=2.7768e-02
+  [X2] fold=2 ep=50/50 loss=1.9761 grad_norm=3.7819e-02
+[X2 fold 2] done in 117.8s, final_grad=3.7819e-02
+  [X2] fold=3 ep=10/50 loss=2.5299 grad_norm=9.0471e-02
+  [X2] fold=3 ep=20/50 loss=2.3713 grad_norm=4.0881e-02
+  [X2] fold=3 ep=30/50 loss=2.2618 grad_norm=5.1363e-02
+  [X2] fold=3 ep=40/50 loss=1.9715 grad_norm=5.1820e-02
+  [X2] fold=3 ep=50/50 loss=1.9757 grad_norm=3.4408e-02
+[X2 fold 3] done in 112.3s, final_grad=3.4408e-02
+  [X2] fold=4 ep=10/50 loss=2.6017 grad_norm=4.9876e-02
+  [X2] fold=4 ep=20/50 loss=2.2493 grad_norm=8.8405e-02
+  [X2] fold=4 ep=30/50 loss=1.9927 grad_norm=4.9911e-02
+  [X2] fold=4 ep=40/50 loss=1.7611 grad_norm=2.9555e-02
+  [X2] fold=4 ep=50/50 loss=1.5280 grad_norm=3.8617e-02
+[X2 fold 4] done in 117.7s, final_grad=3.8617e-02
+
+[X2] DONE — hit_1cm=0.6289 hit_1p5cm=0.8020 max_class_ratio=0.1344 elapsed=586.2s
+
+============================================================
+[X3] head_skip_mode=full
+============================================================
+  [X3] fold=0 ep=10/50 loss=2.4135 grad_norm=1.0331e-01
+  [X3] fold=0 ep=20/50 loss=2.3270 grad_norm=4.9734e-02
+  [X3] fold=0 ep=30/50 loss=2.1644 grad_norm=6.7697e-02
+  [X3] fold=0 ep=40/50 loss=2.0916 grad_norm=4.1469e-02
+  [X3] fold=0 ep=50/50 loss=2.0300 grad_norm=4.5864e-02
+[X3 fold 0] done in 110.2s, final_grad=4.5864e-02
+  [X3] fold=1 ep=10/50 loss=2.4509 grad_norm=8.4744e-02
+  [X3] fold=1 ep=20/50 loss=2.3877 grad_norm=7.6476e-02
+  [X3] fold=1 ep=30/50 loss=2.4210 grad_norm=4.1678e-02
+  [X3] fold=1 ep=40/50 loss=1.8755 grad_norm=2.8685e-02
+  [X3] fold=1 ep=50/50 loss=1.9530 grad_norm=3.4035e-02
+[X3 fold 1] done in 111.3s, final_grad=3.4035e-02
+  [X3] fold=2 ep=10/50 loss=2.6499 grad_norm=2.2508e-02
+  [X3] fold=2 ep=20/50 loss=2.2538 grad_norm=5.3995e-02
+  [X3] fold=2 ep=30/50 loss=2.2331 grad_norm=3.3765e-02
+  [X3] fold=2 ep=40/50 loss=1.9901 grad_norm=1.8688e-02
+  [X3] fold=2 ep=50/50 loss=1.9152 grad_norm=3.3490e-02
+[X3 fold 2] done in 115.1s, final_grad=3.3490e-02
+  [X3] fold=3 ep=10/50 loss=2.5249 grad_norm=9.7555e-02
+  [X3] fold=3 ep=20/50 loss=2.4044 grad_norm=5.8551e-02
+  [X3] fold=3 ep=30/50 loss=2.2311 grad_norm=4.7116e-02
+  [X3] fold=3 ep=40/50 loss=1.9010 grad_norm=4.9782e-02
+  [X3] fold=3 ep=50/50 loss=1.9277 grad_norm=4.4189e-02
+[X3 fold 3] done in 113.4s, final_grad=4.4189e-02
+  [X3] fold=4 ep=10/50 loss=2.5699 grad_norm=7.3851e-02
+  [X3] fold=4 ep=20/50 loss=2.2672 grad_norm=7.4212e-02
+  [X3] fold=4 ep=30/50 loss=2.0943 grad_norm=4.1312e-02
+  [X3] fold=4 ep=40/50 loss=1.9266 grad_norm=6.0665e-02
+  [X3] fold=4 ep=50/50 loss=1.6235 grad_norm=2.3941e-02
+[X3 fold 4] done in 118.8s, final_grad=2.3941e-02
+
+[X3] DONE — hit_1cm=0.6327 hit_1p5cm=0.8027 max_class_ratio=0.1314 elapsed=569.5s
+
+============================================================
+ablation_summary
+============================================================
+X1 (head_in=event_ctx 196 only):        hit_1cm=0.6316
+X2 (head_in=event_ctx + cand 156):      hit_1cm=0.6289 Δ=-0.0027
+X3 (head_in=event_ctx + cand_full 165): hit_1cm=0.6327 Δ=+0.0011
+  F0 baseline = 0.6320 / plan-024 ceiling = 0.6387 / plan-022 winner = 0.6531
+
+[dump] /workspace/daycon-muflight/.claude/worktrees/plan-029-c1.2-head-attention-only/analysis/plan-029/ablation_head_skip.json

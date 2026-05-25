@@ -1,0 +1,5 @@
+inline selector loaded: 27 candidates
+[G1] carry from baseline_carry.json
+  F0  hit_1cm=0.6320, hit_1p5cm=0.8033
+  p022 hit_1cm=0.6531, hit_1p5cm=0.8108
+[G1] ✓ tight band PASS

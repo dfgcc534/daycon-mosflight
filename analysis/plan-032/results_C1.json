@@ -1,0 +1,39 @@
+{
+  "hit_1cm": 0.6399,
+  "hit_1p5cm": 0.8082,
+  "max_class_ratio": 0.2306,
+  "top1_acc": 0.1438,
+  "elapsed_total_s": 622.4808500856161,
+  "fold_logs": [
+    {
+      "fold": 0,
+      "elapsed_s": 161.72580565419048,
+      "N_te": 2020
+    },
+    {
+      "fold": 1,
+      "elapsed_s": 110.91165617201477,
+      "N_te": 2047
+    },
+    {
+      "fold": 2,
+      "elapsed_s": 117.47520432062447,
+      "N_te": 1921
+    },
+    {
+      "fold": 3,
+      "elapsed_s": 117.2765879323706,
+      "N_te": 2020
+    },
+    {
+      "fold": 4,
+      "elapsed_s": 114.26329392753541,
+      "N_te": 1992
+    }
+  ],
+  "label_smooth_alpha": 0.1,
+  "ablation_axis": "C",
+  "variant": "C1",
+  "delta_vs_plan_031": 0.00019999999999997797,
+  "band": "STRONG"
+}

@@ -1,0 +1,41 @@
+inline selector loaded: 27 candidates
+[X1] starting 5-fold OOF (epochs=50, batch=64, hidden=196, anchor_embed_init=0.1)
+/opt/conda/lib/python3.11/site-packages/torch/optim/lr_scheduler.py:209: UserWarning: The epoch parameter in `scheduler.step()` was not necessary and is being deprecated where possible. Please use `scheduler.step()` to step the scheduler. During the deprecation, if epoch is different from None, the closed form is used instead of the new chainable form, where available. Please open an issue if you are unable to replicate your use case: https://github.com/pytorch/pytorch/issues/new/choose.
+  warnings.warn(EPOCH_DEPRECATION_WARNING, UserWarning)
+  fold=0 ep=10/50 loss=2.3854 grad_norm=1.0634e-01 lr=6.789e-04
+  fold=0 ep=20/50 loss=2.3297 grad_norm=7.4665e-02 lr=5.250e-04
+  fold=0 ep=30/50 loss=2.2292 grad_norm=7.0374e-02 lr=2.892e-04
+  fold=0 ep=40/50 loss=2.1009 grad_norm=3.7167e-02 lr=8.188e-05
+  fold=0 ep=50/50 loss=1.9801 grad_norm=4.5055e-02 lr=0.000e+00
+[fold 0] done in 113.1s, N_te=2020, final_grad_norm=4.5055e-02
+  fold=1 ep=10/50 loss=2.4440 grad_norm=8.2579e-02 lr=6.789e-04
+  fold=1 ep=20/50 loss=2.4040 grad_norm=7.8172e-02 lr=5.250e-04
+  fold=1 ep=30/50 loss=2.3829 grad_norm=4.1257e-02 lr=2.892e-04
+  fold=1 ep=40/50 loss=1.8230 grad_norm=3.2510e-02 lr=8.188e-05
+  fold=1 ep=50/50 loss=1.8134 grad_norm=2.3951e-02 lr=0.000e+00
+[fold 1] done in 112.9s, N_te=2047, final_grad_norm=2.3951e-02
+  fold=2 ep=10/50 loss=2.6040 grad_norm=5.8731e-02 lr=6.789e-04
+  fold=2 ep=20/50 loss=2.3573 grad_norm=4.7768e-02 lr=5.250e-04
+  fold=2 ep=30/50 loss=2.2263 grad_norm=4.3408e-02 lr=2.892e-04
+  fold=2 ep=40/50 loss=1.9344 grad_norm=1.9357e-02 lr=8.188e-05
+  fold=2 ep=50/50 loss=1.8961 grad_norm=3.7507e-02 lr=0.000e+00
+[fold 2] done in 114.0s, N_te=1921, final_grad_norm=3.7507e-02
+  fold=3 ep=10/50 loss=2.5281 grad_norm=8.9480e-02 lr=6.789e-04
+  fold=3 ep=20/50 loss=2.3821 grad_norm=4.8089e-02 lr=5.250e-04
+  fold=3 ep=30/50 loss=2.1779 grad_norm=4.7717e-02 lr=2.892e-04
+  fold=3 ep=40/50 loss=1.9294 grad_norm=4.9344e-02 lr=8.188e-05
+  fold=3 ep=50/50 loss=1.9519 grad_norm=5.5205e-02 lr=0.000e+00
+[fold 3] done in 117.0s, N_te=2020, final_grad_norm=5.5205e-02
+  fold=4 ep=10/50 loss=2.5906 grad_norm=8.0294e-02 lr=6.789e-04
+  fold=4 ep=20/50 loss=2.2495 grad_norm=9.4196e-02 lr=5.250e-04
+  fold=4 ep=30/50 loss=1.9775 grad_norm=5.4278e-02 lr=2.892e-04
+  fold=4 ep=40/50 loss=1.9696 grad_norm=4.3854e-02 lr=8.188e-05
+  fold=4 ep=50/50 loss=1.5329 grad_norm=4.0789e-02 lr=0.000e+00
+[fold 4] done in 107.2s, N_te=1992, final_grad_norm=4.0789e-02
+
+[X1] DONE — hit_1cm=0.6316 hit_1p5cm=0.8039 max_class_ratio=0.1328 top1_acc=0.1266
+[G3] verdict = regression
+[G2.X1] pass = True (finite=True, max_class<0.95=True, grad_ep5>1e-4=True, grad_final>0=True)
+[elapsed] 565.3s (9.4min)
+[dump] /workspace/daycon-muflight/.claude/worktrees/plan-029-c1.2-head-attention-only/analysis/plan-029/results_X1.json
+[dump] /workspace/daycon-muflight/.claude/worktrees/plan-029-c1.2-head-attention-only/analysis/plan-029/oof_X1.npz

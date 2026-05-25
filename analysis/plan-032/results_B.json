@@ -1,0 +1,12 @@
+{
+  "ablation_axis": "B",
+  "variant": "boundary_corrector_14a",
+  "in_dim": 33,
+  "epochs": 50,
+  "hit_1cm_before": 0.6397,
+  "hit_1cm_after": 0.6438,
+  "hit_1p5cm_after": 0.8105,
+  "delta_vs_plan_031": 0.0040999999999999925,
+  "band": "STRONG",
+  "elapsed_s": 14.29628190305084
+}

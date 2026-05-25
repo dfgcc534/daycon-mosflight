@@ -1,0 +1,75 @@
+{
+  "G3_verdict": "regression",
+  "G2_pass": true,
+  "hit_1cm": 0.6316,
+  "hit_1p5cm": 0.8039,
+  "delta_vs_F0_1cm": -0.00039999999999995595,
+  "delta_vs_p022_winner_1cm": -0.021499999999999964,
+  "delta_vs_p024_ceiling_1cm": -0.007099999999999995,
+  "oracle_14anchor_1cm": 0.7928,
+  "recall_vs_oracle": 0.7966700302724522,
+  "max_class_ratio": 0.1328,
+  "top1_acc": 0.1266,
+  "per_anchor_argmax_distribution": [
+    0.0608,
+    0.1328,
+    0.1119,
+    0.1025,
+    0.072,
+    0.078,
+    0.0436,
+    0.0395,
+    0.0494,
+    0.0393,
+    0.069,
+    0.066,
+    0.0753,
+    0.0599
+  ],
+  "per_fold_grad_summary": [
+    {
+      "fold": 0,
+      "ep5_grad_norm": 0.058421313762664795,
+      "final_grad_norm": 0.045055124908685684,
+      "max_grad_norm": 0.10633762925863266,
+      "min_grad_norm": 0.029361765831708908
+    },
+    {
+      "fold": 1,
+      "ep5_grad_norm": 0.12226453423500061,
+      "final_grad_norm": 0.023950763046741486,
+      "max_grad_norm": 0.1450926512479782,
+      "min_grad_norm": 0.023950763046741486
+    },
+    {
+      "fold": 2,
+      "ep5_grad_norm": 0.13427060842514038,
+      "final_grad_norm": 0.03750711679458618,
+      "max_grad_norm": 0.13427060842514038,
+      "min_grad_norm": 0.017447786405682564
+    },
+    {
+      "fold": 3,
+      "ep5_grad_norm": 0.13104960322380066,
+      "final_grad_norm": 0.055205073207616806,
+      "max_grad_norm": 0.13104960322380066,
+      "min_grad_norm": 0.01720978505909443
+    },
+    {
+      "fold": 4,
+      "ep5_grad_norm": 0.08730365335941315,
+      "final_grad_norm": 0.04078855365514755,
+      "max_grad_norm": 0.15107324719429016,
+      "min_grad_norm": 0.018018068745732307
+    }
+  ],
+  "warns": {
+    "mode_collapse": false,
+    "mode_collapse_attention": false
+  },
+  "elapsed_total_s": 565.2566285422072,
+  "H4_threshold_cos_offdiag_mean": 0.5,
+  "H4_anchor_embed_cos_offdiag_mean": null,
+  "H4_note": "anchor_embed cosine sim matrix \uc0b0\ucd9c\uc740 5-fold model.anchor_embed \ubc15\uc81c \ud544\uc694. \ubcf8 c10 \uc740 oof \uae30\ubc18 \ubd84\uc11d\ub9cc. G3 PASS \uc2dc follow-up \uc73c\ub85c 5-fold model dump.",
+  "follow_up": "plan-030 single-lever ablation \ubd84\ud574 (a/b/c/d \uac01 \ub2e8\ub3c5)"
+}
