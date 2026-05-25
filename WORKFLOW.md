@@ -50,12 +50,19 @@ local과 server를 분리하고 plan → run → plan 반복으로 실험을 진
 
 **Plan 파일**
 ```
-plan-{NNN}-{slug}.md            ← 요청 (local)
-plan-{NNN}-{slug}.results.md    ← 응답 (server)
+plan-{lane}-{NNN}-{slug}.md            ← 요청 (local)
+plan-{lane}-{NNN}-{slug}.results.md    ← 응답 (server)
 ```
-- `NNN`: zero-pad 3자리, monotonic 증가. gap 금지 — 취소된 plan도 빈 results.md (`status: canceled`, reason 필수)로 자리를 채운다.
+- `lane`: 소문자 알파벳 1자 (`a`~`z`). **병렬 worktree mutex 단위** — 각 worktree는 미사용 lane 1개를 점유하고 그 lane 안의 번호 발행을 단독 소유. 다른 lane 끼리는 번호 겹쳐도 충돌 아님 (`plan-a-005` ≠ `plan-b-005`).
+- `NNN`: lane **내부**에서 zero-pad 3자리, monotonic 증가. **카운터는 lane 별 독립** (전역 단일 X). gap 금지 — lane 내부에서 취소된 plan도 빈 results.md (`status: canceled`, reason 필수)로 자리 채움.
 - `slug`: kebab-case 1~3 단어, 그 plan이 다루는 *질문* 또는 *변경 변수*. 모델/도구/백본 이름으로만 짓지 않는다.
-- 요청과 응답은 같은 NNN-slug 페어 — 1:1.
+- 요청과 응답은 같은 `{lane}-{NNN}-{slug}` 페어 — 1:1.
+
+**Lane mutex 규약 (병렬 worktree 충돌 방지)**
+- **사유**: 여러 worktree 동시 plan 발행 시 전역 단일 `NNN` 카운터는 race (둘 다 같은 번호 집어 충돌). lane 을 worktree 별 분리 → 번호 발행 lane-local → **lock 없이 mutex**.
+- **lane 점유** = worktree 진입 시 미사용 알파벳 1개 claim. 별도 lock 파일 불요 — `ls plans/plan-{lane}-*` grep 으로 점유·다음 번호 판정.
+- **G_final 자율 merge 의무**: plan `G_final` 도달 시 agent 가 *사용자 승인 없이* 그 worktree 브랜치를 `main` 으로 merge (절차 §12.10). merge 전까지 lane plan 이 `main` 에 부재 → 타 worktree 가 점유 grep 불가 → **mutex 붕괴**. 즉 *G_final = main merge* 가 한 짝. merge 후에도 번호 monotonic (같은 lane 재진입 시 다음 번호부터).
+- **legacy backward-compat**: lane 없는 `plan-{NNN}-{slug}` (plan-001~032) 그대로 유효 (개명/이전 금지), lane 없는 단일 직렬 track 취급. 신규 plan 부터 lane 형식.
 
 **Experiment ID**
 ```
@@ -79,7 +86,7 @@ runs/{type}/{exp_id}/
 ## §5. Plan 파일 의무 요소
 
 **Frontmatter (YAML)**
-- `plan_id`: NNN
+- `plan_id`: `{lane}-{NNN}` (lane 형식, 예: `a-001`). legacy plan 은 `NNN` 단독 (§4 backward-compat).
 - `date`: 작성일 (timezone 명시)
 - `inspired_by`: 선행 plan_id/exp_id 목록 — ★ **약한 관계** (동기·lesson·evidence 출처만, 코드 인계 의미 X). 기존 plan의 `based_on`은 backward-compat로 동등 유지, 신규는 `inspired_by`.
 - `code_reuse`: 명시적 코드 carry 목록 — default `[]` (**from-scratch 권장**). carry 항목마다 `{module, symbols, reason}` 박제. 명시 없는 import = 자동 carry 금지.
@@ -154,7 +161,7 @@ plan written ─▶ in_progress ─▶ results written ─▶ analyzed ─▶ ne
 
 ## §9. 불변 규약 (invariants)
 
-1. **ID 단조성** — plan_id, exp_id 모두 monotonic, 재사용 금지.
+1. **ID 단조성** — plan_id, exp_id 모두 monotonic, 재사용 금지. 단 plan_id 의 monotonic 은 *lane 내부* 에서 성립 (lane 간 번호 독립 — `plan-a-005`·`plan-b-005` 공존 정상; §4 lane mutex).
 2. **한 변수 원칙** — 한 exp의 config는 baseline 대비 최소 키만 변경. 변경 키 수는 results diff 섹션에 정확히 기록.
 3. **Plan 자기-완결** — plan은 외부 컨텍스트(채팅·메모리)에 의존하지 않고 단독 재구성 가능.
 4. **Registry append-only** — 도구로만 갱신, 직접 편집 금지. 정정도 새 행 추가 (`type: correction`, `corrects: <id>`).
@@ -265,6 +272,9 @@ category: `spec-default` · `lint-fix` · `dep-install` · `data-partial` · `re
 ### §12.10 종료 정책
 | 시나리오 | 조치 |
 |---|---|
-| G_final 도달 | 자연 종료, telegram ("plan-NNN 완료, hash=...") |
+| G_final 도달 (lane plan) | **worktree → main 자율 merge** (사용자 승인 없이 — §4 lane lifecycle) → 자연 종료, telegram ("plan-{lane}-NNN 완료 + main merge, hash=...") |
+| G_final 도달 (legacy lane 없는 plan) | 자연 종료, telegram ("plan-NNN 완료, hash=...") — auto-merge 비대상 |
 | severe issue | 멈춤, telegram alert, session 유지 (사용자 결정 후 재개) |
 | max_turns (>30) | severe 와 동일 |
+
+**G_final auto-merge 절차** (lane plan, 사용자 confirm 불필요): ① 최종 commit+push 확인 (`git log @{u}..` 비어 있음) → ② `git checkout main && git pull --ff-only origin main` → ③ `git merge --no-ff worktree-<branch>` (lane 작업 묶음 박제) → ④ `git push origin main` → ⑤ telegram (merge hash). **conflict 시**: `git_rebase_conflict` 박제 + 1회 retry (main pull 후), 그래도 실패면 멈춤 + escalate — 자동 강제 merge / `-X` 전략 / squash 금지.

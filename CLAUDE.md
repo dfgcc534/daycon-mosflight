@@ -1,8 +1,14 @@
 # CLAUDE.md
 
+## Plan 명명 규약 (lane mutex)
+
+- 신규 plan = `plan-{lane}-{NNN}-{slug}.md` (예: `plan-a-001-...`). `lane` = 소문자 1자, **병렬 worktree mutex 단위** (worktree 1개 = lane 1개 점유, lane 내 번호 단독 발행 → plan_id 충돌 0). 카운터는 lane 별 독립.
+- **G_final 도달 시 agent 가 사용자 승인 없이 자율로 그 브랜치를 `main` 으로 merge** (절차·conflict fallback = `WORKFLOW.md §12.10`). lane plan 이 main 에 반영돼야 타 worktree 가 점유 grep 판정 가능 → mutex 성립. conflict 시에만 멈춤+escalate.
+- legacy `plan-{NNN}-*.md` (plan-001~032) 그대로 유효 (개명 금지). 전체 규약 = `WORKFLOW.md §4`.
+
 ## Autonomous Execution Policy
 
-이 프로젝트의 모든 `plans/plan-NNN-*.md` 는 **완전 자동 실행** 권한 부여:
+이 프로젝트의 모든 `plans/plan-{lane}-{NNN}-*.md` (및 legacy `plan-{NNN}-*.md`) 는 **완전 자동 실행** 권한 부여:
 
 - plan 전체를 G_final 까지 *자동 끝까지* 진행. 중간 사용자 permission 불필요.
 - 디테일 결정 모호 시 → *권장 default* 채택 후 진행 (ask 금지).
@@ -30,7 +36,7 @@
 (`WORKFLOW.md §12.2 step 1~6` 의 압축형 — plan 본문 전체 re-read 금지, token 낭비)
 
 1. `WORKFLOW.md §12` (Autonomous Execution Protocol)
-2. 현재 `plans/plan-NNN-*.md` 의 `§0.5 Quick Reference`
+2. 현재 `plans/plan-{lane}-{NNN}-*.md` (또는 legacy `plan-NNN-*.md`) 의 `§0.5 Quick Reference`
 3. `git log -20 --oneline` 으로 현 commit 위치 파악
 4. §0.5 commit chain 의 다음 [TODO] commit 식별 → 그 commit 의 spec section 만 offset/limit 부분 read
 
