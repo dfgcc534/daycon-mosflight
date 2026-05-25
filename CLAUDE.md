@@ -3,6 +3,7 @@
 ## Plan 명명 규약 (lane mutex)
 
 - 신규 plan = `plan-{lane}-{NNN}-{slug}.md` (예: `plan-a-001-...`). `lane` = 소문자 1자, **병렬 worktree mutex 단위** (worktree 1개 = lane 1개 점유, lane 내 번호 단독 발행 → plan_id 충돌 0). 번호 카운터는 lane 별 독립.
+- **worktree 작업 완료(G_final) 시 그 브랜치를 반드시 `main` 으로 merge** — lane 의 plan 이 main 에 반영돼야 다른 worktree 가 lane 점유를 grep 판정할 수 있어 mutex 가 성립한다. worktree 종료 = main merge 가 한 짝.
 - legacy `plan-{NNN}-*.md` (plan-001~032) 는 그대로 유효 (개명 금지). 전체 규약 = `WORKFLOW.md §4`.
 
 ## Autonomous Execution Policy

@@ -74,6 +74,7 @@ plan-{lane}-{NNN}-{slug}.results.md    ← 응답 (server)
 - **도입 사유**: 여러 worktree 가 동시에 plan 을 발행할 때 *전역 단일 `NNN` 카운터*는 race condition (둘 다 같은 다음 번호를 집어 충돌) 을 만든다. lane 을 worktree 별로 분리하면 번호 발행이 lane-local 이 되어 **lock 없이 mutex** 가 성립한다.
 - **lane 점유** = worktree 진입 시 미사용 알파벳 1개 claim. 한 lane 의 번호 발행은 *그 lane 을 점유한 worktree 만* 수행 → 병렬 worktree 간 `plan_id` 충돌 0.
 - **점유 현황 판정**: 별도 lock 파일 불요. `ls plans/plan-{lane}-*` grep 으로 어떤 lane 이 쓰였는지, lane 내 다음 번호가 무엇인지 판정.
+- **lane lifecycle (merge-back 의무)**: worktree 의 작업(plan `G_final`)이 끝나면 그 worktree 브랜치를 **반드시 `main` 으로 merge** 한다. merge 전까지 그 lane 의 plan 파일은 `main` 에 부재 → 다른 worktree 가 위 grep 으로 lane 점유 현황을 판정할 수 없어 **mutex 가 깨진다**. 따라서 *worktree 종료 = main merge* 가 한 짝. merge 후에도 plan 번호는 monotonic 유지 (같은 lane 재진입 시 다음 번호부터 발행).
 - **legacy backward-compat**: lane 없는 `plan-{NNN}-{slug}` (plan-001 ~ plan-032) 는 그대로 유효 — *개명/이전 금지*. 이들은 암묵적으로 *lane 없는 단일 직렬 track* 으로 취급한다. **신규 plan 부터 lane 형식**을 사용한다.
 
 ### Experiment ID
