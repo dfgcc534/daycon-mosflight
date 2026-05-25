@@ -1,0 +1,109 @@
+{
+  "exp": "KR001",
+  "gate": "full",
+  "input_yaw": false,
+  "device": "cuda",
+  "N": 10000,
+  "n_predicted": 10000,
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "epochs": 200,
+  "configs": [
+    "A",
+    "B"
+  ],
+  "hit_1cm": 0.6639,
+  "hit_1p5cm": 0.8167,
+  "config_hit_1cm": {
+    "A": 0.6612,
+    "B": 0.663
+  },
+  "kalman_alone_hit_1cm": 0.5964,
+  "kalman_alone_hit_1p5cm": 0.7995,
+  "g_repro_band": "EXCELLENT",
+  "g1_pass_gt_kalman_alone": true,
+  "calibration": {
+    "hardcode_alpha": [
+      1.0,
+      0.95,
+      1.0
+    ],
+    "hit_hardcal": 0.6638,
+    "fit_alpha": [
+      1.025,
+      1.0,
+      1.0
+    ],
+    "hit_fitcal": 0.6641,
+    "overfit_risk_flag": true,
+    "flag_dev": true,
+    "flag_drop": false,
+    "headline": "uncalibrated"
+  },
+  "rotation_class": {
+    "scalar": {
+      "mean_speed": "invariant",
+      "max_speed": "invariant",
+      "speed_std": "invariant",
+      "mean_acc": "invariant",
+      "max_acc": "invariant",
+      "max_jerk": "invariant",
+      "straightness": "invariant",
+      "net_disp": "invariant",
+      "turn_cos": "invariant",
+      "|v_last|": "invariant",
+      "|a_last|": "invariant",
+      "|a_recent|": "invariant",
+      "jerk_last": "invariant",
+      "jerk_recent": "invariant",
+      "noise_poly2": "invariant",
+      "noise_savgol": "invariant",
+      "noise_loo": "invariant",
+      "hard_turn": "invariant",
+      "high_speed": "invariant",
+      "high_acc": "invariant",
+      "log_max_acc": "invariant",
+      "tier3_0": "invariant",
+      "tier3_1": "invariant",
+      "tier3_2": "invariant",
+      "tier3_3": "invariant",
+      "tier3_4": "invariant",
+      "tier3_5": "invariant",
+      "tier3_6": "invariant",
+      "tier3_7": "invariant",
+      "tier3_8": "invariant",
+      "tier3_9": "invariant",
+      "tier3_10": "invariant",
+      "tier3_11": "invariant",
+      "tier3_12": "invariant",
+      "tier3_13": "invariant",
+      "tier3_14": "invariant",
+      "tier3_15": "invariant",
+      "tier3_16": "invariant",
+      "tier3_17": "invariant",
+      "tier3_18": "invariant"
+    },
+    "seq": {
+      "rel_x": "rotate",
+      "rel_y": "rotate",
+      "rel_z": "rotate",
+      "v_x": "rotate",
+      "v_y": "rotate",
+      "v_z": "rotate",
+      "a_x": "rotate",
+      "a_y": "rotate",
+      "a_z": "rotate"
+    }
+  },
+  "runtime_sec": 631.0
+}
