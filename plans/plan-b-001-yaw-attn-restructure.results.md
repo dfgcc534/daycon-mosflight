@@ -11,7 +11,7 @@ best_exp_id: B001_f0-baseline
 g3_oof_hit_1cm: 0.6296
 g3_band: FAIL_regression
 g0_5_baseline_hit_1cm: {f0: 0.6320, kalman: 0.5964}
-lb_score: null
+lb_score: {kalman_only: 0.6162}   # DACON comp 236716, OOF→LB gap +0.0198; 노트북 주장 0.6452 재현 실패
 band: FAIL_regression
 ---
 
@@ -54,6 +54,7 @@ band: FAIL_regression
 ### §2.2 G0.5 baseline 모순 증거 — 확정 (단 **train/OOF split 한정**)
 - 같은 hit_1cm metric 에서 **F0 0.6320 > Kalman 0.5964** (Δ 0.0356, train/OOF). plan 작성 단계 flag 한 "Kalman standalone < F0" 가 OOF 로 **확정**.
 - **split 명확화** (사용자 verify 2026-05-26): 내 Kalman 0.5964 = 노트북 cell-8 `칼만 train R-Hit` assert 와 **diff 0.0000 정확 재현** (kalman_predict full-train 직접 검증). 노트북 §13 표의 **"Kalman LB 0.6452" 는 test set** 수치 — 이 대회는 **train→LB positive gap 이 큼** (Kalman 0.5964→0.6452 +0.0488; sub_09 OOF 0.6612→LB 0.6778 +0.017). 따라서 "Kalman<F0" 는 OOF 한정 결론이고 **LB 거동은 미측정** (양 baseline 모두 OOF 비교라 내부 일관성은 유지; 본 plan 의 모든 hit_1cm 은 OOF). Kalman 의 노이즈-필터 잔차 가설이 selector 위 OOF floor 손실(−0.036)을 상쇄 못 함은 OOF 기준 사실.
+- **LB 실측 (2026-05-26 DACON 제출, comp 236716)**: Kalman-only test → **LB 0.6162**. → 우리 OOF→LB gap = **+0.0198** (0.5964→0.6162; 실재하나 작음). **단 노트북 주장 Kalman LB 0.6452 는 재현 실패** — Kalman 은 결정적이고 우리 train(0.5964)이 노트북 cell-8 과 소수점 일치하므로 같은 config 면 LB 도 동일해야 하나 0.6162 관측. → 노트북 §13 의 0.6452 (및 headline 0.6780) 는 self-report 과대 추정 가능성, 신뢰도 보정 필요. 함의: OOF→LB gap (+0.02)은 method 별로 달라 plan-b-001 OOF FAIL(0.6296)의 LB 외삽 불확실.
 
 ### §2.3 arm 비대칭 — F0 floor 는 selector 로 못 넘는다
 - F0 arm: 모델 < baseline (−0.0024). Kalman arm: 모델 > baseline (+0.0113).
