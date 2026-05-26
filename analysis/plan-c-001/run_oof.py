@@ -160,9 +160,10 @@ def run_config(cfg_name, X, y, fold_ids, theta, base_pred, seq, scal,
     return _yaw.inverse_rotate_xy(oof_rot, theta)
 
 
-def build_inputs(X, theta, input_yaw, use_resid):
-    """seq (N,11,C), scal (N,D), n_channels, scal_dim 반환. C=9 or 12, D=40 or 48."""
-    cache = _THIS / "noise_cache.npz"
+def build_inputs(X, theta, input_yaw, use_resid, use_cache=True):
+    """seq (N,11,C), scal (N,D), n_channels, scal_dim 반환. C=9 or 12, D=40 or 48.
+    use_cache=False (truncated gate) 시 noise 캐시 미사용 — 부분 N 이 full 캐시 오염 방지."""
+    cache = (_THIS / "noise_cache.npz") if use_cache else None
     noise = _feat.compute_noise(X, cache_path=cache, key="train", with_loo=True)
     seq = _feat.build_seq_t3(X)                      # (N,11,9)
     scal, names = _feat.build_scalar_40d(X, noise["poly2"], noise["savgol"], noise["loo"])
@@ -225,7 +226,7 @@ def main():
     tgt_F = _yaw.rotate_xy(y - X[:, -1], theta).astype(np.float32)
     tgt_W = np.zeros_like(tgt_main, dtype=np.float32)
 
-    seq, scal = build_inputs(X, theta, args.input_yaw, args.f0_resid_feats)
+    seq, scal = build_inputs(X, theta, args.input_yaw, args.f0_resid_feats, use_cache=(max_n is None))
     print(f"  inputs: seq {seq.shape} scal {scal.shape}", flush=True)
 
     # baseline-alone floor (비교 기준점)
