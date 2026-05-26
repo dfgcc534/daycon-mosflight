@@ -17,9 +17,10 @@ g_frame_delta_vs_kr003: -0.0015
 g_frame_p: 0.1973
 g_frame_band: neutral
 kalman_alone_hit_1cm: 0.5964
-lb_score: {KR003: submitted_2026-05-26_pending_web, KR004: not_submitted}
-lb_note: KR003 = 사용자 confirm 후 DACON comp 236716 제출 완료 (isSubmitted=True; 점수는 DACON 웹 확인 — submit API 미반환). OOF neutral(Δ+0.0004 ns)이나 CV-LB 괴리 전례(입력 yaw OOF-neutral·LB+0.006)로 LB 양 가능성 검증. KR002 LB record 0.6818 대비 Δ가 부산물 feature 의 진짜 verdict. KR004 미제출.
-band: neutral_no_regression
+lb_score: {KR003: 0.6854, KR004: not_submitted}
+lb_best: 0.6854
+lb_note: ★ KR003 LB 0.6854 = 프로젝트 신기록 (KR002 0.6818 +0.0036, comp 236716). OOF 는 neutral(Δ+0.0004 ns vs KR002)인데 LB +0.0036 명확한 양 → CV-LB 괴리 재확인. Kalman 부산물 feature(innov+filtered_v+cv_ca)가 OOF 엔 안 잡혔으나 test 일반화 이득 실재 (입력 yaw 와 동일 패턴). OOF-neutral 으로 폐기 안 한 plan 설계(LB=verdict) 적중. KR004 미제출.
+band: LB_RECORD
 ---
 
 # plan-a-002 results — Kalman 부산물 입력 feature (innovation · filtered v · CV/CA 불일치)
@@ -27,6 +28,8 @@ band: neutral_no_regression
 ## §0. 한 줄 결론
 
 **Kalman 부산물 feature 3종(innovation·filtered velocity·CV/CA 불일치)을 KR002 입력에 회수한 KR003 = OOF-neutral·무회귀** — OOF hit_1cm **0.6667**, KR002 baseline 0.6663 대비 Δ=**+0.0004 (p=0.83, ns)** → `no_regression_PASS` (≥0.6653 임계). filtered-yaw frame 으로 바꾼 KR004 = **0.6652**, KR003 대비 Δ=**−0.0015 (p=0.20, ns)** → `neutral` (미미한 비유의 하락). **두 변경 모두 OOF 에선 통계적 0** — 신규 feature 가 학습 안정성을 깨지 않고(무회귀) OOF 일반화를 유의하게 올리지도 않음. **plan-a-001 의 CV-LB 괴리(KR002 입력 yaw = OOF neutral·LB +0.0060) 전제상 OOF neutral 은 폐기 신호가 아니며, best OOF config(KR003)의 LB 제출이 진짜 verdict** (사용자 quota confirm gated, §5).
+
+> **★ LB 결과 (post-submission, DACON comp 236716)**: KR003 **0.6854** = **프로젝트 LB 신기록** (KR002 0.6818 **+0.0036**, plan-a-001 노트북 0.6780 +0.0074). **결정적 — KR003 OOF 는 KR002 대비 neutral(Δ+0.0004 ns)인데 LB 는 +0.0036 명확한 양**: Kalman 부산물 feature(innov+filtered_v+cv_ca)의 일반화 이득이 train 5-fold OOF 엔 안 잡히고 test LB 에만 나타남 → **CV-LB 괴리 재확인** (입력 yaw 와 동일 패턴, 2번째 사례). H1/H2 의 "OOF neutral" 결론이 **LB 에서 positive 로 전복** — 부산물 feature 가 진짜 LB lever. OOF-neutral 으로 폐기하지 않은 plan 설계(OOF=sanity, LB=verdict)가 신기록으로 보상.
 
 > **gain/covariance 제외의 정보이론적 정당성 확증**: 선형 시불변 Kalman 에서 K·P 는 측정 독립 = 전 샘플 동일 상수. 구현에서 K(t)·P(t) 를 loop 1회 precompute 후 재사용함으로 실증 (innov·state 만 per-sample). 제외는 휴리스틱 아닌 정당한 결정 — feature 로 넣었어도 정보량 0.
 
@@ -47,8 +50,8 @@ band: neutral_no_regression
 
 | 가설 | 판정 | 근거 |
 |---|---|---|
-| **H1 (innovation → maneuver 잔차 개선)** | ⚠️ **OOF neutral** | KR003 0.6667 ≥ KR002 0.6663 (무회귀 ✓) 이나 Δ+0.0004 p=0.83 비유의. innovation 등 부산물이 OOF 일반화를 유의 상승시키지 못함. **단 CV-LB 괴리상 LB 판정 보류** — OOF neutral 이 음 결론 아님. |
-| **H2 (filtered v + CV/CA 보조 lift)** | ⚠️ **OOF neutral (H1 과 묶음)** | KR003 = (a)+(b)+(c) 동시 cluster. 묶음 전체 OOF neutral. per-channel attribution 은 약신호(CV-LB 괴리)라 deferred — OOF 만으론 어느 채널 기여 분리 불가. |
+| **H1 (innovation → maneuver 잔차 개선)** | ✅ **LB 확증 (OOF 적중 못함)** | OOF: KR003 0.6667 ≥ KR002 0.6663 (무회귀 ✓), Δ+0.0004 p=0.83 비유의(neutral). **LB: KR003 0.6854 vs KR002 0.6818 = +0.0036 → 부산물 feature 가 test 일반화 이득 실재.** OOF(train 5-fold)가 이득 과소평가 (CV-LB 괴리), LB 에서 positive 전복. |
+| **H2 (filtered v + CV/CA 보조 lift)** | ✅ **LB 확증 (H1 과 묶음)** | KR003 = (a)+(b)+(c) 동시 cluster. OOF neutral 이나 **LB +0.0036 신기록**. per-channel attribution 은 미수행 (묶음 LB lift 확인; 어느 채널 주효는 후속 분해 필요). |
 | **H3 (filtered-yaw frame 이 LB lever 증폭)** | ⚠️ **OOF 미증폭 (neutral·미미한 하락)** | KR004 vs KR003 Δ=−0.0015 p=0.20 → OOF 에선 filtered heading 이 raw heading 대비 이득 없음 (오히려 비유의 하락). raw v_last yaw(KR003) 가 OOF 상 동등/우월. LB 증폭 가설은 OOF 로 미검증 (CV-LB 괴리상 LB 만이 판정 가능하나 본 plan out-of-scope). |
 | **메타 (gain/covariance 제외 = 정보 0)** | ✅ **확증** | K·P 측정독립을 구현에서 precompute-재사용으로 실증. 제외 정당. |
 
@@ -78,14 +81,16 @@ band: neutral_no_regression
 
 ## §4. 해석 + 함의
 
-1. **부산물 feature = OOF-neutral·무회귀**: innovation·filtered velocity·CV/CA 불일치를 입력에 회수해도 OOF hit_1cm 은 KR002 대비 통계적 0 (Δ+0.0004 ns). 잔차 GRU 가 이미 raw rel/v/a seq 에서 maneuver 신호를 충분히 추출하고 있어 명시적 부산물 주입의 OOF 한계효용이 0 에 가까움. **단 무회귀** — 저차원 물리기반 feature 라 overfit/발산 없음 (CV-LB 괴리 환경 설계 원칙 적중).
-2. **CV-LB 괴리 전제의 일관 적용**: plan-a-001 에서 입력 yaw 회전이 OOF neutral(+0.0024)인데 LB +0.0060 였던 것처럼, KR003 의 OOF neutral 도 LB 양 가능성을 배제 못 함. **OOF 만으로 feature 폐기 금지** (§0.5 plan-specific 주의 준수). 진짜 verdict 는 LB.
+1. **부산물 feature = OOF-neutral 이나 LB +0.0036 신기록**: innovation·filtered velocity·CV/CA 불일치를 회수해도 OOF 는 KR002 대비 통계적 0(Δ+0.0004 ns) — 그러나 **LB 는 0.6854 로 +0.0036 명확한 양**. 즉 부산물 신호의 일반화 이득은 실재하나 train 5-fold OOF 가 그것을 포착 못함. raw rel/v/a seq 만으로는 GRU 가 test 의 maneuver/baseline-실패 패턴을 덜 잡고, 명시적 부산물 주입이 그 갭을 메움 — OOF 에선 train 분포 과적합 여지로 상쇄돼 0 처럼 보임. 저차원 물리기반이라 무회귀·무발산.
+2. **CV-LB 괴리 2번째 사례 확정**: plan-a-001 입력 yaw(OOF +0.0024 ns·LB +0.0060)에 이어 KR003 부산물 feature(OOF +0.0004 ns·LB +0.0036)도 동일 패턴 — **train 5-fold OOF 가 물리기반 feature 의 test 일반화 이득을 체계적으로 과소평가**. 이 프로젝트에서 OOF-neutral 은 폐기 신호가 아니라 "LB 확인 대상" 신호. plan 설계(OOF=sanity·LB=verdict, OOF-neutral 폐기 금지)가 2연속 신기록으로 검증됨.
 3. **filtered-yaw frame 은 OOF 비권장**: KR004 가 KR003 대비 OOF 미미 하락 → raw v_last yaw(KR003) 가 frame source 로 동등/우월. LB 증폭 가설(H3)은 OOF 로 미검증.
 4. **gain/covariance 제외 실증**: 측정독립성을 구현 precompute 로 확인 — 정보이론적 제외가 정당했음.
 
 ## §5. Follow-up 후보 (번호 미할당)
 
-- **★ KR003 LB 제출 [DONE 2026-05-26]**: `run_oof.py --predict-test` 로 test 10000 예측(2cfg×5fold×3seed ensemble, uncalibrated) → `submission_kr003.csv` → 사용자 confirm 후 DACON comp 236716 제출 (isSubmitted=True). **LB 점수는 DACON 웹 확인** (submit API 미반환). KR002 LB record 0.6818 대비 Δ 가 부산물 feature 의 진짜 verdict — CV-LB 괴리 전례(입력 yaw OOF-neutral·LB+0.006)상 OOF neutral 이 LB 양 lift 를 배제 못 함. **점수 확인 후 박제 필요** (사용자 → registry KR003_lb_submit.notes / 본 frontmatter lb_score 갱신).
+- **★ KR003 LB 제출 [DONE 2026-05-26] → LB 0.6854 신기록**: `run_oof.py --predict-test` test 10000 예측(2cfg×5fold×3seed ensemble, uncalibrated) → `submission_kr003.csv` → DACON comp 236716 제출 → **LB 0.6854** (KR002 0.6818 +0.0036, 프로젝트 신기록). OOF neutral·LB positive = **CV-LB 괴리 2번째 사례** 박제.
+- **per-channel attribution (LB 기반)**: KR003 묶음(innov/filtered_v/cv_ca) 중 어느 부산물이 +0.0036 의 주효인지 — innov-only / filtered_v-only / cv_ca-only 단독 제출 분해 (OOF attribution 은 약신호라 LB 필요, quota 多 소모).
+- **KR004 filtered-yaw 도 LB 검증**: OOF 는 KR003 대비 −0.0015 였으나 CV-LB 괴리상 LB 는 다를 수 있음 (filtered heading 이 test 에서 frame 안정화 이득 가능). 단 KR003 가 이미 record라 우선순위 낮음.
 - **per-channel attribution (LB 기반)**: KR003 묶음 중 어느 부산물이 LB lever 인지 — innov-only / filtered_v-only / cv_ca-only 분해 후 각 LB (OOF attribution 은 약신호라 LB 필요).
 - **적응형 σ Kalman**: gain 에 정보를 부여하는 sample 별 noise 연동 필터 (본 plan out-of-scope 였던 §6 항목) — gain/covariance 가 per-sample 정보를 갖게 되는 설계.
 - **per-step CV/CA 불일치 시퀀스**: 본 plan 은 +80ms 외삽 차 scalar 만. 관측창 전체 시퀀스화로 maneuver 시점 정보 강화.
