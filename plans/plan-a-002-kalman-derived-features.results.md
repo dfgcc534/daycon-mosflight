@@ -17,8 +17,8 @@ g_frame_delta_vs_kr003: -0.0015
 g_frame_p: 0.1973
 g_frame_band: neutral
 kalman_alone_hit_1cm: 0.5964
-lb_score: {KR003: pending_user_gated, KR004: pending_user_gated}
-lb_note: OOF neutral (KR003 Δ+0.0004 ns / KR004 Δ−0.0015 ns). CV-LB 괴리 전제상 OOF neutral 이 폐기 신호 아님 — best OOF config(KR003) LB 제출을 사용자 confirm 후 권장 (입력 yaw 처럼 OOF-neutral·LB-positive 가능성). 본 plan 은 OOF only.
+lb_score: {KR003: submitted_2026-05-26_pending_web, KR004: not_submitted}
+lb_note: KR003 = 사용자 confirm 후 DACON comp 236716 제출 완료 (isSubmitted=True; 점수는 DACON 웹 확인 — submit API 미반환). OOF neutral(Δ+0.0004 ns)이나 CV-LB 괴리 전례(입력 yaw OOF-neutral·LB+0.006)로 LB 양 가능성 검증. KR002 LB record 0.6818 대비 Δ가 부산물 feature 의 진짜 verdict. KR004 미제출.
 band: neutral_no_regression
 ---
 
@@ -85,7 +85,7 @@ band: neutral_no_regression
 
 ## §5. Follow-up 후보 (번호 미할당)
 
-- **★ KR003 LB 제출 (사용자 quota confirm gated)**: best OOF config KR003(0.6667) 을 test 예측 + DACON 제출로 LB 회수. **CV-LB 괴리 전례상 OOF-neutral·LB-positive 가능성** — 입력 yaw 가 그랬듯 부산물 feature 가 test 에서 일반화 이득을 낼 수 있음. KR002 LB 0.6818 대비 Δ 가 진짜 판정. (DACON 일일 5회 quota, 사용자 명시 confirm 필수 — OOF neutral 이라 더더욱 신중.)
+- **★ KR003 LB 제출 [DONE 2026-05-26]**: `run_oof.py --predict-test` 로 test 10000 예측(2cfg×5fold×3seed ensemble, uncalibrated) → `submission_kr003.csv` → 사용자 confirm 후 DACON comp 236716 제출 (isSubmitted=True). **LB 점수는 DACON 웹 확인** (submit API 미반환). KR002 LB record 0.6818 대비 Δ 가 부산물 feature 의 진짜 verdict — CV-LB 괴리 전례(입력 yaw OOF-neutral·LB+0.006)상 OOF neutral 이 LB 양 lift 를 배제 못 함. **점수 확인 후 박제 필요** (사용자 → registry KR003_lb_submit.notes / 본 frontmatter lb_score 갱신).
 - **per-channel attribution (LB 기반)**: KR003 묶음 중 어느 부산물이 LB lever 인지 — innov-only / filtered_v-only / cv_ca-only 분해 후 각 LB (OOF attribution 은 약신호라 LB 필요).
 - **적응형 σ Kalman**: gain 에 정보를 부여하는 sample 별 noise 연동 필터 (본 plan out-of-scope 였던 §6 항목) — gain/covariance 가 per-sample 정보를 갖게 되는 설계.
 - **per-step CV/CA 불일치 시퀀스**: 본 plan 은 +80ms 외삽 차 scalar 만. 관측창 전체 시퀀스화로 maneuver 시점 정보 강화.

@@ -81,8 +81,12 @@ def paired_perm(hit_b, hit_a, n_resample=10000, seed=0):
 
 def train_one(cfg, seq_tr, scal_tr, tgt_main, tgt_F, tgt_W,
               seq_va, scal_va, theta_va, kal_va, y_va,
-              seed, device, epochs, patience, batch=256):
-    """단일 config×seed×fold 학습 → (best_val_out_rot, best_rhit). n_channels 동적."""
+              seed, device, epochs, patience, batch=256,
+              seq_test=None, scal_test=None):
+    """단일 config×seed×fold 학습 → (best_val_out_rot, best_rhit, test_out_rot|None). n_channels 동적.
+
+    test_out_rot = best-val-epoch state 로 예측한 test (rotated frame). seq_test 미지정 시 None.
+    """
     torch.manual_seed(seed)
     np.random.seed(seed)
     n_ch = seq_tr.shape[2]
@@ -103,7 +107,7 @@ def train_one(cfg, seq_tr, scal_tr, tgt_main, tgt_F, tgt_W,
     sc_va = torch.as_tensor(scal_va, device=device)
     n = sq.shape[0]
 
-    best_rhit, best_out, no_imp = -1.0, None, 0
+    best_rhit, best_out, best_state, no_imp = -1.0, None, None, 0
     for ep in range(epochs):
         net.train()
         perm = torch.randperm(n, device=device)
@@ -126,19 +130,33 @@ def train_one(cfg, seq_tr, scal_tr, tgt_main, tgt_F, tgt_W,
         rh = hit_rate(pred, y_va)
         if rh > best_rhit:
             best_rhit, best_out, no_imp = rh, out_rot.copy(), 0
+            best_state = {k: v.detach().clone() for k, v in net.state_dict().items()}
         else:
             no_imp += 1
             if no_imp >= patience:
                 break
-    return best_out, best_rhit
+    test_out = None
+    if seq_test is not None:
+        net.load_state_dict(best_state)
+        net.eval()
+        with torch.no_grad():
+            om_te, _ = net(torch.as_tensor(seq_test, device=device),
+                           torch.as_tensor(scal_test, device=device))
+        test_out = om_te.cpu().numpy()
+    return best_out, best_rhit, test_out
 
 
 def run_config(cfg_name, X, y, fold_ids, theta, kalman_main, seq, scal,
-               tgt_main, tgt_F, tgt_W, folds, seeds, epochs, patience, device, quiet):
-    """config 1개의 5-fold → oof_res_world (N,3). n_channels=seq.shape[2] 동적."""
+               tgt_main, tgt_F, tgt_W, folds, seeds, epochs, patience, device, quiet,
+               seq_test=None, scal_test=None, theta_test=None):
+    """config 1개의 5-fold → (oof_res_world (N,3), test_res_world (Nt,3)|None). n_channels 동적.
+
+    test 는 fold 별 seed-평균(rotated)→inverse_rotate→fold 평균 (plan-a-001 동일).
+    """
     cfg = CONFIGS[cfg_name]
     N, _, C = seq.shape
     oof_rot = np.zeros((N, 3), dtype=np.float64)
+    test_world_folds = []
     for f in folds:
         tr = np.where(fold_ids != f)[0]
         va = np.where(fold_ids == f)[0]
@@ -148,17 +166,26 @@ def run_config(cfg_name, X, y, fold_ids, theta, kalman_main, seq, scal,
         seq_va = _fe.normalize_seq(seq[va], sc_seq)
         scal_tr = sc_scal.transform(scal[tr]).astype(np.float32)
         scal_va = sc_scal.transform(scal[va]).astype(np.float32)
-        seed_outs = []
+        seq_te_n = _fe.normalize_seq(seq_test, sc_seq) if seq_test is not None else None
+        scal_te_n = sc_scal.transform(scal_test).astype(np.float32) if scal_test is not None else None
+        seed_outs, seed_test = [], []
         for s in seeds:
-            out_rot, rh = train_one(
+            out_rot, rh, test_rot = train_one(
                 cfg, seq_tr, scal_tr, tgt_main[tr], tgt_F[tr], tgt_W[tr],
                 seq_va, scal_va, theta[va], kalman_main[va], y[va],
-                s, device, epochs, patience)
+                s, device, epochs, patience,
+                seq_test=seq_te_n, scal_test=scal_te_n)
             seed_outs.append(out_rot)
+            if test_rot is not None:
+                seed_test.append(test_rot)
             if not quiet:
                 print(f"    [{cfg_name}] fold{f} seed{s} val_rhit={rh:.4f}", flush=True)
         oof_rot[va] = np.mean(seed_outs, axis=0)
-    return _yaw.inverse_rotate_xy(oof_rot, theta)
+        if seed_test:
+            test_world_folds.append(_yaw.inverse_rotate_xy(np.mean(seed_test, axis=0), theta_test))
+    oof_world = _yaw.inverse_rotate_xy(oof_rot, theta)
+    test_world = np.mean(test_world_folds, axis=0) if test_world_folds else None
+    return oof_world, test_world
 
 
 def main():
@@ -175,6 +202,7 @@ def main():
     ap.add_argument("--epochs", type=int, default=200)
     ap.add_argument("--patience", type=int, default=30)
     ap.add_argument("--seeds-cpu", type=int, default=1, help="CPU 시 seed 수 (decision-note carry)")
+    ap.add_argument("--predict-test", action="store_true", help="test 10000 예측 → submission_{exp}.csv (full only)")
     ap.add_argument("--quiet", action="store_true")
     args = ap.parse_args()
 
@@ -233,13 +261,37 @@ def main():
         cv_ca_arr=cv_ca_arr, theta=theta, input_yaw=args.input_yaw)
     seq_rot = {n: "rotate" for n in seq_names}  # 전부 벡터 triplet
 
+    # test 예측 features (--predict-test) — DACON submission. test internals 도 관측창 산출(leakage-safe).
+    seq_test = scal_test = theta_test = kalman_test = test_ids = None
+    if args.predict_test:
+        if max_n is not None:
+            raise SystemExit("--predict-test 는 full gate 전용 (max_n=None)")
+        test_ids, X_test = load_all_samples("test")
+        innov_te = fv_te = None
+        if need_internals:
+            _, innov_te, fv_te = _kf.kalman_with_internals(X_test)
+        theta_test = (_yaw.yaw_angle(fv_te[:, -1, :].astype(np.float64)) if args.filtered_yaw
+                      else _yaw.yaw_from_last_step(X_test))
+        kalman_test = _kalman.kalman_predict(
+            X_test, sigma_obs=_kalman.SIGMA_OBS_MAIN, sigma_proc=_kalman.SIGMA_PROC_MAIN)
+        noise_te = _fe.compute_noise(X_test, cache_path=cache, key="test", with_loo=False)
+        seq_test, _ = _fe.build_seq_ext(
+            X_test, innov_arr=(innov_te if args.innov else None),
+            filtered_v_arr=(fv_te if args.filtered_v else None),
+            theta=theta_test, input_yaw=args.input_yaw)
+        cv_ca_te = _kf.cv_ca_disagreement(X_test) if args.cv_ca else None
+        scal_test, _, _ = _fe.build_scalar_ext(
+            X_test, noise_te["poly2"], noise_te["savgol"], noise_te["loo"],
+            cv_ca_arr=cv_ca_te, theta=theta_test, input_yaw=args.input_yaw)
+
     kalman_alone_hit = hit_rate(kalman_main[pm], y[pm])
 
-    oof_res = {}
+    oof_res, test_res = {}, {}
     for c in configs:
-        oof_res[c] = run_config(
+        oof_res[c], test_res[c] = run_config(
             c, X, y, fold_ids, theta, kalman_main, seq, scal,
-            tgt_main, tgt_F, tgt_W, folds, seeds, epochs, args.patience, device, args.quiet)
+            tgt_main, tgt_F, tgt_W, folds, seeds, epochs, args.patience, device, args.quiet,
+            seq_test=seq_test, scal_test=scal_test, theta_test=theta_test)
         h = hit_rate((kalman_main + oof_res[c])[pm], y[pm])
         print(f"  config {c} OOF hit_1cm={h:.4f}", flush=True)
 
@@ -280,6 +332,19 @@ def main():
         print(f"  [compare vs {cpath.name}] base={base_hit:.4f} Δ={delta:+.4f} p={pval:.4g} → {band}",
               flush=True)
 
+    # submission (--predict-test): uncalibrated test 예측 (OOF headline 동일 기준)
+    submission_name = None
+    if args.predict_test and test_ids is not None:
+        import pandas as pd
+        ens_test_res = np.mean([test_res[c] for c in configs], axis=0)
+        test_pred = kalman_test + ens_test_res
+        sub = pd.DataFrame({"id": test_ids, "x": test_pred[:, 0],
+                            "y": test_pred[:, 1], "z": test_pred[:, 2]})
+        submission_name = f"submission_{(args.exp or 'kr00x').lower()}.csv"
+        sub.to_csv(_THIS / submission_name, index=False)
+        print(f"[submission] {submission_name} ({len(sub)} rows, uncalibrated, "
+              f"finite={bool(np.isfinite(test_pred).all())})", flush=True)
+
     result = dict(
         exp=args.exp, gate=args.gate, device=str(device),
         flags=dict(input_yaw=args.input_yaw, innov=args.innov, filtered_v=args.filtered_v,
@@ -292,6 +357,7 @@ def main():
         config_hit_1cm={c: hit_rate((kalman_main + oof_res[c])[pm], y[pm]) for c in configs},
         kalman_alone_hit_1cm=kalman_alone_hit,
         compare=compare,
+        submission=submission_name,
         rotation_class=dict(seq=seq_rot, scalar=scal_rot),
         runtime_sec=round(time.time() - t0, 1),
     )

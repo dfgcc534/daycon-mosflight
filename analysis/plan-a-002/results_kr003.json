@@ -44,6 +44,7 @@
     "p": 0.8347,
     "band": "no_regression_PASS"
   },
+  "submission": "submission_kr003.csv",
   "rotation_class": {
     "seq": {
       "rel_x": "rotate",
@@ -109,5 +110,5 @@
       "cvca_norm": "invariant"
     }
   },
-  "runtime_sec": 618.0
+  "runtime_sec": 613.0
 }
