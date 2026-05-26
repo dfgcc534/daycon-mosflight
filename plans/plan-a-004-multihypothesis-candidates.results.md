@@ -66,6 +66,22 @@ band: KILL_single_gru_conditional_optimal
 - **유일 escape = 새 입력정보**: competition 데이터 사양 확인 (440ms 보다 긴 trajectory·추가 센서·cross-sample). 모델링 아닌 데이터 문제.
 - 현 best 고정: **KR008 LB 0.6862 (plan-a-003)** = 프로젝트 top, 정보 천장 부근.
 
+## §4.5 K-sweep 추가 검증 (oracle↔realized 간극 = selection 벽)
+
+KILL 후 "K=3,4 면 oracle 이 단조 증가해 gate 넘지 않나?" 검증 (g1, soft_top=2):
+
+| K | oracle@K | realized-hit | KR008 대비 realized Δ (p) | per_head |
+|---|---|---|---|---|
+| 1 (KR008) | 0.6757 | 0.6757 | — | — |
+| 2 | 0.6787 | 0.6767 | +0.001 (0.75) | [1277,743] |
+| **3** | **0.7653** | **0.6347** | **−0.044 (p=0)** | [811,606,603] |
+| **4** | **0.7579** | **0.6317** | **−0.047 (p=0)** | [1147,504,314,55] |
+
+- **oracle 는 K 따라 급증** (0.6787→0.7653, gate 0.696 초과) — 후보가 정답을 더 덮음(미래 미세 multimodal 실재).
+- **그러나 realized-hit 는 K 따라 폭락** (0.6767→0.6347→0.6317, p=0) — selector 가 늘어난 후보 중 정답 head 를 못 골라, KR008 보다 훨씬 나빠짐.
+- **oracle↔realized 간극 = 0.13 (K=3)** → ceiling_verify 의 selection 벽(14-anchor oracle 0.79 vs selector 0.63)과 동일 메커니즘. "정답이 후보에 있음" ≠ "고를 수 있음".
+- **G1 gate 정당성 확인**: gate = oracle@2≥0.696 **AND** realized≥0.6707. K=3 은 oracle(0.765) 통과해도 realized(0.6347)<0.6707 로 **여전히 KILL** → K 늘려도 통과 불가, KILL airtight.
+
 ## §5. 재현
 
 ```
