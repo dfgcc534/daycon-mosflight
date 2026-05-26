@@ -2,7 +2,7 @@
 plan_id: d-001
 version: 1
 date: 2026-05-26 (Asia/Seoul)
-status: draft
+status: all_complete
 lane: d
 inspired_by:
   - notes/[LB_0.6+] Neural ODE 기반 예측모델.ipynb (재현 대상 — pos+vel 상태계 위 학습 가속도장 + RK4 단일스텝 + 학습 damping + local/global bias, 자칭 LB 0.6+)
@@ -59,22 +59,22 @@ exp_ids:
 
 | commit | spec | status |
 |---|---|---|
-| c0 spec | §0~§7 (본 파일) | [TODO] |
-| c1 data + frame | §4.1 `analysis/plan-d-001/data.py` (load+diffs+p_last), `frame.py` (θ·R from yaw.py) | [TODO] |
-| c2 features | §4.2 `features.py` — `extract_features` 24D 재구현 + train-fold mean/std scaling stats | [TODO] |
-| c3 model + loss | §4.3 `model.py` (`SimpleNeuralODEModel`+RK4+damping, cell 8 그대로), `losses.py` (softhit+huber+accel_reg, cell 10 그대로) | [TODO] |
-| c4 OOF runner | §4.4 `run_oof.py` (5-fold stable_fold_id + per-fold scaling + full train loop + world hit_1cm) | [TODO] |
-| c5 smoke | §5 `tests/test_plan_d001_smoke.py` (import + 1f1s1e finite, NaN/Inf 0) | [TODO] |
-| c6 G1 validation | §5 1-fold 1-seed full-epoch — val hit_1cm finite & final-epoch val hit_1cm ≥ epoch1 값 (비단조 noise 허용, crisp 판정) (학습신호 sanity) | [TODO] |
-| c7 NODE001 full repro | §5 5-fold×1seed×15ep OOF → `results_node001.json/.npz` | [TODO] |
-| c8 results + merge | §5 `plan-d-001-...results.md` frontmatter sync + **worktree→main 자율 merge** (§4 lane lifecycle) | [TODO] |
+| c0 spec | §0~§7 (본 파일) | [DONE] |
+| c1 data + frame | §4.1 `analysis/plan-d-001/data.py` (load+diffs+p_last), `frame.py` (θ·R from yaw.py) | [DONE] |
+| c2 features | §4.2 `features.py` — `extract_features` 24D 재구현 + train-fold mean/std scaling stats | [DONE] |
+| c3 model + loss | §4.3 `model.py` (`SimpleNeuralODEModel`+RK4+damping, cell 8 그대로), `losses.py` (softhit+huber+accel_reg, cell 10 그대로) | [DONE] |
+| c4 OOF runner | §4.4 `run_oof.py` (5-fold stable_fold_id + per-fold scaling + full train loop + world hit_1cm) | [DONE] |
+| c5 smoke | §5 `tests/test_plan_d001_smoke.py` (import + 1f1s1e finite, NaN/Inf 0) | [DONE] |
+| c6 G1 validation | §5 1-fold 1-seed full-epoch — val hit_1cm finite & final-epoch val hit_1cm ≥ epoch1 값 (비단조 noise 허용, crisp 판정) (학습신호 sanity) | [DONE] |
+| c7 NODE001 full repro | §5 5-fold×1seed×15ep OOF → `results_node001.json/.npz` | [DONE] |
+| c8 results + merge | §5 `plan-d-001-...results.md` frontmatter sync + **worktree→main 자율 merge** (§4 lane lifecycle) | [DONE] |
 
 ### G-gates
 
-- G0: c1~c5 인프라 + smoke green (import + 1f1s1e finite)            [TODO]
-- G1: 1-fold 1-seed full-epoch val hit_1cm finite & final-epoch val hit_1cm ≥ epoch1 값 (비단조 noise 허용, crisp 판정)   [TODO]
-- G_repro (G2): NODE001 full OOF hit_1cm band 판정 (≥0.6320 PASS)    [TODO]
-- G_final: results 박제 + §0.5 sync + worktree→main merge            [TODO]
+- G0: c1~c5 인프라 + smoke green (import + 1f1s1e finite)            [DONE] (frame self-check + smoke 3 pass + runner --smoke 63.02%)
+- G1: 1-fold 1-seed full-epoch val hit_1cm finite & final-epoch val hit_1cm ≥ epoch1 값 (비단조 noise 허용, crisp 판정)   [DONE] (fold0 ep1 63.02%→final 63.07% PASS; peak ep3 66.63% overfitting 관찰)
+- G_repro (G2): NODE001 full OOF hit_1cm band 판정 (≥0.6320 PASS)    [DONE] (**0.6330 PASS**, vs F0 Δ+0.0010 p=0.79 동률; H2 잔차 paradigm 미달)
+- G_final: results 박제 + §0.5 sync + worktree→main merge            [DONE]
 
 ---
 
