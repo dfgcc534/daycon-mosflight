@@ -1,0 +1,113 @@
+{
+  "exp": "KR004",
+  "gate": "full",
+  "device": "cuda",
+  "flags": {
+    "input_yaw": true,
+    "innov": true,
+    "filtered_v": true,
+    "cv_ca": true,
+    "filtered_yaw": true
+  },
+  "N": 10000,
+  "n_predicted": 10000,
+  "folds": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "epochs": 200,
+  "configs": [
+    "A",
+    "B"
+  ],
+  "seq_dim": 15,
+  "scal_dim": 44,
+  "hit_1cm": 0.6652,
+  "hit_1p5cm": 0.8209,
+  "config_hit_1cm": {
+    "A": 0.6645,
+    "B": 0.6667
+  },
+  "kalman_alone_hit_1cm": 0.5964,
+  "compare": {
+    "compare_to": "results_kr003.npz",
+    "base_hit_1cm": 0.6667,
+    "delta": -0.0015,
+    "p": 0.1973,
+    "band": "neutral"
+  },
+  "rotation_class": {
+    "seq": {
+      "rel_x": "rotate",
+      "rel_y": "rotate",
+      "rel_z": "rotate",
+      "v_x": "rotate",
+      "v_y": "rotate",
+      "v_z": "rotate",
+      "a_x": "rotate",
+      "a_y": "rotate",
+      "a_z": "rotate",
+      "innov_x": "rotate",
+      "innov_y": "rotate",
+      "innov_z": "rotate",
+      "fv_x": "rotate",
+      "fv_y": "rotate",
+      "fv_z": "rotate"
+    },
+    "scalar": {
+      "mean_speed": "invariant",
+      "max_speed": "invariant",
+      "speed_std": "invariant",
+      "mean_acc": "invariant",
+      "max_acc": "invariant",
+      "max_jerk": "invariant",
+      "straightness": "invariant",
+      "net_disp": "invariant",
+      "turn_cos": "invariant",
+      "|v_last|": "invariant",
+      "|a_last|": "invariant",
+      "|a_recent|": "invariant",
+      "jerk_last": "invariant",
+      "jerk_recent": "invariant",
+      "noise_poly2": "invariant",
+      "noise_savgol": "invariant",
+      "noise_loo": "invariant",
+      "hard_turn": "invariant",
+      "high_speed": "invariant",
+      "high_acc": "invariant",
+      "log_max_acc": "invariant",
+      "tier3_0": "invariant",
+      "tier3_1": "invariant",
+      "tier3_2": "invariant",
+      "tier3_3": "invariant",
+      "tier3_4": "invariant",
+      "tier3_5": "invariant",
+      "tier3_6": "invariant",
+      "tier3_7": "invariant",
+      "tier3_8": "invariant",
+      "tier3_9": "invariant",
+      "tier3_10": "invariant",
+      "tier3_11": "invariant",
+      "tier3_12": "invariant",
+      "tier3_13": "invariant",
+      "tier3_14": "invariant",
+      "tier3_15": "invariant",
+      "tier3_16": "invariant",
+      "tier3_17": "invariant",
+      "tier3_18": "invariant",
+      "cvca_x": "rotate",
+      "cvca_y": "rotate",
+      "cvca_z": "rotate",
+      "cvca_norm": "invariant"
+    }
+  },
+  "runtime_sec": 565.0
+}
