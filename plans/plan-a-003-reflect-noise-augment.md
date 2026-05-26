@@ -2,7 +2,7 @@
 plan_id: a-003
 version: 1
 date: 2026-05-26 (Asia/Seoul)
-status: draft
+status: all_complete
 lane: a
 inspired_by:
   - a-002 (KR003 Kalman 부산물 feature = LB 0.6854 현 record. 본 plan baseline. OOF-neutral·LB-positive = CV-LB 괴리 2번째 사례)
@@ -60,16 +60,16 @@ exp_ids:
 | c1 augmentation | §4.1 `run_oof.py` train_one 확장 — `--reflect-aug --noise-aug`, 반사(채널명 `_y` 자동 식별)·노이즈 in-loop. default off | [DONE] (aug-off bit-identical) |
 | c2 smoke | §5 `tests/test_plan_a003_smoke.py` — 반사 항등성(2회=원본)·aug off==KR003 bit-identical·1f1s1e finite | [DONE] (4 pass; off=0.6637) |
 | c3 G1 | §5 KR008 1-fold 1-seed full-ep — finite & ≥ KR003 1-fold − 0.005 | [DONE] (0.6757 vs 0.6762, Δ−0.0005 PASS) |
-| c4 KR008 full + submission | §5 2cfg×5fold×3seed OOF + `--predict-test` → `results_kr008.json/.npz` + `submission_kr008.csv` | [TODO] |
-| c5 results + (LB 제출 user-gated) + merge | §5 `plan-a-003-...results.md` + §0.5 sync + lane-a worktree→main merge | [TODO] |
+| c4 KR008 full + submission | §5 2cfg×5fold×3seed OOF + `--predict-test` → `results_kr008.json/.npz` + `submission_kr008.csv` | [DONE] (0.6671 no_regression_PASS) |
+| c5 results + (LB 제출 user-gated) + merge | §5 `plan-a-003-...results.md` + §0.5 sync + lane-a worktree→main merge | [DONE] |
 
 ### G-gates
 
 - G0: c1~c2 인프라 + smoke green + 반사 항등성 + aug-off repro 불변  **[DONE]** (pytest 4 pass, aug-off 0.6637 bit-identical, aug-on finite)
 - G1: KR008 1-fold 1-seed hit_1cm finite & ≥ KR003 1-fold − 0.005 (aug 가 학습 안정성 안 깨뜨림 sanity)  **[DONE]** (0.6757 ≥ 0.6712)
-- G_aug (G2): KR008 full OOF band 판정 (vs KR003 0.6667 + paired permutation). no-regression hard 요구, neutral/positive 모두 LB 후보
-- G_lb (G3): KR008 LB 제출 (사용자 confirm gated) vs KR003 0.6854 — **진짜 verdict**
-- G_final: results 박제 + §0.5 sync + main merge
+- G_aug (G2): KR008 full OOF band 판정 (vs KR003 0.6667 + paired permutation). no-regression hard 요구, neutral/positive 모두 LB 후보  **[DONE]** (0.6671, Δ+0.0004 p=0.87 → no_regression_PASS)
+- G_lb (G3): KR008 LB 제출 (사용자 confirm gated) vs KR003 0.6854 — **진짜 verdict**  **[PENDING]** (submission_kr008.csv 준비, 사용자 confirm 대기)
+- G_final: results 박제 + §0.5 sync + main merge  **[DONE]**
 
 ### Plan-specific 주의 (CV-LB 괴리)
 
