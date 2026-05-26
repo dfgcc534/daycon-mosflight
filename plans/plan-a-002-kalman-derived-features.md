@@ -2,7 +2,7 @@
 plan_id: a-002
 version: 1
 date: 2026-05-26 (Asia/Seoul)
-status: draft
+status: all_complete
 lane: a
 inspired_by:
   - a-001 (KR002 input-yaw = 프로젝트 LB 신기록 0.6818. 핵심 발견 = **CV-LB 괴리** (입력 yaw OOF neutral +0.0024인데 LB +0.0060). KR002 가 본 plan baseline)
@@ -78,17 +78,17 @@ exp_ids:
 | c3 runner flag | §4.3 `run_oof.py` (plan-a-002 자체 orchestrator) — `--innov --filtered-v --cv-ca --filtered-yaw` flag, n_channels 동적. | [DONE] |
 | c4 smoke | §5 `tests/test_plan_a002_smoke.py` — import + 1f1s1e finite + leakage assert | [DONE] (7 passed) |
 | c5 G1 | §5 KR003 1-fold 1-seed full-ep — finite & ≥ KR002 1-fold (−tol) | [DONE] (KR003 0.6762 vs KR002base 0.6767, Δ−0.0005 PASS) |
-| c6 KR003 full | §5 2cfg×5fold×3seed OOF → `results_kr003.json/.npz` | [TODO] |
-| c7 KR004 full | §5 동일 budget + `--filtered-yaw` → `results_kr004.json/.npz` | [TODO] |
-| c8 results + merge | §5 `plan-a-002-...results.md` + §0.5 sync + lane-a worktree→main merge | [TODO] |
+| c6 KR003 full | §5 2cfg×5fold×3seed OOF → `results_kr003.json/.npz` | [DONE] (0.6667, no_regression_PASS) |
+| c7 KR004 full | §5 동일 budget + `--filtered-yaw` → `results_kr004.json/.npz` | [DONE] (0.6652, neutral) |
+| c8 results + merge | §5 `plan-a-002-...results.md` + §0.5 sync + lane-a worktree→main merge | [DONE] |
 
 ### G-gates
 
 - G0: c1~c4 인프라 + smoke green + leakage assert  **[DONE]** (7 pass, t_pred-invariant)
 - G1: KR003 1-fold 1-seed hit_1cm finite & ≥ KR002 1-fold − 0.005 (신규 채널이 학습 안정성 안 깨뜨림 sanity)  **[DONE]** (0.6762 ≥ 0.6717)
-- G_kalman (G2): KR003 full OOF band 판정 (vs KR002 0.6663 + paired permutation)
-- G_frame (G3): KR004 full OOF Δ vs KR003 + paired permutation
-- G_final: 양 exp results 박제 + §0.5 sync + main merge
+- G_kalman (G2): KR003 full OOF band 판정 (vs KR002 0.6663 + paired permutation)  **[DONE]** (0.6667, Δ+0.0004 p=0.83 → no_regression_PASS)
+- G_frame (G3): KR004 full OOF Δ vs KR003 + paired permutation  **[DONE]** (0.6652, Δ−0.0015 p=0.20 → neutral)
+- G_final: 양 exp results 박제 + §0.5 sync + main merge  **[DONE]**
 
 ### Plan-specific 주의 (CV-LB 괴리)
 
