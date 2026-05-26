@@ -72,7 +72,7 @@ exp_ids:
 
 | commit | spec | status |
 |---|---|---|
-| c0 spec | §0~§7 (본 파일) | [TODO] |
+| c0 spec | §0~§7 (본 파일) | [DONE] (plan-review-master BLOCKER 5→0) |
 | c1 kalman internals | §4.1 `analysis/plan-a-002/kalman_features.py` — `kalman_with_internals(X,model)` → (pred, innov_seq (N,T,3), filtered_v (N,T,3)); `cv_ca_disagreement(X)` → (N,3) | [TODO] |
 | c2 feature 확장 | §4.2 `features_ext.py` — KR002 seq/scalar 위에 innov(+3)·filtered_v(+3) seq 채널, cv/ca(+4) scalar. yaw 회전 적용 (flag 별) | [TODO] |
 | c3 runner flag | §4.3 `run_oof.py` 확장 — `--innov --filtered-v --cv-ca --filtered-yaw` flag. 채널/스칼라 dim 자동 전달 | [TODO] |
